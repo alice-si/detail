@@ -1,45 +1,47 @@
 <template>
-  <body>
-    <section class="chart-title">
-      <h1>INS Lessons</h1>
+  <main>
+    <section class="page-title">
+      <div class="back"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </div>
+      <div><h1 class="title">INS Lessons</h1></div>
     </section>
     <section class="select-area">
       <row :gutter="12">
-        <column :lg="1">Countries: </column>
-        <column :lg="3"><v-select :options="countries" @input="changeCountry" v-model="selectedCountry"></v-select></column>
-        <column :lg="1">Camps: </column>
-        <column :lg="3"><v-select :options="camps" @input="changeCamp" v-model="selectedCamp"></v-select></column>
-        <column :lg="1">Schools: </column>
-        <column :lg="3"><v-select :options="schools" @input="changeSchool" v-model="selectedSchool"></v-select></column>
+        <column :lg="1.5"><h3>Select Country</h3></column>
+        <column :lg="2.5"><v-select :options="countries" @input="changeCountry" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
+        <column :lg="1.5"><h3>Select Camp</h3></column>
+        <column :lg="2.5"><v-select :options="camps" @input="changeCamp" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate"></v-select></column>
+        <column :lg="1.5"><h3>Select School</h3></column>
+        <column :lg="2.5"><v-select :options="schools" @input="changeSchool" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column>
       </row>
     </section>
-    <section class="chart-view">
-      <row :gutter="12">
-        <column :lg="8"><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
+    <section class="chart-title-area">
+      <row :gutter="12" class="chart-title">
+        <column :lg="8" ><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
         <column :lg="4">
-          <div> {{ totalLessons }} lessons using INS</div>
+          <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1><h3>lessons</h3></span><h3>using INS</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
-      <row :gutter="12">
-        <column :lg="8" class="chart-area">
+    </section>
+    <section class="chart-view">
+      <row :gutter="12" class="chart-main">
+        <column :lg="8" class="line-chart-area">
           <line-chart :chart-data="chartData" :options="options"></line-chart>
         </column>
-          <column :lg="4" class="summary-area">
-            <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
-              <div class="text-container">
-                <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
-                <label v-bind:class="country.cssId" v-bind:for="country.cssId"><div v-bind:class="country.cssId" v-bind:for="country.cssId"></div>{{ lessonsByCountries[country.propId] }} lessons </br> in {{country.vForId}}</label>
-              </div>
-              <div class="chart-container">
-                <bar-chart :chart-data="barChartData[country.propId]" :options="barchartOption"></bar-chart>
-              </div>
+        <column :lg="4" class="summary-area">
+          <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
+            <div class="text-container">
+              <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
+              <label v-bind:class="country.cssId" v-bind:for="country.cssId"><div v-bind:class="country.cssId" v-bind:for="country.cssId"></div>{{ lessonsByCountries[country.propId] }} lessons </br> in {{country.vForId}}</label>
             </div>
-          </column>
+            <div class="chart-container">
+              <bar-chart :chart-data="barChartData[country.propId]" :options="barchartOption"></bar-chart>
+            </div>
+          </div>
+        </column>
       </row>
     </section>
-
-  </body>
+  </main>
 </template>
 
 <script>
@@ -71,6 +73,9 @@ export default {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+          duration: 0
+        },
         scales: {
           xAxes: [{
             gridLines: {
@@ -87,6 +92,9 @@ export default {
       barchartOption: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+          duration: 0
+        },
         scales: {
           xAxes: [{
             display: false
@@ -265,59 +273,173 @@ export default {
 </script>
 
 <style>
-  .chart-view {
-    margin-top: 50px;
-  }
-  .filtering-section{
-    display: flex;
-    flex-direction: column;
-  }
-  .text-container {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-  }
-  .chart-container {
-    display: flex;
-    flex-grow: 2;
-  }
-  .country-wrapper {
-    display: flex;
-    align-items: center;
-  }
-  #bar-chart {
-    width: 200px !important;
-    height: 100px !important;
-  }
-  label {
-    display: flex;
-    flex-direction: row;
-    align-content: center;
-    text-align: left;
-    color: var(--color-light-grey);
-  }
-  label div {
-    display:flex;
-    width:18px;
-    height:18px;
-    background:white;
-    border:1px solid var(--color-light-grey);
-    cursor:pointer;
-    border-radius: 3px;
-    margin-right: 10px;
-    align-self: center;
-  }
-  #south-sudan {
-    display: none;
-  }
-  #kenya {
-    display: none;
-  }
-  #tanzania {
-    display: none;
-  }
-  #dr-congo{
-    display: none;
-  }
+.navbar {
+  background: white;
+}
+.back {
+  align-self: start;
+}
 
+.title {
+  font-family: Helvetica;
+  font-size: 3.4rem;
+  color: var(--color-purple);
+  font-weight: 300;
+  text-align: left;
+}
+
+.page-title {
+  display: flex;
+  flex-direction: column;
+  padding-top: 5rem;
+  padding-left: 5rem;
+}
+
+.select-area{
+  display: flex !important;
+  flex-direction: row !important;
+  /* margin-left: 10rem;
+  margin-right: 5rem; */
+  align-items: center !important;
+}
+
+.colVGR {
+  padding: 0px !important;
+  align-self: center;
+  border-radius: 0px;
+}
+
+#vs__selected {
+  font-size: 1.4rem;
+}
+
+.select-country .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
+
+.select-camp .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
+
+.select-school .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
+
+.vs__dropdown-toggle {
+  border-radius: 2px;
+  background-color: #ffffff70;
+  border-color:#ffffff70;
+  padding: 1rem;
+}
+
+.vs__dropdown-toggle:active {
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+
+.vs__dropdown-menu {
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.4rem;
+}
+
+#vs1__listbox {
+  border: 1px, solid
+}
+
+.chart-title-area {
+  display: flex;
+  /* margin-left: 10.5rem;
+  margin-top: 5rem; */
+}
+
+.total-lessons {
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-view {
+  /* margin-left: 10rem;
+  margin-right: 5rem;
+  margin-top: 5rem; */
+  /* background-color:#ffffff; */
+  padding: 3rem;
+  /* margin-bottom: 20rem; */
+  display: flex;
+  flex-direction: column;
+  height: 45%;
+}
+
+.chart-main {
+  display: flex;
+}
+
+.chart-title h2 {
+  text-align:left;
+  margin: 0;
+}
+/* .line-chart-area {
+  display: flex;
+} */
+
+.text-container {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+.chart-container {
+  display: flex;
+  flex-grow: 2;
+}
+.country-wrapper {
+  display: flex;
+  align-items: center;
+}
+#bar-chart {
+  width: 200px !important;
+  height: 100px !important;
+}
+
+label {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  text-align: left;
+  color: var(--color-light-grey);
+}
+label div {
+  display:flex;
+  width:18px;
+  height:18px;
+  background:white;
+  border:1px solid var(--color-light-grey);
+  cursor:pointer;
+  border-radius: 3px;
+  margin-right: 10px;
+  align-self: center;
+}
+#south-sudan {
+  display: none;
+}
+#kenya {
+  display: none;
+}
+#tanzania {
+  display: none;
+}
+#dr-congo{
+  display: none;
+}
+
+canvas {
+  display: flex;
+}
+
+.chartjs-render-monitor {
+  animation: none;
+}
 </style>
