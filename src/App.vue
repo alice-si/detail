@@ -5,7 +5,7 @@
       <header class="horizontal-nav" :gutter="12">
       <nav class="navbar navbar-light bg-white justify-content-end fixed-top border-bottom">
         <img src="../src/assets/alice_logo.png" width="43" height="40" class="company_logo" alt="company_logo">
-         <img class="search-icon" src="../src/assets/Search.svg" alt="">
+          <img class="search-icon" src="../src/assets/Search.svg" alt="">
         <form class="form-inline">
           <input class="form-control mr-sm-2" style="width:250px; border: none;" type="search" placeholder="Search e.g. INS exam results" aria-label="Search">
           <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
