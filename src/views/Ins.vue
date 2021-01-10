@@ -1,10 +1,10 @@
 <template>
   <main>
-    <section class="page-title">
-      <div class="back"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </div>
+    <section id="page-title" class="container-fluid">
+      <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">INS Lessons</h1></div>
     </section>
-    <section class="select-area">
+    <section id="select-area" class="container-fluid">
       <row :gutter="12">
         <column :lg="1.5"><h3>Select Country</h3></column>
         <column :lg="2.5"><v-select :options="countries" @input="changeCountry" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
@@ -14,16 +14,16 @@
         <column :lg="2.5"><v-select :options="schools" @input="changeSchool" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column>
       </row>
     </section>
-    <section class="chart-title-area">
-      <row :gutter="12" class="chart-title">
-        <column :lg="8" ><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
-        <column :lg="4">
-          <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1><h3>lessons</h3></span><h3>using INS</h3></div>
+    <section :gutter="12" class="chart-title-area">
+      <row class="chart-title">
+        <column :lg="8" xs-6><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
+        <column :lg="4" xs-6>
+          <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span><h3>using INS</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
     </section>
-    <section class="chart-view">
+    <section class="chart-area">
       <row :gutter="12" class="chart-main">
         <column :lg="8" class="line-chart-area">
           <line-chart :chart-data="chartData" :options="options"></line-chart>
@@ -32,13 +32,75 @@
           <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
             <div class="text-container">
               <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
-              <label v-bind:class="country.cssId" v-bind:for="country.cssId"><div v-bind:class="country.cssId" v-bind:for="country.cssId"></div>{{ lessonsByCountries[country.propId] }} lessons </br> in {{country.vForId}}</label>
+                <label v-bind:class="country.cssId" v-bind:for="country.cssId">
+                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="justify-content:center; align-item:center;">
+                    <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px; width:10px; height:10px;">V</span>
+                  </div>
+                </label>
+                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
+                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">{{ lessonsByCountries[country.propId] }}</h1>
+                      <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
+                  </div>
+                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
+                    <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
+                  </div>
+                </div>
             </div>
             <div class="chart-container">
               <bar-chart :chart-data="barChartData[country.propId]" :options="barchartOption"></bar-chart>
             </div>
           </div>
         </column>
+      </row>
+      <row :gutter="12" class="table">
+        <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">1</th>
+            <th scope="col">2</th>
+            <th scope="col">3</th>
+            <th scope="col">4</th>
+            <th scope="col">5</th>
+            <th scope="col">6</th>
+            <th scope="col">7</th>
+            <th scope="col">8</th>
+            <th scope="col">9</th>
+            <th scope="col">10</th>
+            <th scope="col">11</th>
+            <th scope="col">12</th>
+            <th scope="col">Total lessons</th>
+            <th scope="col">Difference in 12 Months</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">South Sudan</th>
+            <!-- <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td> -->
+          </tr>
+          <tr>
+            <th scope="row">DR Congo</th>
+            <!-- <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td> -->
+          </tr>
+          <tr>
+            <th scope="row">Kenya</th>
+            <!-- <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td> -->
+          </tr>
+          <tr>
+            <th scope="row">Tanzania</th>
+            <!-- <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td> -->
+          </tr>
+        </tbody>
+      </table>
       </row>
     </section>
   </main>
@@ -90,8 +152,8 @@ export default {
         }
       },
       barchartOption: {
-        responsive: true,
-        maintainAspectRatio: false,
+        // responsive: true,
+        // maintainAspectRatio: false,
         animation: {
           duration: 0
         },
@@ -211,6 +273,9 @@ export default {
           const checkedColor = getColorSchmeFromIndex(i)
           dom[1].style.color = checkedColor
           dom[2].style.border = `1px solid ${checkedColor}`
+          dom[3].style.color = checkedColor
+          dom[4].style.color = checkedColor
+          // dom[5].style.color = checkedColor
 
           const chartData = {}
           const lessons = getLessons(countries[i])
@@ -227,6 +292,8 @@ export default {
         } else {
           dom[1].style.color = '#D8D8D8'
           dom[2].style.border = '1px solid #D8D8D8'
+          dom[3].style.color = '#ffffff'
+          dom[4].style.color = '#D8D8D8'
         }
       }
       this.updateLineChartData(multipleData)
@@ -273,6 +340,12 @@ export default {
 </script>
 
 <style>
+main {
+  display: flex;
+  flex-direction: column;
+  padding: 10rem 6rem 5rem 10rem;
+}
+
 .navbar {
   background: white;
 }
@@ -288,19 +361,38 @@ export default {
   text-align: left;
 }
 
-.page-title {
+#page-title {
   display: flex;
   flex-direction: column;
-  padding-top: 5rem;
-  padding-left: 5rem;
 }
 
-.select-area{
+.back {
+  padding-bottom: var(--padding-wide);
+  align-items: center;
+}
+
+.back a {
+  color: var(--color-dark-grey);
+  font-size: 1.2rem;
+}
+
+.title {
+  padding-bottom: calc(var(--padding-wide)/1.5);
+}
+
+.container[data-v-42e9a5e0] {
+  width: 100% !important;
+}
+
+#select-area{
   display: flex !important;
   flex-direction: row !important;
-  /* margin-left: 10rem;
-  margin-right: 5rem; */
   align-items: center !important;
+  padding-bottom: calc(var(--padding-wide)/1.5);
+}
+
+#select-area h3 {
+  color: var(--color-dark-grey)
 }
 
 .colVGR {
@@ -353,6 +445,8 @@ export default {
 
 .chart-title-area {
   display: flex;
+  color: var(--color-purple);
+  margin-top: 1.5rem;
   /* margin-left: 10.5rem;
   margin-top: 5rem; */
 }
@@ -360,57 +454,112 @@ export default {
 .total-lessons {
   display: flex;
   flex-direction: column;
+  padding-left: 10rem;
 }
 
-.chart-view {
-  /* margin-left: 10rem;
-  margin-right: 5rem;
-  margin-top: 5rem; */
-  /* background-color:#ffffff; */
+.total-lessons h1,
+.total-lessons h2,
+.total-lessons h3 {
+  display: inline;
+  color: var(--color-purple);
+}
+
+.total-lessons span {
+  align-self: start;
+}
+
+.total-lessons h1 {
+  margin-right: 1rem;
+}
+
+.total-lessons h2 {
+  font-weight: 100;
+}
+
+.total-lessons h3 {
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 100;
+}
+
+.chart-area {
+  margin-top: 3rem;
   padding: 3rem;
-  /* margin-bottom: 20rem; */
   display: flex;
   flex-direction: column;
   height: 45%;
+  background-color:#ffffff;
 }
 
 .chart-main {
   display: flex;
 }
 
+.chart-title {
+  display: flex;
+}
+
 .chart-title h2 {
   text-align:left;
   margin: 0;
+  color: var(--color-purple)
 }
-/* .line-chart-area {
+
+.line-chart-area {
+  padding-right: 3rem !important;
+}
+
+.summary-area {
   display: flex;
-} */
+  flex-direction: column;
+  height: 100%;
+  border-left: solid 1px var(--color-light-grey);
+  align-items: center;
+}
 
 .text-container {
   display: flex;
-  flex-grow: 1;
   align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  margin-right: 1rem;
 }
+
+.summary-text{
+  color: #D8D8D8;
+  align-items: flex-start;
+}
+
 .chart-container {
   display: flex;
-  flex-grow: 2;
+  padding-left: 1.5rem;
 }
+
+/* #line-chart {
+  width: 100% !important;
+  height: 100% !important;
+} */
+
+#bar-chart {
+  width: 100px !important;
+  height: 50px !important;
+}
+
 .country-wrapper {
   display: flex;
   align-items: center;
-}
-#bar-chart {
-  width: 200px !important;
-  height: 100px !important;
+  height: 100px;
+  padding: 10px;
 }
 
 label {
   display: flex;
   flex-direction: row;
-  align-content: center;
+  /* align-content: center; */
   text-align: left;
   color: var(--color-light-grey);
 }
+
 label div {
   display:flex;
   width:18px;
@@ -420,7 +569,7 @@ label div {
   cursor:pointer;
   border-radius: 3px;
   margin-right: 10px;
-  align-self: center;
+  /* align-self: center; */
 }
 #south-sudan {
   display: none;
@@ -435,11 +584,11 @@ label div {
   display: none;
 }
 
-canvas {
-  display: flex;
-}
-
 .chartjs-render-monitor {
   animation: none;
+}
+
+.table {
+  margin-top: 3rem;
 }
 </style>

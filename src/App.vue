@@ -2,33 +2,28 @@
 
   <div id="app">
     <div id="nav">
-      <nav class="navbar navbar-light bg-white">
-        <column :lg="1"><img src="../src/assets/alice_logo.png" width="43" height="40" class="company_logo" alt="company_logo"></column>
+      <header class="horizontal-nav" :gutter="12">
+      <nav class="navbar navbar-light bg-white justify-content-end fixed-top border-bottom">
+        <img src="../src/assets/alice_logo.png" width="43" height="40" class="company_logo" alt="company_logo">
+         <img class="search-icon" src="../src/assets/Search.svg" alt="">
         <form class="form-inline">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search e.g. INS exam results" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          <input class="form-control mr-sm-2" style="width:250px; border: none;" type="search" placeholder="Search e.g. INS exam results" aria-label="Search">
+          <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
         </form>
-          <column :lg="1"><img src="../src/assets/Alert.svg"/></column>
-          <column :lg="1"><img src="../src/assets/Profile.svg"/></column>
-        </nav>
+        <div class="notification-icon"><img src="../src/assets/Alert.svg" alt="alert"/></div>
+        <div class="profile-icon"><img src="../src/assets/Profile.svg" alt="profile"/></div>
+      </nav>
+      </header>
       <aside class="vertical-nav">
-        <nav class="navbar navbar-light bg-white flex-column">
-          <router-link to="/"><img src='../src/assets/Home.svg' class="home" alt="home"></router-link>
-          <router-link to="/ins"><img src='../src/assets/Dashboard.svg' class="dashboard" alt="dashboard"></router-link>
-          <!-- FIXME: change link direcntory -->
-          <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
-          <!-- FIXME: change link direcntory -->
-          <router-link to="/"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link>
+        <nav class="navbar navbar-light bg-white flex-column justify-content-start">
+            <router-link to="/"><img src='../src/assets/Home.svg' class="home" alt="home"></router-link>
+            <router-link to="/ins"><img src='../src/assets/Dashboard.svg' class="dashboard" alt="dashboard"></router-link>
+            <!-- FIXME: change link direcntory -->
+            <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
+            <!-- FIXME: change link direcntory -->
+            <router-link to="/"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link>
         </nav>
 
-        <!-- <ul>
-          <li><router-link to="/"><img src='../src/assets/Home.svg' class="home" alt="home"></router-link></li>
-          <li><router-link to="/ins"><img src='../src/assets/Dashboard.svg' class="dashboard" alt="dashboard"></router-link></li>
-          <!-- FIXME: change link direcntory -->
-          <li><router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link></li>
-          <!-- FIXME: change link direcntory -->
-          <li><router-link to="/"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link></li>
-        </ul> -->
       </aside>
     </div>
     <router-view/>
@@ -48,6 +43,7 @@
   --color-light-grey: #D8D8D8;
   --color-dark-grey: #767676;
   --color-purple: #8954BA;
+  --padding-wide: 3rem;
 }
 
 html {
@@ -72,7 +68,6 @@ body {
 h1 {
   font-size: 3.4rem;
   font-family: Helvetica;
-  color: var(--color-purple);
   font-weight: 300;
   margin: 0;
 }
@@ -80,7 +75,6 @@ h1 {
 h2 {
   font-size: 2.88em;
   font-family: Helvetica;
-  color: var(--color-purple);
   font-weight: 300;
   margin: 0;
 }
@@ -88,11 +82,12 @@ h2 {
 h3 {
   font-family: Helvetica;
   font-size: 1.4rem;
-  color: var(--color-dark-grey);
   font-weight: 300;
   margin: 0;
 }
-
+.navbar {
+  padding: 0 !important;
+}
 .company_logo {
   align-self: start;
   position: fixed;
@@ -110,25 +105,34 @@ h3 {
   height: 100%;
 }
 
-.horizontal-nav {
-  background-color: #FFFFFF !important;
-  display: flex;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 50px;
-  border-bottom: 1px solid var(--color-light-grey);
-  align-items: center;
+.form-inline .form-control {
+  font-size: 1.5rem;
+  /* margin-right: 3rem; */
+}
+
+.search-icon {
+  margin-right: 0.5rem;
+}
+
+.notification-icon {
+  padding: 20px 20px 20px 20px !important;
+  border-left: 1px solid var(--color-light-grey);
+}
+
+.profile-icon {
+  padding: 10px 20px 10px 20px;
+  margin-right: 10px;
+  border-left: 1px solid var(--color-light-grey);
 }
 
 .vertical-nav {
-  background-color: #FFFFFF !important;
   display: flex;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 50px;
-  height: 93%;
-  justify-content: center;
+  height: 95%;
+  justify-content: space-around;
+  background-color: #ffffff
 }
 
 .vertical-nav > ul {
@@ -140,13 +144,13 @@ h3 {
   overflow: auto;
 }
 
-li img {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+.vertical-nav img {
+  margin-bottom: 5rem;
 }
 
 .home {
-  margin-top: 10rem;
+  margin-top: 8rem;
+  margin-bottom: 5rem;
 }
 
 #nav a {
