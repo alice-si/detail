@@ -35,7 +35,7 @@
               <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
                 <label v-bind:class="country.cssId" v-bind:for="country.cssId">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="justify-content:center; align-item:center;">
-                    <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px; width:10px; height:10px;">V</span>
+                    <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px 2px 2px 5px; width:10px; height:10px;">V</span>
                   </div>
                 </label>
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">

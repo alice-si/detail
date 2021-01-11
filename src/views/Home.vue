@@ -14,18 +14,18 @@
           <h1>See the impact of your work</h1>
         </row>
         <row :gutter="12" id="thumbnails">
-          <column :lg="4">
+          <column class="thumb-1" :lg="4">
             <!-- {{dashboardName}} -->
-            <link-prevue url="https://dashboard.joannakang.vercel.app/#/ins"></link-prevue>
-            <!-- <router-link to="/ins"><img src="../../src/assets/dummy1.png" width="100%" height="100%"/></router-link> -->
+            <!-- <link-prevue url="https://dashboard.joannakang.vercel.app/#/ins"></link-prevue> -->
+            <router-link to="/ins"><img src="../../src/assets/dummy1.png" width="90%" height="90%"/></router-link>
             <!-- {{thumbnails}} -->
             <!-- Showing data till {{lastUpdate}} -->
           </column>
-           <column :lg="4">
-            <img src="../../src/assets/dummy2.png" width="100%" height="100%"/>
+           <column class="thumb-2" :lg="4">
+            <router-link to="/attendance"><img src="../../src/assets/dummy2.png" width="90%" height="90%"/></router-link>
           </column>
-          <column :lg="4">
-            <img src="../../src/assets/dummy3.png" width="100%" height="100%"/>
+          <column class="thumb-3" :lg="4">
+            <router-link to="/ict"><img src="../../src/assets/dummy3.png" width="90%" height="90%"/></router-link>
           </column>
         </row>
       </section>
@@ -72,10 +72,6 @@ main {
   margin-left: 1rem;
   margin-right: 1rem;
 }
-
-/* .list {
-  margin-left: 1rem;
-} */
 
 #filtering-area {
   width: 100%;
@@ -126,6 +122,11 @@ main {
 #thumbnail-area h1 {
   color: var(--color-dark-grey);
   margin: 4rem 0 4rem 0;
+}
+
+#thumbnails img {
+  box-shadow: -13px 11px 25px 0 #adb6d92b;
+  border-radius: 0.12rem;
 }
 
 </style>
