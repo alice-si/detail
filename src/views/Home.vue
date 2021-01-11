@@ -65,7 +65,7 @@ export default {
 main {
   display: flex;
   flex-direction: column;
-  padding: 5rem;
+  padding: 5rem 5rem 5rem 0;
 }
 
 .grid {
