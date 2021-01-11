@@ -488,11 +488,11 @@ main {
   display: flex;
   flex-direction: column;
   height: 45%;
-  background-color:#ffffff;
 }
 
 .chart-main {
   display: flex;
+  background-color:#ffffff;
 }
 
 .chart-title {
@@ -590,5 +590,6 @@ label div {
 
 .table {
   margin-top: 3rem;
+  background-color: #ffffff
 }
 </style>
