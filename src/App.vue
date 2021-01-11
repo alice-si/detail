@@ -70,6 +70,7 @@ h1 {
   font-family: Helvetica;
   font-weight: 300;
   margin: 0;
+  letter-spacing: -0.01px;
 }
 
 h2 {
@@ -77,6 +78,7 @@ h2 {
   font-family: Helvetica;
   font-weight: 300;
   margin: 0;
+  letter-spacing: -0.01px;
 }
 
 h3 {
@@ -84,6 +86,7 @@ h3 {
   font-size: 1.4rem;
   font-weight: 300;
   margin: 0;
+  letter-spacing: -0.01px;
 }
 .navbar {
   padding: 0 !important;

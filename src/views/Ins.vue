@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main id="ins">
     <section id="page-title" class="container-fluid">
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">INS Lessons</h1></div>
@@ -26,6 +26,7 @@
     <section class="chart-area">
       <row :gutter="12" class="chart-main">
         <column :lg="8" class="line-chart-area">
+          <h3> No of lessons</h3>
           <line-chart :chart-data="chartData" :options="options"></line-chart>
         </column>
         <column :lg="4" class="summary-area">
@@ -53,6 +54,10 @@
           </div>
         </column>
       </row>
+      <!-- TODO: Show no of monthly lessons by country-->
+      <!-- TODO: Total number of yealry lessons calculation -->
+      <!-- TODO: Sorting table by alphabet, total number of lessons -->
+      <!-- TODO: Change country column font color when checkbox click -->
       <row :gutter="12" class="table">
         <table class="table">
         <thead>
@@ -109,6 +114,7 @@
 <script>
 import LineChart from '../components/LineChart.js'
 import BarChart from '../components/BarChart.js'
+// import html2canvas from 'html2canvas'
 import { getCountries, getCamps, getSchools, getLessons } from '../data/data-provider.js'
 
 export default {
@@ -135,9 +141,6 @@ export default {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        animation: {
-          duration: 0
-        },
         scales: {
           xAxes: [{
             gridLines: {
@@ -152,8 +155,6 @@ export default {
         }
       },
       barchartOption: {
-        // responsive: true,
-        // maintainAspectRatio: false,
         animation: {
           duration: 0
         },
@@ -177,6 +178,7 @@ export default {
     this.updateLineChartData()
     this.updateBarChartData()
     this.setSummary()
+    // this.setThumbnails()
   },
   methods: {
     changeCountry (value) {
@@ -330,6 +332,15 @@ export default {
       }
       this.dictForVfor = countriesForVfor
     }
+    // setThumbnails () {
+    //   html2canvas(document.getElementById('ins'))
+    //     // .then(res => console.log('res', res))
+    //     .then(function (canvas) {
+    //       document.getElementById('page-title').appendChild(canvas)
+    //       // console.log('canvas', canvas)
+    //       // console.log('document.body', document.body)
+    //     })
+    // }
   },
   watch: {
     checkedCountries (newVal, oldVal) {
@@ -401,6 +412,7 @@ main {
   border-radius: 0px;
 }
 
+/* selectbox design customizing start */
 #vs__selected {
   font-size: 1.4rem;
 }
@@ -438,6 +450,8 @@ main {
   border-radius: 2px;
   font-size: 1.4rem;
 }
+
+/* selectbox design customizing end */
 
 /* #vs1__listbox {
   border: 1px, solid
@@ -506,7 +520,18 @@ main {
 }
 
 .line-chart-area {
-  padding-right: 3rem !important;
+  padding: 3rem !important;
+  /* padding-top: 3rem !important; */
+  display: flex;
+  flex-direction: column;
+}
+
+.line-chart-area h3 {
+  font-family: Helvetica;
+  font-size: 12px;
+  color: #666666;
+  letter-spacing: -0.01px;
+  text-align: left;
 }
 
 .summary-area {
@@ -584,12 +609,9 @@ label div {
   display: none;
 }
 
-.chartjs-render-monitor {
-  animation: none;
-}
-
 .table {
   margin-top: 3rem;
-  background-color: #ffffff
+  background-color: #ffffff;
+  display: flex;
 }
 </style>
