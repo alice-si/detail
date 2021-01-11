@@ -439,9 +439,9 @@ main {
   font-size: 1.4rem;
 }
 
-#vs1__listbox {
+/* #vs1__listbox {
   border: 1px, solid
-}
+} */
 
 .chart-title-area {
   display: flex;
