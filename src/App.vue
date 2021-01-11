@@ -41,7 +41,8 @@
   --color-tanzania: #67B675;
   --color-dr-congo: #f76511; */
   --color-light-grey: #D8D8D8;
-  --color-dark-grey: #767676;
+  /* main font color */
+  --color-dark-grey: #686868;
   --color-purple: #8954BA;
   --padding-wide: 3rem;
 }

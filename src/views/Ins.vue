@@ -25,7 +25,7 @@
     </section>
     <section class="chart-area">
       <row :gutter="12" class="chart-main">
-        <column :lg="8" class="line-chart-area">
+        <column :lg="7.5" class="line-chart-area">
           <h3> No of lessons</h3>
           <line-chart :chart-data="chartData" :options="options"></line-chart>
         </column>
@@ -54,15 +54,11 @@
           </div>
         </column>
       </row>
-      <!-- TODO: Show no of monthly lessons by country-->
-      <!-- TODO: Total number of yealry lessons calculation -->
-      <!-- TODO: Sorting table by alphabet, total number of lessons -->
-      <!-- TODO: Change country column font color when checkbox click -->
       <row :gutter="12" class="table">
-        <table class="table">
+        <table id="table-content">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">Country <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
             <th scope="col">1</th>
             <th scope="col">2</th>
             <th scope="col">3</th>
@@ -75,36 +71,16 @@
             <th scope="col">10</th>
             <th scope="col">11</th>
             <th scope="col">12</th>
-            <th scope="col">Total lessons</th>
-            <th scope="col">Difference in 12 Months</th>
+            <th scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+            <th scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th scope="row">South Sudan</th>
-            <!-- <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td> -->
-          </tr>
-          <tr>
-            <th scope="row">DR Congo</th>
-            <!-- <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td> -->
-          </tr>
-          <tr>
-            <th scope="row">Kenya</th>
-            <!-- <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td> -->
-          </tr>
-          <tr>
-            <th scope="row">Tanzania</th>
-            <!-- <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td> -->
-          </tr>
-        </tbody>
+        <tr v-for="country in tableData" v-bind:key="country.name">
+          <td v-bind:class="country.cssId" id="country-name">{{country.name}}</td>
+            <th scope="row" class="monthly-data" v-for="(month, index) in country.monthlyData.lessons"  v-bind:key="index">
+              {{month}}
+            </th>
+        </tr>
       </table>
       </row>
     </section>
@@ -114,7 +90,6 @@
 <script>
 import LineChart from '../components/LineChart.js'
 import BarChart from '../components/BarChart.js'
-// import html2canvas from 'html2canvas'
 import { getCountries, getCamps, getSchools, getLessons } from '../data/data-provider.js'
 
 export default {
@@ -152,6 +127,11 @@ export default {
               beginAtZero: true
             }
           }]
+        },
+        legend: {
+          labels: {
+            boxWidth: 10
+          }
         }
       },
       barchartOption: {
@@ -169,7 +149,10 @@ export default {
         legend: {
           display: false
         }
-      }
+      },
+      tableData: [],
+      sortedByName: false,
+      sortedByLessons: false
     }
   },
   mounted () {
@@ -178,7 +161,7 @@ export default {
     this.updateLineChartData()
     this.updateBarChartData()
     this.setSummary()
-    // this.setThumbnails()
+    this.setTableData()
   },
   methods: {
     changeCountry (value) {
@@ -277,7 +260,7 @@ export default {
           dom[2].style.border = `1px solid ${checkedColor}`
           dom[3].style.color = checkedColor
           dom[4].style.color = checkedColor
-          // dom[5].style.color = checkedColor
+          dom[9].style.color = checkedColor
 
           const chartData = {}
           const lessons = getLessons(countries[i])
@@ -296,6 +279,7 @@ export default {
           dom[2].style.border = '1px solid #D8D8D8'
           dom[3].style.color = '#ffffff'
           dom[4].style.color = '#D8D8D8'
+          dom[9].style.color = '#686868'
         }
       }
       this.updateLineChartData(multipleData)
@@ -331,16 +315,53 @@ export default {
         countriesForVfor.push(obj)
       }
       this.dictForVfor = countriesForVfor
+    },
+    setTableData () {
+      const countries = getCountries()
+      function calcSum (country) {
+        const sum = country.lessons.reduce(
+          (prev, curr) => prev + curr)
+        return sum
+      }
+      const tableDataArray = []
+      for (let i = 0; i < countries.length; i++) {
+        const obj = {}
+        const sum = calcSum(getLessons(countries[i]))
+        const cssId = countries[i].toLowerCase().replace(' ', '-')
+        obj.name = countries[i]
+        obj.totalLessons = sum
+        obj.cssId = cssId
+        obj.monthlyData = getLessons(countries[i])
+        obj.monthlyData.lessons.push(sum)
+        obj.monthlyData.lessons.push(0)
+        obj.monthlyData.months.push('Total Lessons')
+        obj.monthlyData.months.push('Difference in 12 Months')
+        tableDataArray.push(obj)
+      }
+      this.tableData = tableDataArray
+    },
+    sortTableDatabyName () {
+      if (this.sortedByName === false) {
+        const unsorted = this.tableData
+        unsorted.sort((a, b) => (a.name > b.name) ? 1 : -1)
+        this.sortedByName = true
+      } else if (this.sortedByName === true) {
+        const sorted = this.tableData
+        sorted.sort((a, b) => (a.name < b.name) ? 1 : -1)
+        this.sortedByName = false
+      }
+    },
+    sortTableDatabyLessons () {
+      if (this.sortedByLessons === false) {
+        const unsorted = this.tableData
+        unsorted.sort((a, b) => (a.totalLessons > b.totalLessons) ? 1 : -1)
+        this.sortedByLessons = true
+      } else if (this.sortedByLessons === true) {
+        const sorted = this.tableData
+        sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
+        this.sortedByLessons = false
+      }
     }
-    // setThumbnails () {
-    //   html2canvas(document.getElementById('ins'))
-    //     // .then(res => console.log('res', res))
-    //     .then(function (canvas) {
-    //       document.getElementById('page-title').appendChild(canvas)
-    //       // console.log('canvas', canvas)
-    //       // console.log('document.body', document.body)
-    //     })
-    // }
   },
   watch: {
     checkedCountries (newVal, oldVal) {
@@ -529,7 +550,7 @@ main {
 .line-chart-area h3 {
   font-family: Helvetica;
   font-size: 12px;
-  color: #666666;
+  /* color: #666666; */
   letter-spacing: -0.01px;
   text-align: left;
 }
@@ -538,8 +559,8 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-left: solid 1px var(--color-light-grey);
   align-items: center;
+  border-left: solid 1px var(--color-light-grey);
 }
 
 .text-container {
@@ -613,5 +634,19 @@ label div {
   margin-top: 3rem;
   background-color: #ffffff;
   display: flex;
+  color: var(--color-dark-grey);
+}
+
+#country-name {
+  font-weight: 500;
+}
+
+.monthly-data {
+  font-weight: 200;
+}
+
+#table-content {
+  width: 100%;
+  margin: 3rem;
 }
 </style>
