@@ -3,8 +3,8 @@
     <table id="table-content" class="table">
       <thead>
         <tr>
-          <!-- FIXME: Get rid of warning message regarding table data name -->
-          <th scope="col">{{tableData[1].type}} <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <!-- FIXME: Get rid of warning message regarding table data name {{tableData[0].type}}  -->
+          <th scope="col">Name<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
           <th scope="col">1</th>
           <th scope="col">2</th>
           <th scope="col">3</th>
@@ -37,7 +37,10 @@
 
 <script>
 export default {
-  props: ['tableData'],
+  props: {
+    tableData: {
+      type: Array
+    } },
   data () {
     return {
       sortedByName: false,
