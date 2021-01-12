@@ -5,6 +5,9 @@
       <div><h1 class="title">INS Lessons</h1></div>
     </section>
     <section id="select-area" class="container-fluid">
+      <!-- TODO: When country selected => show comparing line chart and summary across camps, update table -->
+      <!-- TODO: When camp selected => show comparing line chart and summary across the schools update table-->
+      <!-- TODO: when school selected => show stacked bar chart for subjects-->
       <row :gutter="12">
         <column :lg="1.5"><h3>Select Country</h3></column>
         <column :lg="2.5"><v-select :options="countries" @input="changeCountry" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
@@ -16,8 +19,8 @@
     </section>
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
-        <column :lg="8" xs-6><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
-        <column :lg="4" xs-6>
+        <column :lg="8" :xs="6"><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
+        <column :lg="4" :xs="6">
           <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span><h3>using INS</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
@@ -40,7 +43,9 @@
                 </label>
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">{{ lessonsByCountries[country.propId] }}</h1>
+                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                        {{ lessonsByCountries[country.propId] }}
+                      </h1>
                       <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
                   </div>
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
@@ -54,35 +59,7 @@
           </div>
         </column>
       </row>
-      <row :gutter="12" class="table">
-        <table id="table-content">
-        <thead>
-          <tr>
-            <th scope="col">Country <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-            <th scope="col">1</th>
-            <th scope="col">2</th>
-            <th scope="col">3</th>
-            <th scope="col">4</th>
-            <th scope="col">5</th>
-            <th scope="col">6</th>
-            <th scope="col">7</th>
-            <th scope="col">8</th>
-            <th scope="col">9</th>
-            <th scope="col">10</th>
-            <th scope="col">11</th>
-            <th scope="col">12</th>
-            <th scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
-            <th scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
-          </tr>
-        </thead>
-        <tr v-for="country in tableData" v-bind:key="country.name">
-          <td v-bind:class="country.cssId" id="country-name">{{country.name}}</td>
-            <th scope="row" class="monthly-data" v-for="(month, index) in country.monthlyData.lessons"  v-bind:key="index">
-              {{month}}
-            </th>
-        </tr>
-      </table>
-      </row>
+      <Table :tableData="tableData"></Table>
     </section>
   </main>
 </template>
@@ -91,11 +68,13 @@
 import LineChart from '../components/LineChart.js'
 import BarChart from '../components/BarChart.js'
 import { getCountries, getCamps, getSchools, getLessons } from '../data/data-provider.js'
+import Table from '../components/Table'
 
 export default {
   components: {
     LineChart,
-    BarChart
+    BarChart,
+    Table
   },
   data () {
     return {
@@ -150,9 +129,7 @@ export default {
           display: false
         }
       },
-      tableData: [],
-      sortedByName: false,
-      sortedByLessons: false
+      tableData: []
     }
   },
   mounted () {
@@ -168,8 +145,77 @@ export default {
       this.camps = getCamps(this.selectedCountry)
       this.selectedCamp = null
       this.selectedSchool = null
-      this.updateLineChartData()
       this.country = '- ' + this.selectedCountry
+      // Change line graph
+      function getColorSchmeFromIndex (index) {
+        let COLOR_SCHEME = [
+          '#F69855',
+          '#BED23F',
+          '#3FC9D2',
+          '#D23FC5'
+        ]
+
+        return COLOR_SCHEME[index % COLOR_SCHEME.length]
+      }
+
+      const campLineChartData = []
+      for (let i = 0; i < this.camps.length; i++) {
+        const camp = this.camps[i]
+        const lessons = getLessons(this.country.substring(2), camp)
+        const chartData = {}
+        const chartColor = getColorSchmeFromIndex(i)
+        chartData.label = camp
+        chartData.backgroundColor = 'transparent'
+        chartData.borderColor = chartColor
+        chartData.data = lessons.lessons
+        chartData.pointRadius = 6
+        chartData.borderWidth = 1.5
+        chartData.pointBackgroundColor = '#FFFFFF'
+        chartData.lineTension = 0
+        campLineChartData.push(chartData)
+      }
+      this.updateLineChartData(campLineChartData)
+      // Change Table
+      function calcSum (lessons) {
+        const sum = lessons.reduce(
+          (prev, curr) => prev + curr)
+        return sum
+      }
+      const tableDataArray = []
+      for (let i = 0; i < this.camps.length; i++) {
+        const camp = this.camps[i]
+        const lessons = getLessons(this.country.substring(2), camp)
+        const obj = {}
+
+        const sum = calcSum(lessons.lessons)
+        const cssId = camp.toLowerCase().replace(' ', '-')
+        const vForId = camp
+        const propId = camp.replace(/\s+/g, '')
+        obj.type = 'Camps'
+        obj.name = camp
+        obj.totalLessons = sum
+        obj.cssId = cssId
+        obj.vForId = vForId
+        obj.propId = propId
+        obj.monthlyData = lessons
+        obj.monthlyData.lessons.push(sum)
+        obj.monthlyData.lessons.push(0)
+        obj.monthlyData.months.push('Total Lessons')
+        obj.monthlyData.months.push('Difference in 12 Months')
+        tableDataArray.push(obj)
+      }
+      this.tableData = tableDataArray
+      this.school = 'Total'
+      if (this.tableData.length === 1) {
+        this.totalLessons = tableDataArray[0].totalLessons
+      } else if (this.tableData.length > 1) {
+        this.totalLessons = this.tableData.reduce((a, b) => a.totalLessons + b.totalLessons)
+        // FIXME: Calculation for DR congo result NAN
+        console.log('totalLessonsbySchools', this.totalLessons)
+      }
+      console.log('tableDataArray', tableDataArray)
+      // Change summary
+      // this.setDictForVfor(tableDataArray)
     },
     changeCamp (value) {
       this.schools = getSchools(this.selectedCountry, this.selectedCamp)
@@ -236,6 +282,7 @@ export default {
       }
     },
     updateMultipleChartData (newVal) {
+      console.log('MultipleChartData', newVal)
       function getColorSchmeFromIndex (index) {
         let COLOR_SCHEME = [
           '#EA4C89',
@@ -249,7 +296,6 @@ export default {
       let multipleData = []
 
       const countries = this.countries
-
       for (let i = 0; i < countries.length; i++) {
         const cssId = countries[i].toLowerCase().replace(' ', '-')
         const dom = document.getElementsByClassName(`${cssId}`)
@@ -304,7 +350,13 @@ export default {
       }
       this.lessonsByCountries = lessonSumDict
     },
-    setDictForVfor () {
+    setDictForVfor (args) {
+      console.log('🥰args', args)
+
+      // if (args[0].type === 'Camps') {
+      //   this.dictForVfor = args
+      // }
+
       const countries = getCountries()
       const countriesForVfor = []
       for (let i = 0; i < countries.length; i++) {
@@ -328,6 +380,7 @@ export default {
         const obj = {}
         const sum = calcSum(getLessons(countries[i]))
         const cssId = countries[i].toLowerCase().replace(' ', '-')
+        obj.type = 'Names'
         obj.name = countries[i]
         obj.totalLessons = sum
         obj.cssId = cssId
@@ -338,35 +391,24 @@ export default {
         obj.monthlyData.months.push('Difference in 12 Months')
         tableDataArray.push(obj)
       }
-      this.tableData = tableDataArray
-    },
-    sortTableDatabyName () {
-      if (this.sortedByName === false) {
-        const unsorted = this.tableData
-        unsorted.sort((a, b) => (a.name > b.name) ? 1 : -1)
-        this.sortedByName = true
-      } else if (this.sortedByName === true) {
-        const sorted = this.tableData
-        sorted.sort((a, b) => (a.name < b.name) ? 1 : -1)
-        this.sortedByName = false
+      // console.log('tableDataArray', tableDataArray)
+
+      if (tableDataArray.length > 0) {
+        this.tableData = tableDataArray
       }
     },
-    sortTableDatabyLessons () {
-      if (this.sortedByLessons === false) {
-        const unsorted = this.tableData
-        unsorted.sort((a, b) => (a.totalLessons > b.totalLessons) ? 1 : -1)
-        this.sortedByLessons = true
-      } else if (this.sortedByLessons === true) {
-        const sorted = this.tableData
-        sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
-        this.sortedByLessons = false
-      }
+    updateTableData () {
+
     }
   },
   watch: {
     checkedCountries (newVal, oldVal) {
       this.updateMultipleChartData(newVal)
     }
+    // country (newVal, oldVal) {
+    //   const selectedCountry = newVal.substring(2)
+    //   this.updateLineChartData(selectedCountry)
+    // }
   }
 }
 </script>
@@ -523,6 +565,7 @@ main {
   display: flex;
   flex-direction: column;
   height: 45%;
+  background-color: #ffffff;
 }
 
 .chart-main {
@@ -630,11 +673,11 @@ label div {
   display: none;
 }
 
-.table {
-  margin-top: 3rem;
-  background-color: #ffffff;
+.table-responsive {
   display: flex;
   color: var(--color-dark-grey);
+  overflow: hidden;
+  width: 100%;
 }
 
 #country-name {
@@ -646,7 +689,19 @@ label div {
 }
 
 #table-content {
-  width: 100%;
   margin: 3rem;
+  font-size: 1.2rem;
 }
+
+.table thead th {
+  border-bottom: none;
+}
+
+.table thead {
+  width: 100%;
+}
+
+/* .table {
+  width: 100%;
+} */
 </style>

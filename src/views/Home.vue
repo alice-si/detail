@@ -3,10 +3,10 @@
     <main id="home">
       <section id="filtering-area" >
         <row :gutter="12">
-          <column :lg="2.5" xs-2><h3>Select programme</h3></column>
-          <column :lg="3" xs-2><v-select placeholder="Instant Network Schools"> :options="dashboards"</v-select></column>
-          <column :lg="1" xs-1><img src="../../src/assets/Grid.svg" alt="grid" class="grid"/></column>
-          <column :lg="0.5" xs-1><img src="../../src/assets/List.svg" class="list"/></column>
+          <column :lg="2.5" :xs="2"><h3>Select programme</h3></column>
+          <column :lg="3" :xs="2"><v-select placeholder="Instant Network Schools"> :options="dashboards"</v-select></column>
+          <column :lg="1" :xs="1"><img src="../../src/assets/Grid.svg" alt="grid" class="grid"/></column>
+          <column :lg="0.5" :xs="1"><img src="../../src/assets/List.svg" class="list"/></column>
         </row>
       </section>
       <section id="thumbnail-area" class="container-fluid">

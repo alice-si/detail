@@ -14,6 +14,7 @@ export function getSchools (country, camp) {
 
 export function getLessons (country, camp, school) {
   let values = data.values
+
   if (country) {
     values = data.children[country].values
   }
