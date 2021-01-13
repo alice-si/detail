@@ -68,6 +68,7 @@
 import LineChart from '../components/LineChart.js'
 import BarChart from '../components/BarChart.js'
 import { getCountries, getCamps, getSchools, getLessons } from '../data/data-provider.js'
+import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme } from '../data/colour-scheme.js'
 import Table from '../components/Table'
 
 export default {
@@ -217,30 +218,10 @@ export default {
       }
     },
     updateMultipleChartData (newVal) {
-      function getCountryColorSchme (index) {
-        let COLOR_SCHEME = [
-          '#EA4C89',
-          '#2FB9EF',
-          '#67B675',
-          '#f76511'
-        ]
-        return COLOR_SCHEME[index % COLOR_SCHEME.length]
-      }
-
-      function getCampColorSchme (index) {
-        let COLOR_SCHEME = [
-          '#F69855',
-          '#BED23F',
-          '#3FC9D2',
-          '#D23FC5'
-        ]
-        return COLOR_SCHEME[index % COLOR_SCHEME.length]
-      }
-
       let multipleData = []
 
       if (this.selectedCountry !== null) {
-        // ** For camps
+        // For camps
         const country = this.selectedCountry
         const camp = getCamps(country)
         for (let i = 0; i < camp.length; i++) {
@@ -275,7 +256,7 @@ export default {
           }
         }
       } else {
-        // **For countries**
+        // For countries
         const countries = this.countries
         for (let i = 0; i < countries.length; i++) {
           const cssId = countries[i].toLowerCase().replace(' ', '-')
@@ -375,16 +356,6 @@ export default {
       const country = newVal
       const camps = getCamps(country)
 
-      function getCampColorSchmeFromIndex (index) {
-        let COLOR_SCHEME = [
-          '#F69855',
-          '#BED23F',
-          '#3FC9D2',
-          '#D23FC5'
-        ]
-        return COLOR_SCHEME[index % COLOR_SCHEME.length]
-      }
-
       function calcSum (lessons) {
         const sum = lessons.reduce(
           (prev, curr) => prev + curr)
@@ -403,7 +374,7 @@ export default {
         const lineChartDataSet = {
           label: camp,
           backgroundColor: 'transparent',
-          borderColor: getCampColorSchmeFromIndex(i),
+          borderColor: getCampColorSchme(i),
           data: lessons.lessons.slice(0, 12),
           pointRadius: 6,
           borderWidth: 1.5,
@@ -440,19 +411,98 @@ export default {
         tableDataArr.push(tableDataSet)
       }
 
+      // Total no of lessons by country
+      let sum = 0
+      for (let i = 0; i < tableDataArr.length; i++) {
+        sum += tableDataArr[i].totalLessons
+      }
+
       // replace old data with updated values
       this.chartData = {
         labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
         datasets: lineChartData
       }
-
       this.barChartData = barDataDict
       this.tableData = tableDataArr
       this.dictForVfor = tableDataArr
+      this.totalLessons = sum
+    },
+    selectedCamp (newVal, oldVal) {
+      const country = this.selectedCountry
+      const camp = newVal
+      const schoolsArr = getSchools(country, camp)
+
+      function calcSum (lessons) {
+        const sum = lessons.reduce(
+          (prev, curr) => prev + curr)
+        return sum
+      }
+
+      console.log('newVal, oldVal', newVal, oldVal)
+
+      const lineChartData = []
+      const barDataDict = {}
+      const tableDataArr = []
+
+      for (let i = 0; i < schoolsArr.length; i++) {
+        const school = schoolsArr[i]
+        const lessons = getLessons(country, camp, school)
+        console.log(lessons)
+        // Line chart update
+        const lineChartDataSet = {
+          label: school,
+          backgroundColor: 'transparent',
+          borderColor: getSchoolColorSchme(i),
+          data: lessons.lessons.slice(0, 12),
+          pointRadius: 6,
+          borderWidth: 1.5,
+          pointBackgroundColor: '#FFFFFF',
+          lineTension: 0
+        }
+        lineChartData.push(lineChartDataSet)
+
+        // Bar chart update
+        barDataDict[school] = {
+          labels: lessons.months.slice(0, 12),
+          datasets: [{
+            data: lessons.lessons.slice(0, 12)
+          }]
+        }
+
+        // table Update
+        const tableDataSet = {
+          type: 'School',
+          name: school,
+          totalLessons: calcSum(lessons.lessons),
+          cssId: school.toLowerCase().replace(' ', '-'),
+          vForId: school,
+          propId: school.replace(/\s+/g, ''),
+          monthlyData: {
+            lessons: lessons.lessons,
+            months: lessons.months
+          }
+        }
+        tableDataSet.monthlyData.lessons.push(calcSum(lessons.lessons))
+        tableDataSet.monthlyData.lessons.push(0)
+        tableDataSet.monthlyData.months.push('Total Lessons')
+        tableDataSet.monthlyData.months.push('Difference in 12 Months')
+        tableDataArr.push(tableDataSet)
+      }
+
+      // Total no of lessons by country
       let sum = 0
       for (let i = 0; i < tableDataArr.length; i++) {
         sum += tableDataArr[i].totalLessons
       }
+
+      // replace old data with updated values
+      this.chartData = {
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        datasets: lineChartData
+      }
+      this.barChartData = barDataDict
+      this.tableData = tableDataArr
+      this.dictForVfor = tableDataArr
       this.totalLessons = sum
     }
   }

@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <!-- FIXME: Get rid of warning message regarding table data name {{tableData[0].type}}  -->
-          <th scope="col">Name<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <th scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
           <th scope="col">1</th>
           <th scope="col">2</th>
           <th scope="col">3</th>
@@ -44,9 +44,14 @@ export default {
   data () {
     return {
       sortedByName: false,
-      sortedByLessons: false
+      sortedByLessons: false,
+      tableName: 'Name'
     }
   },
+  // FIXME: change table name depending on data type
+  // mounted () {
+  //   this.setTableName()
+  // },
   methods: {
     sortTableDatabyName () {
       if (this.sortedByName === false) {
