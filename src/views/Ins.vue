@@ -243,7 +243,7 @@ export default {
       }
     },
     updateMultipleChartData (newVal) {
-      function getColorSchmeFromIndex (index) {
+      function getCountryColorSchme (index) {
         let COLOR_SCHEME = [
           '#EA4C89',
           '#2FB9EF',
@@ -253,42 +253,88 @@ export default {
         return COLOR_SCHEME[index % COLOR_SCHEME.length]
       }
 
+      function getCampColorSchme (index) {
+        let COLOR_SCHEME = [
+          '#F69855',
+          '#BED23F',
+          '#3FC9D2',
+          '#D23FC5'
+        ]
+        return COLOR_SCHEME[index % COLOR_SCHEME.length]
+      }
+
       let multipleData = []
 
-      const countries = this.countries
-      for (let i = 0; i < countries.length; i++) {
-        const cssId = countries[i].toLowerCase().replace(' ', '-')
-        const dom = document.getElementsByClassName(`${cssId}`)
+      if (this.selectedCountry !== null) {
+        // ** For camps
+        const country = this.selectedCountry
+        const camp = getCamps(country)
+        for (let i = 0; i < camp.length; i++) {
+          const cssId = camp[i].toLowerCase().replace(' ', '-')
+          const dom = document.getElementsByClassName(`${cssId}`)
 
-        if (dom[0].checked) {
-          const checkedColor = getColorSchmeFromIndex(i)
-          dom[1].style.color = checkedColor
-          dom[2].style.border = `1px solid ${checkedColor}`
-          dom[3].style.color = checkedColor
-          dom[4].style.color = checkedColor
-          dom[9].style.color = checkedColor
+          if (dom[0] && dom[0].checked) {
+            const checkedColor = getCampColorSchme(i)
+            dom[1].style.color = checkedColor
+            dom[2].style.border = `1px solid ${checkedColor}`
+            dom[3].style.color = checkedColor
+            dom[4].style.color = checkedColor
+            dom[9].style.color = checkedColor
 
-          const chartData = {}
-          const lessons = getLessons(countries[i])
+            const chartData = {}
+            const lessons = getLessons(country, camp[i])
+            chartData.label = camp[i]
+            chartData.backgroundColor = 'transparent'
+            chartData.borderColor = checkedColor
+            chartData.data = lessons.lessons
+            chartData.pointRadius = 6
+            chartData.borderWidth = 1.5
+            chartData.pointBackgroundColor = '#FFFFFF'
+            chartData.lineTension = 0
+            multipleData.push(chartData)
+          } else {
+            dom[1].style.color = '#D8D8D8'
+            dom[2].style.border = '1px solid #D8D8D8'
+            dom[3].style.color = '#ffffff'
+            dom[4].style.color = '#D8D8D8'
+            dom[9].style.color = '#686868'
+          }
+        }
+      } else {
+        // **For countries**
+        const countries = this.countries
+        for (let i = 0; i < countries.length; i++) {
+          const cssId = countries[i].toLowerCase().replace(' ', '-')
+          const dom = document.getElementsByClassName(`${cssId}`)
+          if (dom[0].checked) {
+            const checkedColor = getCountryColorSchme(i)
+            dom[1].style.color = checkedColor
+            dom[2].style.border = `1px solid ${checkedColor}`
+            dom[3].style.color = checkedColor
+            dom[4].style.color = checkedColor
+            dom[9].style.color = checkedColor
 
-          chartData.label = countries[i]
-          chartData.backgroundColor = 'transparent'
-          chartData.borderColor = checkedColor
-          chartData.data = lessons.lessons
-          chartData.pointRadius = 6
-          chartData.borderWidth = 1.5
-          chartData.pointBackgroundColor = '#FFFFFF'
-          chartData.lineTension = 0
-          multipleData.push(chartData)
-        } else {
-          dom[1].style.color = '#D8D8D8'
-          dom[2].style.border = '1px solid #D8D8D8'
-          dom[3].style.color = '#ffffff'
-          dom[4].style.color = '#D8D8D8'
-          dom[9].style.color = '#686868'
+            const chartData = {}
+            const lessons = getLessons(countries[i])
+
+            chartData.label = countries[i]
+            chartData.backgroundColor = 'transparent'
+            chartData.borderColor = checkedColor
+            chartData.data = lessons.lessons
+            chartData.pointRadius = 6
+            chartData.borderWidth = 1.5
+            chartData.pointBackgroundColor = '#FFFFFF'
+            chartData.lineTension = 0
+            multipleData.push(chartData)
+          } else if (dom[0].checked === false) {
+            dom[1].style.color = '#D8D8D8'
+            dom[2].style.border = '1px solid #D8D8D8'
+            dom[3].style.color = '#ffffff'
+            dom[4].style.color = '#D8D8D8'
+            dom[9].style.color = '#686868'
+          }
         }
       }
-      // console.log('multipleData', multipleData)
 
       this.updateLineChartData(multipleData)
     },
@@ -355,7 +401,7 @@ export default {
       const country = newVal
       const camps = getCamps(country)
 
-      function getColorSchmeFromIndex (index) {
+      function getCampColorSchmeFromIndex (index) {
         let COLOR_SCHEME = [
           '#F69855',
           '#BED23F',
@@ -381,7 +427,7 @@ export default {
         const lineChartDataSet = {
           label: camp,
           backgroundColor: 'transparent',
-          borderColor: getColorSchmeFromIndex(i),
+          borderColor: getCampColorSchmeFromIndex(i),
           data: lessons.lessons.slice(0, 12),
           pointRadius: 6,
           borderWidth: 1.5,
