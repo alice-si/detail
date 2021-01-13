@@ -5,8 +5,6 @@
       <div><h1 class="title">INS Lessons</h1></div>
     </section>
     <section id="select-area" class="container-fluid">
-      <!-- TODO: When country selected => show comparing line chart and summary across camps, update table -->
-      <!-- TODO: When camp selected => show comparing line chart and summary across the schools update table-->
       <!-- TODO: when school selected => show stacked bar chart for subjects-->
       <row :gutter="12">
         <column :lg="1.5"><h3>Select Country</h3></column>
@@ -35,7 +33,7 @@
         <column :lg="4" class="summary-area">
           <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
             <div class="text-container">
-              <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries" style="display:none">
+              <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedItems" style="display:none">
                 <label v-bind:class="country.cssId" v-bind:for="country.cssId">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="justify-content:center; align-item:center;">
                     <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px 2px 2px 5px; width:10px; height:10px;">V</span>
@@ -67,9 +65,9 @@
 <script>
 import LineChart from '../components/LineChart.js'
 import BarChart from '../components/BarChart.js'
+import Table from '../components/Table'
 import { getCountries, getCamps, getSchools, getLessons } from '../data/data-provider.js'
 import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme } from '../data/colour-scheme.js'
-import Table from '../components/Table'
 
 export default {
   components: {
@@ -90,7 +88,7 @@ export default {
       schools: [],
       country: '',
       school: '',
-      checkedCountries: [],
+      checkedItems: [],
       totalLessons: '',
       lessonsByCountries: {},
       options: {
@@ -142,7 +140,7 @@ export default {
   },
   methods: {
     changeCountry (value) {
-      this.checkedCountries = []
+      this.checkedItems = []
       this.camps = getCamps(this.selectedCountry)
       this.selectedCamp = null
       this.selectedSchool = null
@@ -220,7 +218,44 @@ export default {
     updateMultipleChartData (newVal) {
       let multipleData = []
 
-      if (this.selectedCountry !== null) {
+      if (this.selectedCamp !== null) {
+        // For schools
+        const country = this.selectedCountry
+        const camp = this.selectedCamp
+        const schoolsArr = getSchools(country, camp)
+
+        for (let i = 0; i < schoolsArr.length; i++) {
+          const cssId = schoolsArr[i].toLowerCase().replace(' ', '-')
+          const dom = document.getElementsByClassName(`${cssId}`)
+
+          if (dom[0] && dom[0].checked) {
+            const checkedColor = getSchoolColorSchme(i)
+            dom[1].style.color = checkedColor
+            dom[2].style.border = `1px solid ${checkedColor}`
+            dom[3].style.color = checkedColor
+            dom[4].style.color = checkedColor
+            dom[9].style.color = checkedColor
+
+            const chartData = {}
+            const lessons = getLessons(country, camp, schoolsArr[i])
+            chartData.label = schoolsArr[i]
+            chartData.backgroundColor = 'transparent'
+            chartData.borderColor = checkedColor
+            chartData.data = lessons.lessons
+            chartData.pointRadius = 6
+            chartData.borderWidth = 1.5
+            chartData.pointBackgroundColor = '#FFFFFF'
+            chartData.lineTension = 0
+            multipleData.push(chartData)
+          } else {
+            dom[1].style.color = '#D8D8D8'
+            dom[2].style.border = '1px solid #D8D8D8'
+            dom[3].style.color = '#ffffff'
+            dom[4].style.color = '#D8D8D8'
+            dom[9].style.color = '#686868'
+          }
+        }
+      } else if (this.selectedCountry !== null) {
         // For camps
         const country = this.selectedCountry
         const camp = getCamps(country)
@@ -349,7 +384,7 @@ export default {
     }
   },
   watch: {
-    checkedCountries (newVal, oldVal) {
+    checkedItems (newVal, oldVal) {
       this.updateMultipleChartData(newVal)
     },
     selectedCountry (newVal, oldVal) {
@@ -438,8 +473,6 @@ export default {
         return sum
       }
 
-      console.log('newVal, oldVal', newVal, oldVal)
-
       const lineChartData = []
       const barDataDict = {}
       const tableDataArr = []
@@ -447,7 +480,7 @@ export default {
       for (let i = 0; i < schoolsArr.length; i++) {
         const school = schoolsArr[i]
         const lessons = getLessons(country, camp, school)
-        console.log(lessons)
+
         // Line chart update
         const lineChartDataSet = {
           label: school,
@@ -504,6 +537,7 @@ export default {
       this.tableData = tableDataArr
       this.dictForVfor = tableDataArr
       this.totalLessons = sum
+      this.checkedItems = [] // empty check box clicked history
     }
   }
 }

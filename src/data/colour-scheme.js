@@ -29,7 +29,10 @@ export function getSchoolColorSchme (index) {
     '#a05195',
     '#665191',
     '#2f4b7c',
-    '#003f5c'
+    '#003f5c',
+    '#488f31',
+    '#de6069',
+    '#f0b8b8'
   ]
   return COLOR_SCHEME[index % COLOR_SCHEME.length]
 }
