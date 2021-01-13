@@ -57,32 +57,6 @@
               <bar-chart :chart-data="barChartData[country.name]" :options="barchartOption"></bar-chart>
             </div>
           </div>
-
-          <!-- **Previous code -->
-          <!-- <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
-            <div class="text-container">
-              <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
-                <label v-bind:class="country.cssId" v-bind:for="country.cssId">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="justify-content:center; align-item:center;">
-                    <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px 2px 2px 5px; width:10px; height:10px;">V</span>
-                  </div>
-                </label>
-                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">
-                        {{ lessonsByCountries[country.propId] }}
-                      </h1>
-                      <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
-                  </div>
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
-                    <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
-                  </div>
-                </div>
-            </div>
-            <div class="chart-container">
-              <bar-chart :chart-data="barChartData[country.propId]" :options="barchartOption"></bar-chart>
-            </div>
-          </div> -->
         </column>
       </row>
       <Table :tableData="tableData"></Table>
@@ -424,6 +398,8 @@ export default {
       for (let i = 0; i < camps.length; i++) {
         const camp = camps[i]
         const lessons = getLessons(country, camp)
+
+        // Line chart update
         const lineChartDataSet = {
           label: camp,
           backgroundColor: 'transparent',
@@ -436,6 +412,7 @@ export default {
         }
         lineChartData.push(lineChartDataSet)
 
+        // Bar chart update
         barDataDict[camp] = {
           labels: lessons.months.slice(0, 12),
           datasets: [{
@@ -443,6 +420,7 @@ export default {
           }]
         }
 
+        // table update
         const tableDataSet = {
           type: 'Camps',
           name: camp,
@@ -461,6 +439,8 @@ export default {
         tableDataSet.monthlyData.months.push('Difference in 12 Months')
         tableDataArr.push(tableDataSet)
       }
+
+      // replace old data with updated values
       this.chartData = {
         labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
         datasets: lineChartData
@@ -469,120 +449,12 @@ export default {
       this.barChartData = barDataDict
       this.tableData = tableDataArr
       this.dictForVfor = tableDataArr
-
-      // console.log('barDataDict', barDataDict)
-      // console.log('tableDataSet', tableDataArr)
-
-      // // Change line graph
-      // function getColorSchmeFromIndex (index) {
-      //   let COLOR_SCHEME = [
-      //     '#F69855',
-      //     '#BED23F',
-      //     '#3FC9D2',
-      //     '#D23FC5'
-      //   ]
-
-      //   return COLOR_SCHEME[index % COLOR_SCHEME.length]
-      // }
-
-      // const campLineChartData = []
-      // for (let i = 0; i < this.camps.length; i++) {
-      //   const camp = this.camps[i]
-      //   const lessons = getLessons(this.country.substring(2), camp)
-      //   const chartData = {}
-      //   const chartColor = getColorSchmeFromIndex(i)
-      //   chartData.label = camp
-      //   chartData.backgroundColor = 'transparent'
-      //   chartData.borderColor = chartColor
-      //   chartData.data = lessons.lessons
-      //   chartData.pointRadius = 6
-      //   chartData.borderWidth = 1.5
-      //   chartData.pointBackgroundColor = '#FFFFFF'
-      //   chartData.lineTension = 0
-      //   campLineChartData.push(chartData)
-      // }
-      // this.updateLineChartData(campLineChartData)
-      // // Change Table
-      // function calcSum (lessons) {
-      //   const sum = lessons.reduce(
-      //     (prev, curr) => prev + curr)
-      //   return sum
-      // }
-      // const tableDataArray = []
-      // for (let i = 0; i < this.camps.length; i++) {
-      //   const camp = this.camps[i]
-      //   const lessons = getLessons(this.country.substring(2), camp)
-      //   const obj = {}
-
-      //   const sum = calcSum(lessons.lessons)
-      //   const cssId = camp.toLowerCase().replace(' ', '-')
-      //   const vForId = camp
-      //   const propId = camp.replace(/\s+/g, '')
-
-      //   obj.type = 'Camps'
-      //   obj.name = camp
-      //   obj.totalLessons = sum
-      //   obj.cssId = cssId
-      //   obj.vForId = vForId
-      //   obj.propId = propId
-      //   obj.monthlyData = lessons
-      //   obj.monthlyData.lessons.push(sum)
-      //   obj.monthlyData.lessons.push(0)
-      //   obj.monthlyData.months.push('Total Lessons')
-      //   obj.monthlyData.months.push('Difference in 12 Months')
-      //   tableDataArray.push(obj)
-      // }
-      // this.tableData = tableDataArray
-      // this.school = 'Total'
-
-      // // FIXME: Calculation for DR congo result NAN
-      // if (this.tableData.length === 1) {
-      //   this.totalLessons = tableDataArray[0].totalLessons
-      // } else if (this.tableData.length > 1) {
-      //   this.totalLessons = this.tableData.reduce((a, b) => {
-      //     return a.totalLessons + b.totalLessons
-      //   })
-      // }
-      // Change summary
-      // this.dictForVfor = tableDataArray
-      // console.log('this.dictForVfor', this.dictForVfor)
-
-      // for (let i = 0; i < newVal.length; i++) {
-      //   const cssId = newVal[i].toLowerCase().replace(' ', '-')
-      //   const dom = document.getElementsByClassName(`${cssId}`)
-      //   if (dom[0].checked === true) {
-      //     const checkedColor = getColorSchmeFromIndex(i)
-      //     dom[1].style.color = checkedColor
-      //     dom[2].style.border = `1px solid ${checkedColor}`
-      //     dom[3].style.color = checkedColor
-      //     dom[4].style.color = checkedColor
-      //     dom[9].style.color = checkedColor
-
-      //     const chartData = {}
-      //     const lessons = lessonsByCamp
-
-      //     chartData.label = newVal[i]
-      //     chartData.backgroundColor = 'transparent'
-      //     chartData.borderColor = checkedColor
-      //     chartData.data = lessons.lessons
-      //     chartData.pointRadius = 6
-      //     chartData.borderWidth = 1.5
-      //     chartData.pointBackgroundColor = '#FFFFFF'
-      //     chartData.lineTension = 0
-      //     multipleData.push(chartData)
-      //   } else if (dom[0].checked === false) {
-      //     dom[1].style.color = '#D8D8D8'
-      //     dom[2].style.border = '1px solid #D8D8D8'
-      //     dom[3].style.color = '#ffffff'
-      //     dom[4].style.color = '#D8D8D8'
-      //     dom[9].style.color = '#686868'
-      //   }
-      // }
+      let sum = 0
+      for (let i = 0; i < tableDataArr.length; i++) {
+        sum += tableDataArr[i].totalLessons
+      }
+      this.totalLessons = sum
     }
-    // country (newVal, oldVal) {
-    //   const selectedCountry = newVal.substring(2)
-    //   this.updateLineChartData(selectedCountry)
-    // }
   }
 }
 </script>
