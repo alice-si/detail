@@ -36,3 +36,19 @@ export function getSchoolColorSchme (index) {
   ]
   return COLOR_SCHEME[index % COLOR_SCHEME.length]
 }
+
+export function getTopicColorSchme (index) {
+  let COLOR_SCHEME = [
+    '#A26AE6',
+    '#BED23F',
+    '#FE8708',
+    '#5496FF',
+    '#c70039',
+    '#111d5e',
+    '#654062',
+    '#65d6ce',
+    '#ffcc29',
+    '#184d47'
+  ]
+  return COLOR_SCHEME[index % COLOR_SCHEME.length]
+}

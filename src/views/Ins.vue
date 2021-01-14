@@ -1,5 +1,6 @@
 <template>
   <main id="ins">
+
     <section id="page-title" class="container-fluid">
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">INS Lessons</h1></div>
@@ -28,7 +29,8 @@
       <row :gutter="12" class="chart-main">
         <column :lg="7.5" class="line-chart-area">
           <h3> No of lessons</h3>
-          <line-chart :chart-data="chartData" :options="options"></line-chart>
+          <line-chart :chart-data="chartData" :options="options" v-if="linechartShow === true"></line-chart>
+          <stacked-bar-chart id="stacked-bar-chart" :chart-data="stackedBarChartData" :options="stackedBarchartOption" v-if="stackedChartShow === true"></stacked-bar-chart>
         </column>
         <column :lg="4" class="summary-area">
           <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
@@ -39,7 +41,8 @@
                     <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px 2px 2px 5px; width:10px; height:10px;">V</span>
                   </div>
                 </label>
-                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                <!-- Lessons summary start-->
+                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="linechartShow === true">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
                       <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.totalLessons }}
@@ -50,14 +53,31 @@
                     <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
                   </div>
                 </div>
+                <!-- Lessons summary end-->
+                <!-- Topic summary -->
+                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="stackedChartShow === true">
+                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
+                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                        {{ country.vForId }}
+                      </h1>
+                      <!-- <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2> -->
+                  </div>
+                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
+                    <!-- <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2> -->
+                  </div>
+                </div>
+                <!-- Topic summary end -->
             </div>
-            <div class="chart-container">
-              <bar-chart :chart-data="barChartData[country.name]" :options="barchartOption"></bar-chart>
+
+            <div class="chart-container" v-if="linechartShow === true">
+              <bar-chart id="bar-chart" class="barChart" :chart-data="barChartData[country.name]" :options="barchartOption"></bar-chart>
             </div>
           </div>
         </column>
+        <!-- <summary-checkbox :dictForVfor="dictForVfor" :barChartData="barChartData"></summary-checkbox> -->
       </row>
-      <Table :tableData="tableData"></Table>
+      <Table :tableData="tableData" v-if="linechartShow === true"></Table>
+      <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic>
     </section>
   </main>
 </template>
@@ -66,14 +86,20 @@
 import LineChart from '../components/LineChart.js'
 import BarChart from '../components/BarChart.js'
 import Table from '../components/Table'
-import { getCountries, getCamps, getSchools, getLessons } from '../data/data-provider.js'
-import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme } from '../data/colour-scheme.js'
+import TableForTopic from '../components/TableforTopic'
+import StackedBarChart from '../components/StackedBarChart.js'
+import SummaryCheckbox from '../components/SummaryCheckbox'
+import { getCountries, getCamps, getSchools, getLessons, getLessonsByTopics } from '../data/data-provider.js'
+import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme, getTopicColorSchme } from '../data/colour-scheme.js'
 
 export default {
   components: {
     LineChart,
     BarChart,
-    Table
+    Table,
+    StackedBarChart,
+    TableForTopic,
+    SummaryCheckbox
   },
   data () {
     return {
@@ -81,7 +107,12 @@ export default {
       selectedCamp: null,
       selectedSchool: null,
       chartData: {},
+      linechartShow: true,
+      stackedChartShow: false,
       barChartData: [],
+      stackedBarChartData: {},
+      tableData: [],
+      TopicTableData: [],
       countries: [],
       dictForVfor: [],
       camps: [],
@@ -128,7 +159,25 @@ export default {
           display: false
         }
       },
-      tableData: []
+      stackedBarchartOption: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{
+            stacked: true
+          }],
+          yAxes: [{
+            stacked: true,
+            beginAtZero: true,
+            suggestedMin: true
+          }]
+        },
+        legend: {
+          labels: {
+            boxWidth: 10
+          }
+        }
+      }
     }
   },
   mounted () {
@@ -137,32 +186,37 @@ export default {
     this.updateBarChartData()
     this.setSummary()
     this.setTableData()
+    // this.setTopicsData()
   },
   methods: {
     changeCountry (value) {
+      this.linechartShow = true
+      this.stackedChartShow = false
       this.checkedItems = []
-      this.camps = getCamps(this.selectedCountry)
       this.selectedCamp = null
       this.selectedSchool = null
+      this.camps = getCamps(this.selectedCountry)
       this.country = '- ' + this.selectedCountry
     },
     changeCamp (value) {
-      this.schools = getSchools(this.selectedCountry, this.selectedCamp)
+      console.log(value)
+      console.log(this.selectedCamp)
+      this.linechartShow = true
+      this.stackedChartShow = false
       this.selectedSchool = null
       this.updateLineChartData()
+      this.schools = getSchools(this.selectedCountry, this.selectedCamp)
       this.school = ', ' + this.selectedCamp
     },
     changeSchool (value) {
+      console.log('here!')
+      this.linechartShow = false
+      this.stackedChartShow = true
       this.updateLineChartData()
     },
     updateBarChartData (name, lessons) {
       const allDataDict = {}
-      if (name & lessons) {
-
-      }
-
       const countries = getCountries()
-
       for (let i = 0; i < countries.length; i++) {
         let key = countries[i]
         let value = getLessons(countries[i])
@@ -176,6 +230,7 @@ export default {
       this.barChartData = allDataDict
     },
     updateLineChartData (chartData) {
+      this.linechartShow = true
       // Build label
       let label = 'All'
       if (this.selectedCountry) {
@@ -215,7 +270,8 @@ export default {
         datasets: dataSetsArray
       }
     },
-    updateMultipleChartData (newVal) {
+    updateMultipleChartData () {
+      this.linechartShow = true
       let multipleData = []
 
       if (this.selectedCamp !== null) {
@@ -247,7 +303,7 @@ export default {
             chartData.pointBackgroundColor = '#FFFFFF'
             chartData.lineTension = 0
             multipleData.push(chartData)
-          } else {
+          } else if (dom[0] && !dom[0].checked) {
             dom[1].style.color = '#D8D8D8'
             dom[2].style.border = '1px solid #D8D8D8'
             dom[3].style.color = '#ffffff'
@@ -282,7 +338,7 @@ export default {
             chartData.pointBackgroundColor = '#FFFFFF'
             chartData.lineTension = 0
             multipleData.push(chartData)
-          } else {
+          } else if (dom[0] && !dom[0].checked) {
             dom[1].style.color = '#D8D8D8'
             dom[2].style.border = '1px solid #D8D8D8'
             dom[3].style.color = '#ffffff'
@@ -296,7 +352,7 @@ export default {
         for (let i = 0; i < countries.length; i++) {
           const cssId = countries[i].toLowerCase().replace(' ', '-')
           const dom = document.getElementsByClassName(`${cssId}`)
-          if (dom[0].checked) {
+          if (dom[0] && dom[0].checked) {
             const checkedColor = getCountryColorSchme(i)
             dom[1].style.color = checkedColor
             dom[2].style.border = `1px solid ${checkedColor}`
@@ -316,7 +372,7 @@ export default {
             chartData.pointBackgroundColor = '#FFFFFF'
             chartData.lineTension = 0
             multipleData.push(chartData)
-          } else if (dom[0].checked === false) {
+          } else if (dom[0] && !dom[0].checked) {
             dom[1].style.color = '#D8D8D8'
             dom[2].style.border = '1px solid #D8D8D8'
             dom[3].style.color = '#ffffff'
@@ -379,16 +435,113 @@ export default {
       this.tableData = tableDataArray
       this.dictForVfor = tableDataArray
     },
-    updateTableData () {
+    setTopicsData (country, camp, school) {
+      this.linechartShow = false
+      this.stackedChartShow = true
+      function calcSum (lessons) {
+        const sum = lessons.reduce(
+          (prev, curr) => prev + curr)
+        return sum
+      }
+      // if (country & camp & school) {
+      console.log('country, camp, school', country, camp, school)
+      const lessonsByTopics = getLessonsByTopics(country, camp, school)
+      const stackedBarchartDataArr = []
+      const tableDataArr = []
 
+      for (let i = 0; i < lessonsByTopics.topics.length; i++) {
+        const topic = lessonsByTopics.topics[i]
+        const lessons = JSON.parse(JSON.stringify(lessonsByTopics.lessons[i])).values
+        const barChartDataSet = {
+          label: topic,
+          backgroundColor: getSchoolColorSchme(i),
+          data: Object.values(lessons)
+        }
+        stackedBarchartDataArr.push(barChartDataSet)
+
+        const tableDataSet = {
+          type: 'Topics',
+          name: lessonsByTopics.topics[i],
+          totalLessons: calcSum(Object.values(lessons)),
+          cssId: lessonsByTopics.topics[i].toLowerCase().replace(' ', '-'),
+          vForId: lessonsByTopics.topics[i],
+          propId: lessonsByTopics.topics[i].replace(/\s+/g, ''),
+          monthlyData: Object.values(lessons)
+        }
+        tableDataSet.monthlyData.push(calcSum(Object.values(lessons)))
+        tableDataSet.monthlyData.push(0) // hard-coded Difference in 12 months
+
+        tableDataArr.push(tableDataSet)
+      }
+      this.TopicTableData = tableDataArr
+      this.stackedBarChartData = {
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        datasets: stackedBarchartDataArr
+      }
+      this.dictForVfor = tableDataArr
+      // } else {
+      //   this.updateLineChartData()
+      // }
+    },
+    updateStackedBarChartData () {
+      console.log('next!')
+      this.linechartShow = false
+      this.stackedChartShow = true
+      const country = this.selectedCountry
+      const camp = this.selectedCamp
+      const school = this.selectedSchool
+      const topics = getLessonsByTopics(country, camp, school)
+      const stackedBarchartDataArr = []
+
+      for (let i = 0; i < topics.topics.length; i++) {
+        const topic = topics.topics[i]
+        const lessons = topics.lessons[i].values
+        const cssId = topic.toLowerCase().replace(' ', '-')
+        const dom = document.getElementsByClassName(`${cssId}`)
+        if (dom[0] && dom[0].checked) {
+          const checkedColor = getTopicColorSchme(i)
+          dom[1].style.color = checkedColor
+          dom[2].style.border = `1px solid ${checkedColor}`
+          dom[3].style.color = checkedColor
+          dom[4].style.color = checkedColor
+          dom[9].style.color = checkedColor
+          const barChartDataSet = {
+            label: topic,
+            backgroundColor: getTopicColorSchme(i),
+            data: Object.values(lessons)
+          }
+          stackedBarchartDataArr.push(barChartDataSet)
+        } else if (dom[0] && !dom[0].checked) {
+          dom[1].style.color = '#D8D8D8'
+          dom[2].style.border = '1px solid #D8D8D8'
+          dom[3].style.color = '#ffffff'
+          dom[4].style.color = '#D8D8D8'
+          dom[9].style.color = '#686868'
+        }
+      }
+      this.stackedBarChartData = {
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        datasets: stackedBarchartDataArr
+      }
     }
   },
   watch: {
-    checkedItems (newVal, oldVal) {
-      this.updateMultipleChartData(newVal)
+    checkedItems () {
+      if (this.selectedSchool === null) {
+        this.linechartShow = true
+        this.stackedChartShow = false
+        this.updateMultipleChartData()
+      } else {
+        console.log('here!')
+        this.linechartShow = false
+        this.stackedChartShow = true
+        this.updateStackedBarChartData()
+      }
     },
-    selectedCountry (newVal, oldVal) {
-      const country = newVal
+    selectedCountry () {
+      this.linechartShow = true
+      this.stackedChartShow = false
+      const country = this.selectedCountry
       const camps = getCamps(country)
 
       function calcSum (lessons) {
@@ -462,9 +615,11 @@ export default {
       this.dictForVfor = tableDataArr
       this.totalLessons = sum
     },
-    selectedCamp (newVal, oldVal) {
+    selectedCamp () {
+      this.linechartShow = true
+      this.stackedChartShow = false
       const country = this.selectedCountry
-      const camp = newVal
+      const camp = this.selectedCamp
       const schoolsArr = getSchools(country, camp)
 
       function calcSum (lessons) {
@@ -538,6 +693,16 @@ export default {
       this.dictForVfor = tableDataArr
       this.totalLessons = sum
       this.checkedItems = [] // empty check box clicked history
+    },
+    selectedSchool () {
+      if (this.selectedSchool !== null) {
+        const country = this.selectedCountry
+        const camp = this.selectedCamp
+        const school = this.selectedSchool
+        this.linechartShow = false
+        this.stackedChartShow = true
+        this.setTopicsData(country, camp, school)
+      }
     }
   }
 }
@@ -754,14 +919,19 @@ main {
   padding-left: 1.5rem;
 }
 
-/* #line-chart {
-  width: 100% !important;
-  height: 100% !important;
-} */
-
-#bar-chart {
+#bar-chart #bar-chart {
   width: 100px !important;
   height: 50px !important;
+}
+
+#stacked-bar-chart #bar-chart {
+  width: 100% !important;
+  height: 50% !important;
+}
+
+#stacked-bar-chart canvas {
+  width: 100% !important;
+  height: 50% !important;
 }
 
 .country-wrapper {
@@ -791,7 +961,7 @@ label div {
   /* align-self: center; */
 }
 
-.table-responsive {
+/* .table-responsive {
   display: flex;
   color: var(--color-dark-grey);
   overflow: hidden;
@@ -804,9 +974,9 @@ label div {
 
 .monthly-data {
   font-weight: 200;
-}
+} */
 
-#table-content {
+/* #table-content {
   margin: 3rem;
   font-size: 1.2rem;
 }
@@ -817,7 +987,7 @@ label div {
 
 .table thead {
   width: 100%;
-}
+} */
 
 /* .table {
   width: 100%;

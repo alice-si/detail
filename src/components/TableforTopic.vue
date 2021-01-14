@@ -5,27 +5,28 @@
         <tr>
           <!-- FIXME: Get rid of warning message regarding table data name {{tableData[0].type}}  -->
           <th scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th scope="col">1</th>
-          <th scope="col">2</th>
-          <th scope="col">3</th>
-          <th scope="col">4</th>
-          <th scope="col">5</th>
-          <th scope="col">6</th>
-          <th scope="col">7</th>
-          <th scope="col">8</th>
-          <th scope="col">9</th>
-          <th scope="col">10</th>
-          <th scope="col">11</th>
-          <th scope="col">12</th>
-          <th scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+          <th scope="col">Jan</th>
+          <th scope="col">Feb</th>
+          <th scope="col">Mar</th>
+          <th scope="col">Apr</th>
+          <th scope="col">May</th>
+          <th scope="col">Jun</th>
+          <th scope="col">Jul</th>
+          <th scope="col">Aug</th>
+          <th scope="col">Sep</th>
+          <th scope="col">Oct</th>
+          <th scope="col">Nov</th>
+          <th scope="col">Dec</th>
+          <th scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+          <!-- TODO:% of total usage?? -->
           <th scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
         </tr>
       <tbody>
-        <tr v-for="country in tableData" v-bind:key="country.name">
-          <td v-bind:class="country.cssId" id="country-name">
-            {{country.name}}
+        <tr v-for="topic in TopicTableData" v-bind:key="topic.name">
+          <td v-bind:class="topic.cssId" id="country-name">
+            {{topic.name}}
           </td>
-          <th scope="row" class="monthly-data" v-for="(month, index) in country.monthlyData.lessons"  v-bind:key="index">
+          <th scope="row" class="monthly-data" v-for="(month, index) in topic.monthlyData"  v-bind:key="index">
             {{month}}
           </th>
         </tr>
@@ -38,7 +39,7 @@
 <script>
 export default {
   props: {
-    tableData: {
+    TopicTableData: {
       type: Array
     } },
   data () {
@@ -53,6 +54,7 @@ export default {
   //   this.setTableName()
   // },
   methods: {
+    // FIXME: sorting table function
     sortTableDatabyName () {
       if (this.sortedByName === false) {
         const unsorted = this.tableData

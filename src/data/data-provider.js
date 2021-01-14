@@ -30,3 +30,11 @@ export function getLessons (country, camp, school) {
     lessons: Object.values(values)
   }
 }
+
+export function getLessonsByTopics (country, camp, school) {
+  let values = data.children[country].children[camp].children[school].children
+  return {
+    topics: Object.keys(values),
+    lessons: Object.values(values)
+  }
+}
