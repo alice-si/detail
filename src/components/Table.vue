@@ -3,7 +3,6 @@
     <table id="table-content" class="table">
       <thead>
         <tr>
-          <!-- FIXME: Get rid of warning message regarding table data name {{tableData[0].type}}  -->
           <th scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
           <th scope="col">1</th>
           <th scope="col">2</th>
@@ -48,10 +47,6 @@ export default {
       tableName: 'Name'
     }
   },
-  // FIXME: change table name depending on data type
-  // mounted () {
-  //   this.setTableName()
-  // },
   methods: {
     sortTableDatabyName () {
       if (this.sortedByName === false) {
@@ -74,6 +69,11 @@ export default {
         sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
         this.sortedByLessons = false
       }
+    }
+  },
+  watch: {
+    tableData () {
+      this.tableName = this.tableData[0].type
     }
   }
 }

@@ -3,7 +3,6 @@
     <table id="table-content" class="table">
       <thead>
         <tr>
-          <!-- FIXME: Get rid of warning message regarding table data name {{tableData[0].type}}  -->
           <th scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
           <th scope="col">Jan</th>
           <th scope="col">Feb</th>
@@ -46,36 +45,36 @@ export default {
     return {
       sortedByName: false,
       sortedByLessons: false,
-      tableName: 'Name'
+      tableName: 'Topic'
     }
   },
-  // FIXME: change table name depending on data type
-  // mounted () {
-  //   this.setTableName()
-  // },
   methods: {
-    // FIXME: sorting table function
     sortTableDatabyName () {
       if (this.sortedByName === false) {
-        const unsorted = this.tableData
+        const unsorted = this.TopicTableData
         unsorted.sort((a, b) => (a.name > b.name) ? 1 : -1)
         this.sortedByName = true
       } else if (this.sortedByName === true) {
-        const sorted = this.tableData
+        const sorted = this.TopicTableData
         sorted.sort((a, b) => (a.name < b.name) ? 1 : -1)
         this.sortedByName = false
       }
     },
     sortTableDatabyLessons () {
       if (this.sortedByLessons === false) {
-        const unsorted = this.tableData
+        const unsorted = this.TopicTableData
         unsorted.sort((a, b) => (a.totalLessons > b.totalLessons) ? 1 : -1)
         this.sortedByLessons = true
       } else if (this.sortedByLessons === true) {
-        const sorted = this.tableData
+        const sorted = this.TopicTableData
         sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
         this.sortedByLessons = false
       }
+    }
+  },
+  watch: {
+    TopicTableData () {
+      this.tableName = this.TopicTableData[0].type
     }
   }
 }
