@@ -72,6 +72,7 @@
       </row>
       <Table :tableData="tableData" v-if="linechartShow === true"></Table>
       <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic>
+      <div v-if="noData === true"> No Data </div>
     </section>
   </main>
 </template>
@@ -101,6 +102,7 @@ export default {
       chartData: {},
       linechartShow: true,
       stackedChartShow: false,
+      noData: false,
       barChartData: [],
       stackedBarChartData: {},
       tableData: [],
@@ -442,27 +444,32 @@ export default {
       for (let i = 0; i < lessonsByTopics.topics.length; i++) {
         const topic = lessonsByTopics.topics[i]
         const lessons = JSON.parse(JSON.stringify(lessonsByTopics.lessons[i])).values
-        const barChartDataSet = {
-          label: topic,
-          backgroundColor: getSchoolColorSchme(i),
-          data: Object.values(lessons)
-        }
-        stackedBarchartDataArr.push(barChartDataSet)
+        const sum = calcSum(Object.values(lessons))
 
-        const tableDataSet = {
-          type: 'Topics',
-          name: lessonsByTopics.topics[i],
-          totalLessons: calcSum(Object.values(lessons)),
-          cssId: lessonsByTopics.topics[i].toLowerCase().replace(' ', '-'),
-          vForId: lessonsByTopics.topics[i],
-          propId: lessonsByTopics.topics[i].replace(/\s+/g, ''),
-          monthlyData: Object.values(lessons)
-        }
-        tableDataSet.monthlyData.push(calcSum(Object.values(lessons)))
-        tableDataSet.monthlyData.push(0) // hard-coded Difference in 12 months
+        if (sum !== 0) {
+          const barChartDataSet = {
+            label: topic,
+            backgroundColor: getSchoolColorSchme(i),
+            data: Object.values(lessons)
+          }
+          stackedBarchartDataArr.push(barChartDataSet)
 
-        tableDataArr.push(tableDataSet)
+          const tableDataSet = {
+            type: 'Topics',
+            name: lessonsByTopics.topics[i],
+            totalLessons: sum,
+            cssId: lessonsByTopics.topics[i].toLowerCase().replace(' ', '-'),
+            vForId: lessonsByTopics.topics[i],
+            propId: lessonsByTopics.topics[i].replace(/\s+/g, ''),
+            monthlyData: Object.values(lessons)
+          }
+          tableDataSet.monthlyData.push(calcSum(Object.values(lessons)))
+          tableDataSet.monthlyData.push(0) // hard-coded Difference in 12 months
+
+          tableDataArr.push(tableDataSet)
+        }
       }
+
       this.TopicTableData = tableDataArr
       this.stackedBarChartData = {
         labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
@@ -546,15 +553,16 @@ export default {
     selectedCountry () {
       this.linechartShow = true
       this.stackedChartShow = false
-      if (this.checkedItems) this.unchekcAllCheckbox()
-      const country = this.selectedCountry
-      const camps = getCamps(country)
-
+      // this.changeCountry()
       function calcSum (lessons) {
         const sum = lessons.reduce(
           (prev, curr) => prev + curr)
         return sum
       }
+      if (this.checkedItems) this.unchekcAllCheckbox()
+
+      const country = this.selectedCountry
+      const camps = getCamps(country)
 
       const lineChartData = []
       const barDataDict = {}
@@ -624,16 +632,19 @@ export default {
     selectedCamp () {
       this.linechartShow = true
       this.stackedChartShow = false
+      // this.changeCamp()
       if (this.checkedItems) this.unchekcAllCheckbox()
+
       function calcSum (lessons) {
         const sum = lessons.reduce(
           (prev, curr) => prev + curr)
         return sum
       }
 
-      const country = this.selectedCountry
-      const camp = this.selectedCamp
       if (this.selectedCamp !== null) {
+        const country = this.selectedCountry
+        const camp = this.selectedCamp
+
         const schoolsArr = getSchools(country, camp)
 
         const lineChartData = []
@@ -701,6 +712,10 @@ export default {
         this.dictForVfor = tableDataArr
         this.totalLessons = sum
       }
+      // FIXME: Selectbox에서 x 자가 눌릴 경우의 케이스 핸들링
+      // if (this.selectedCamp === null) {
+      //   this.updateMultipleChartData()
+      // }
     },
     selectedSchool () {
       if (this.checkedItems) this.unchekcAllCheckbox()
@@ -712,6 +727,10 @@ export default {
         this.stackedChartShow = true
         this.setTopicsData(country, camp, school)
       }
+      // FIXME: Selectbox에서 x 자가 눌릴 경우의 케이스 핸들링
+      // if (this.selectedSchool === null) {
+      //   this.updateMultipleChartData()
+      // }
     }
   }
 }
