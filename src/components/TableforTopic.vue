@@ -25,8 +25,8 @@
           <td v-bind:class="topic.cssId" id="country-name">
             {{topic.name}}
           </td>
-          <th scope="row" class="monthly-data" v-for="(month, index) in topic.monthlyData"  v-bind:key="index">
-            {{month}}
+          <th scope="row" class="monthly-data" v-for="(lesson, index) in topic.monthlyData.lessons"  v-bind:key="index">
+            {{lesson}}
           </th>
         </tr>
       </tbody>
@@ -79,33 +79,3 @@ export default {
   }
 }
 </script>
-<style>
-
-.table-responsive {
-  display: flex;
-  color: var(--color-dark-grey);
-  overflow: hidden;
-  width: 100%;
-}
-
-#country-name {
-  font-weight: 500;
-}
-
-.monthly-data {
-  font-weight: 200;
-}
-
-#table-content {
-  margin: 3rem;
-  font-size: 1.2rem;
-}
-
-.table thead th {
-  border-bottom: none;
-}
-
-.table thead {
-  width: 100%;
-}
-</style>

@@ -31,12 +31,10 @@ function getZeroLessonData () {
 }
 
 export function getLessons (countries, camps, schools, year) {
-  console.log('💡country, camp, school, year', countries, camps, schools, year)
-
   let values = {}
 
   if (countries.length === 0) {
-    values['All'] = data.values[year]
+    values['All'] = data.values[year] ? data.values[year] : getZeroLessonData()
   } else {
     for (let countryIndex = 0; countryIndex < countries.length; countryIndex++) {
       const country = countries[countryIndex]
@@ -44,6 +42,8 @@ export function getLessons (countries, camps, schools, year) {
         const lessons = data.children[country].values[year]
         if (lessons) {
           values[country] = lessons
+        } else {
+          values[country] = getZeroLessonData()
         }
       } else {
         for (let campIndex = 0; campIndex < camps.length; campIndex++) {
@@ -52,6 +52,8 @@ export function getLessons (countries, camps, schools, year) {
             const lessons = data.children[country].children[camp].values[year]
             if (lessons) {
               values[camp] = lessons
+            } else {
+              values[camp] = getZeroLessonData()
             }
           } else {
             for (let schoolIndex = 0; schoolIndex < schools.length; schoolIndex++) {
@@ -59,6 +61,8 @@ export function getLessons (countries, camps, schools, year) {
               const lessons = data.children[country].children[camp].children[school].values[year]
               if (lessons) {
                 values[school] = lessons
+              } else {
+                values[school] = getZeroLessonData()
               }
             }
           }
@@ -71,19 +75,8 @@ export function getLessons (countries, camps, schools, year) {
     labels: Object.keys(values),
     lessons: Object.values(values)
   }
-  console.log('🌈values', values)
 
   return values
-}
-
-export function getTableData (year) {
-  const values = {}
-  const allCountries = Object.keys(data.children)
-  for (let countryIndex = 0; countryIndex < allCountries.length; countryIndex++) {
-    const country = allCountries[countryIndex]
-    values[country] = data.children[country].values[year]
-  }
-  console.log('values', values)
 }
 
 export function getLessonsByTopics (country, camp, school, year) {
@@ -91,7 +84,6 @@ export function getLessonsByTopics (country, camp, school, year) {
   let allMonthlyDataByYears = Object.values(values)
 
   const allTopics = Object.keys(values)
-
   let existingTopicsInYear = {}
 
   allTopics.forEach((el, index) => {
@@ -99,10 +91,8 @@ export function getLessonsByTopics (country, camp, school, year) {
     existingTopicsInYear[el] = monthlyData || getZeroLessonData()
   })
 
-  console.log('existingTopicsInYear', existingTopicsInYear)
-
   return {
-    topics: Object.keys(existingTopicsInYear),
+    labels: Object.keys(existingTopicsInYear),
     lessons: Object.values(existingTopicsInYear)
   }
 }
@@ -112,7 +102,7 @@ export function setYearSelectBox (country, camp, school) {
   const totalDataByCountry = Object.values(data.children)
   let yearlyIndex = []
   let uniqueYear = []
-  // Case: when country is not selected => return 2015~2020
+
   if (country === undefined) {
     totalDataByCountry.forEach(el => {
       const totalData = el.values
@@ -120,6 +110,6 @@ export function setYearSelectBox (country, camp, school) {
     })
     uniqueYear = yearlyIndex.filter((item, index) => yearlyIndex.indexOf(item) === index).sort((a, b) => b - a)
   }
-  // Case2: When country is selected => Matching country name & year index
+
   return uniqueYear
 }

@@ -1,23 +1,23 @@
 <template>
   <div class="table-responsive">
     <table id="table-content" class="table">
-      <thead>
+      <thead class="thead">
         <tr>
-          <th scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th scope="col">1</th>
-          <th scope="col">2</th>
-          <th scope="col">3</th>
-          <th scope="col">4</th>
-          <th scope="col">5</th>
-          <th scope="col">6</th>
-          <th scope="col">7</th>
-          <th scope="col">8</th>
-          <th scope="col">9</th>
-          <th scope="col">10</th>
-          <th scope="col">11</th>
-          <th scope="col">12</th>
-          <th scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
-          <th scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
+          <th style="width:15%" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <th style="width:3%" scope="col">1</th>
+          <th style="width:3%" scope="col">2</th>
+          <th style="width:3%" scope="col">3</th>
+          <th style="width:3%" scope="col">4</th>
+          <th style="width:3%" scope="col">5</th>
+          <th style="width:3%" scope="col">6</th>
+          <th style="width:3%" scope="col">7</th>
+          <th style="width:3%" scope="col">8</th>
+          <th style="width:3%" scope="col">9</th>
+          <th style="width:3%" scope="col">10</th>
+          <th style="width:3%" scope="col">11</th>
+          <th style="width:3%" scope="col">12</th>
+          <th style="width:16%" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+          <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
         </tr>
       <tbody>
         <tr v-for="country in tableData" v-bind:key="country.name">
@@ -78,33 +78,3 @@ export default {
   }
 }
 </script>
-<style>
-
-.table-responsive {
-  display: flex;
-  color: var(--color-dark-grey);
-  overflow: hidden;
-  width: 100%;
-}
-
-#country-name {
-  font-weight: 500;
-}
-
-.monthly-data {
-  font-weight: 200;
-}
-
-#table-content {
-  margin: 3rem;
-  font-size: 1.2rem;
-}
-
-.table thead th {
-  border-bottom: none;
-}
-
-.table thead {
-  width: 100%;
-}
-</style>

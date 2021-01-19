@@ -18,9 +18,9 @@
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
         <column :lg="8" :xs="6"><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
-        <column :lg="4" :xs="6">
+        <column class="chart-summary" :lg="4" :xs="6">
           <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span><h3>using INS</h3></div>
-          <!-- <div> {{'+38%'}} last 12months</div> -->
+          <div class="growth-rate"> <h1>{{growthRate}}</h1> <h3>last 12months</h3></div>
         </column>
       </row>
     </section>
@@ -29,11 +29,11 @@
         <column :lg="7.5" class="line-chart-area">
           <h3> No of lessons</h3>
           <line-chart :chart-data="chartData" :options="options" v-if="linechartShow === true"></line-chart>
-
           <stacked-bar-chart id="stacked-bar-chart" :chart-data="stackedBarChartData" :options="stackedBarchartOption" v-if="stackedChartShow === true"></stacked-bar-chart>
+          <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column>
         </column>
         <column :lg="4" class="summary-area">
-          <div class="country-wrapper" v-for="country in tableData" v-bind:key="country.vForId" :value="country.vForId">
+          <div class="country-wrapper" v-for="country in summaryBoxData" v-bind:key="country.vForId" :value="country.vForId">
             <div class="text-container">
               <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedItems" style="display:none">
                 <label v-bind:class="country.cssId" v-bind:for="country.cssId">
@@ -44,10 +44,10 @@
                 <!-- Lessons summary start-->
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="linechartShow === true">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                      <h1 style="display: inline; margin-right: 5px; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.totalLessons }}
                       </h1>
-                      <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
+                      <h2 style="display: inline; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
                   </div>
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
                     <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
@@ -70,7 +70,7 @@
           </div>
         </column>
       </row>
-      <v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select>
+
       <Table :tableData="tableData" v-if="linechartShow === true"></Table>
       <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic>
     </section>
@@ -104,21 +104,20 @@ export default {
       chartData: {},
       linechartShow: true,
       stackedChartShow: false,
-      noData: false,
       barChartData: [],
       stackedBarChartData: {},
       tableData: [],
+      summaryBoxData: [],
       TopicTableData: [],
       yearOptions: [],
       countries: [],
-      dictForVfor: [],
       camps: [],
       schools: [],
       country: '',
       school: '',
       checkedItems: [],
       totalLessons: '',
-      lessonsByCountries: {},
+      growthRate: '',
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -183,195 +182,28 @@ export default {
   mounted () {
     this.countries = getCountries() // Set initial Country select box options
     this.yearOptions = setYearSelectBox() // Set initial Year select box options
-
     this.updateData()
   },
   methods: {
-
-    updateBarChartData (name, lessons) {
-      const allDataDict = {}
-      const countries = getCountries()
-
-      for (let i = 0; i < countries.length; i++) {
-        let key = countries[i]
-        let value = getLessons(countries[i])
-        allDataDict[key] = {
-          labels: value.months,
-          datasets: [{
-            data: value.lessons
-          }]
-        }
-      }
-      this.barChartData = allDataDict
-    },
-    // updateLineChartData (chartData) {
-    //   this.linechartShow = true
-    //   // Build label
-    //   let label = 'All'
-    //   if (this.selectedCountry) {
-    //     label = this.selectedCountry
-    //   }
-    //   if (this.selectedCamp) {
-    //     label += ' > ' + this.selectedCamp
-    //   }
-    //   if (this.selectedSchool) {
-    //     label += ' > ' + this.selectedSchool
-    //   }
-    // },
-    setSummary () {
-      const total = getLessons(this.selectedCountry, this.selectedCamp, this.selectedSchool, this.selectedYear)
-      const countries = getCountries()
-
-      function calcSum (country) {
-        const sum = country.lessons.reduce(
-          (prev, curr) => prev + curr)
-        return sum
-      }
-
-      this.totalLessons = calcSum(total)
-
-      const lessonSumDict = {}
-      for (let i = 0; i < countries.length; i++) {
-        const countryName = countries[i].replace(/\s+/g, '')
-        const sum = calcSum(getLessons(countries[i]))
-        lessonSumDict[countryName] = sum
-      }
-      this.lessonsByCountries = lessonSumDict
-    },
-    setTopicsData (country, camp, school) {
-      this.linechartShow = false
-      this.stackedChartShow = true
-      function calcSum (lessons) {
-        const sum = lessons.reduce(
-          (prev, curr) => prev + curr)
-        return sum
-      }
-
-      const lessonsByTopics = getLessonsByTopics(country, camp, school)
-      const stackedBarchartDataArr = []
-      const tableDataArr = []
-
-      for (let i = 0; i < lessonsByTopics.topics.length; i++) {
-        const topic = lessonsByTopics.topics[i]
-        const lessons = lessonsByTopics.lessons[i]
-        const sum = calcSum(Object.values(lessons))
-
-        if (sum !== 0) {
-          const barChartDataSet = {
-            label: topic,
-            backgroundColor: getSchoolColorSchme(i),
-            data: Object.values(lessons)
-          }
-          stackedBarchartDataArr.push(barChartDataSet)
-
-          const tableDataSet = {
-            type: 'Topics',
-            name: lessonsByTopics.topics[i],
-            totalLessons: sum,
-            cssId: lessonsByTopics.topics[i].toLowerCase().replace(' ', '-'),
-            vForId: lessonsByTopics.topics[i],
-            propId: lessonsByTopics.topics[i].replace(/\s+/g, ''),
-            monthlyData: Object.values(lessons)
-          }
-          tableDataSet.monthlyData.push(calcSum(Object.values(lessons)))
-          tableDataSet.monthlyData.push(0) // hard-coded Difference in 12 months
-
-          tableDataArr.push(tableDataSet)
-        }
-      }
-
-      this.TopicTableData = tableDataArr
-      this.stackedBarChartData = {
-        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-        datasets: stackedBarchartDataArr
-      }
-      this.dictForVfor = tableDataArr
-
-      // Total no of lessons by country
-      let sum = 0
-      for (let i = 0; i < tableDataArr.length; i++) {
-        sum += tableDataArr[i].totalLessons
-      }
-      this.totalLessons = sum
-    },
-    updateStackedBarChartData () {
-      this.linechartShow = false
-      this.stackedChartShow = true
-      const country = this.selectedCountry
-      const camp = this.selectedCamp
-      const school = this.selectedSchool
-      const topics = getLessonsByTopics(country, camp, school)
-      const stackedBarchartDataArr = []
-
-      for (let i = 0; i < topics.topics.length; i++) {
-        const topic = topics.topics[i]
-        const lessons = topics.lessons[i]
-        const cssId = topic.toLowerCase().replace(' ', '-')
-        const dom = document.getElementsByClassName(`${cssId}`)
-
-        if (dom[0] && dom[0].checked) { // checkbox
-          const checkedColor = getTopicColorSchme(i)
-          dom[1].style.color = checkedColor // label
-          dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
-          dom[3].style.color = checkedColor // V
-          dom[4].style.color = checkedColor // Topic text
-          dom[7].style.color = checkedColor // Table name
-          const barChartDataSet = {
-            label: topic,
-            backgroundColor: getTopicColorSchme(i),
-            data: Object.values(lessons)
-          }
-          stackedBarchartDataArr.push(barChartDataSet)
-        } else if (dom[0] && !dom[0].checked) {
-          dom[1].style.color = '#D8D8D8'
-          dom[2].style.border = '1px solid #D8D8D8'
-          dom[3].style.color = '#ffffff'
-          dom[4].style.color = '#D8D8D8'
-          dom[7].style.color = '#686868'
-        }
-      }
-      this.stackedBarChartData = {
-        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-        datasets: stackedBarchartDataArr
-      }
-    },
     uncheckAllCheckboxes () {
       for (let i = 0; i < this.checkedItems.length; i++) {
         const checkedItem = this.checkedItems[i]
-        const cssId = checkedItem.toLowerCase().replace(' ', '-')
+        const cssId = checkedItem.toLowerCase().replaceAll(' ', '-')
         const dom = document.getElementsByClassName(`${cssId}`)
         dom[0].checked = false
       }
       this.checkedItems = []
     },
     getLineChartData (lessons, colorScheme) {
+      const totalLessons = lessons.lessons.flatMap(el => Object.values(el))
+      const sum = this.calcSum(totalLessons)
+
       const labels = lessons.labels
       const dataset = lessons.lessons
       const lineChartData = []
-
-      for (let i = 0; i < dataset.length; i++) {
-        const color = colorScheme(i)
-
-        const lineChartDataSet = {
-          label: labels[i],
-          backgroundColor: 'transparent',
-          borderColor: color,
-          data: Object.values(dataset[i]),
-          pointRadius: 6,
-          borderWidth: 1.5,
-          pointBackgroundColor: '#FFFFFF',
-          lineTension: 0
-        }
-        lineChartData.push(lineChartDataSet)
-      }
-
       let chartDataObj = {}
-      if (dataset.length > 0) {
-        chartDataObj = {
-          labels: Object.keys(dataset[0]),
-          datasets: lineChartData
-        }
-      } else {
+
+      if (sum === 0) {
         chartDataObj = {
           labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
           datasets: [{
@@ -385,42 +217,203 @@ export default {
             lineTension: 0
           }]
         }
+      } else {
+        for (let i = 0; i < dataset.length; i++) {
+          const color = colorScheme(i)
+          const lineChartDataSet = {
+            label: labels[i],
+            backgroundColor: 'transparent',
+            borderColor: color,
+            data: Object.values(dataset[i]),
+            pointRadius: 6,
+            borderWidth: 1.5,
+            pointBackgroundColor: '#FFFFFF',
+            lineTension: 0
+          }
+          lineChartData.push(lineChartDataSet)
+        }
+        chartDataObj = {
+          labels: Object.keys(dataset[0]),
+          datasets: lineChartData
+        }
       }
       return chartDataObj
     },
-    getTableData (tabletype, lessons) {
-      function calcSum (lessons) {
-        const sum = lessons.reduce(
-          (prev, curr) => prev + curr)
-        return sum
-      }
-
+    getTableData (tabletype, lessons, prevYear) {
       const countries = lessons.labels
       const tableDataArray = []
 
       for (let countryIndex = 0; countryIndex < countries.length; countryIndex++) {
         const lessonsData = lessons.lessons[countryIndex]
-        const total = calcSum(Object.values(lessonsData))
+        const prevYearLessonsData = prevYear.lessons[countryIndex]
+        const total = this.calcSum(Object.values(lessonsData))
+        let growthRate = ''
+
+        if (prevYearLessonsData) {
+          growthRate = this.compareDataByYear(Object.values(prevYearLessonsData), Object.values(lessonsData))
+        } else {
+          growthRate = '+100%'
+        }
+
         const tableDataSet = {
           type: tabletype,
           name: countries[countryIndex],
           totalLessons: total,
-          cssId: countries[countryIndex].toLowerCase().replace(' ', '-'),
+          cssId: countries[countryIndex].toLowerCase().replaceAll(' ', '-'),
           vForId: countries[countryIndex],
           propId: countries[countryIndex].replace(/\s+/g, ''),
           monthlyData: {
             lessons: Object.values(lessonsData),
             months: Object.keys(lessonsData)
-          }
+          },
+          colorIndex: countryIndex
         }
+
         tableDataSet.monthlyData.lessons.push(total)
-        tableDataSet.monthlyData.lessons.push(0)
+        tableDataSet.monthlyData.lessons.push(growthRate)
         tableDataSet.monthlyData.months.push('Total Lessons')
         tableDataSet.monthlyData.months.push('Difference in 12 Months')
         tableDataArray.push(tableDataSet)
       }
-
       return tableDataArray
+    },
+    filterChartData (chartData, filter) {
+      if (filter.length !== 0) {
+        const filtered = chartData.datasets.filter(el => filter.indexOf(el.label) !== -1)
+        chartData.datasets = filtered
+      }
+      return chartData
+    },
+    calcSum (lessons) {
+      const sum = lessons.reduce(
+        (prev, curr) => prev + curr
+      )
+      return sum
+    },
+    compareDataByYear (prevYearLessons, currYearLessons) {
+      const prevSum = this.calcSum(prevYearLessons)
+      const currSum = this.calcSum(currYearLessons)
+      const growthRate = ((currSum / prevSum) - 1) * 100
+      if (Number.isNaN(growthRate)) {
+        return '-'
+      } else if (growthRate !== Infinity) {
+        return growthRate.toFixed(0) + '%'
+      } else {
+        return '+ 100%'
+      }
+    },
+    getBarChartData (dataByCountry) {
+      const allDataDict = {}
+      dataByCountry.forEach(el => {
+        let key = el.name
+        let value = el.monthlyData.lessons.slice(0, 12)
+        allDataDict[key] = {
+          labels: el.monthlyData.months.slice(0, 12),
+          datasets: [{
+            data: value
+          }]
+        }
+      })
+      return allDataDict
+    },
+    getStackedBarChartData (lessons, colorScheme) {
+      const totalLessons = lessons.lessons.flatMap(el => Object.values(el))
+      const sum = this.calcSum(totalLessons)
+      const barChartData = []
+      for (let i = 0; i < lessons.labels.length; i++) {
+        const barChartDataSet = {
+          label: lessons.labels[i],
+          backgroundColor: colorScheme(i),
+          data: Object.values(lessons.lessons[i])
+        }
+        barChartData.push(barChartDataSet)
+      }
+
+      let chartDataObj = {}
+      if (sum === 0) {
+        chartDataObj = {
+          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+          datasets: [{
+            label: 'No lessons data for this year',
+            backgroundColor: 'transparent',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          }]
+        }
+      } else if (lessons.lessons.length > 0) {
+        chartDataObj = {
+          labels: Object.keys(lessons.lessons[0]),
+          datasets: barChartData
+        }
+      }
+      return chartDataObj
+    },
+    updateData () {
+      this.updateConditionalRendering()
+      let lessons = {}
+      let prevYearLessons = {}
+      let totalCurrLessons = []
+      let totalPrevLessons = []
+
+      switch (this.viewMode) {
+        case 'All':
+          const tableLessons = getLessons(getCountries(), [], [], this.selectedYear)
+          const prevTableLessons = getLessons(getCountries(), [], [], this.selectedYear - 1)
+          if (this.checkedItems.length === 0) {
+            lessons = getLessons([], [], [], this.selectedYear)
+            prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
+            this.totalLessons = this.calcSum(Object.values(lessons.lessons[0]))
+            this.growthRate = this.compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
+            this.chartData = this.getLineChartData(lessons, getCountryColorSchme)
+          } else {
+            lessons = tableLessons
+            this.chartData = this.filterChartData(this.getLineChartData(lessons, getCountryColorSchme), this.checkedItems)
+          }
+          this.barChartData = this.getBarChartData(this.getTableData('Country', tableLessons, prevTableLessons))
+          this.tableData = this.getTableData('Country', tableLessons, prevTableLessons)
+          this.summaryBoxData = this.filterTopics(this.getTableData('Country', tableLessons, prevTableLessons))
+          this.updateColors(this.viewMode, getCountryColorSchme)
+          break
+
+        case 'Country':
+          lessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
+          prevYearLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
+          totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
+          totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
+          this.totalLessons = this.calcSum(totalCurrLessons)
+          this.growthRate = this.compareDataByYear(totalPrevLessons, totalCurrLessons)
+          this.chartData = this.filterChartData(this.getLineChartData(lessons, getCampColorSchme), this.checkedItems)
+          this.barChartData = this.getBarChartData(this.getTableData('Camps', lessons, prevYearLessons))
+          this.tableData = this.getTableData('Camps', lessons, prevYearLessons)
+          this.summaryBoxData = this.filterTopics(this.getTableData('Camps', lessons, prevYearLessons))
+          this.updateColors(this.viewMode, getCampColorSchme)
+          break
+
+        case 'Camp':
+          lessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
+          prevYearLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
+          totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
+          totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
+          this.totalLessons = this.calcSum(totalCurrLessons)
+          this.growthRate = this.compareDataByYear(totalPrevLessons, totalCurrLessons)
+          this.chartData = this.filterChartData(this.getLineChartData(lessons, getSchoolColorSchme), this.checkedItems)
+          this.barChartData = this.getBarChartData(this.getTableData('Schools', lessons, prevYearLessons))
+          this.tableData = this.getTableData('Schools', lessons, prevYearLessons)
+          this.summaryBoxData = this.filterTopics(this.getTableData('Schools', lessons, prevYearLessons))
+          this.updateColors(this.viewMode, getSchoolColorSchme)
+          break
+
+        case 'School':
+          lessons = getLessonsByTopics([this.selectedCountry], [this.selectedCamp], [this.selectedSchool], this.selectedYear)
+          prevYearLessons = getLessonsByTopics([this.selectedCountry], [this.selectedCamp], [this.selectedSchool], this.selectedYear - 1)
+          totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
+          totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
+          this.totalLessons = this.calcSum(totalCurrLessons)
+          this.growthRate = this.compareDataByYear(totalPrevLessons, totalCurrLessons)
+          this.stackedBarChartData = this.filterChartData(this.getStackedBarChartData(lessons, getTopicColorSchme), this.checkedItems)
+          this.TopicTableData = this.getTableData('Topics', lessons, prevYearLessons)
+          this.summaryBoxData = this.filterTopics(this.getTableData('Topics', lessons, prevYearLessons)) // for checkbox rendering
+          this.updateColors(this.viewMode, getTopicColorSchme)
+      }
     },
     updateConditionalRendering () {
       switch (this.viewMode) {
@@ -445,71 +438,34 @@ export default {
           this.schools = getSchools(this.selectedCountry, this.selectedCamp)
           this.school = ', ' + this.selectedCamp
           break
-      }
-    },
-    filterLineChartData (lineChartData, filter) {
-      if (filter.length !== 0) {
-        const filtered = lineChartData.datasets.filter(el => filter.indexOf(el.label) !== -1)
-        lineChartData.datasets = filtered
-      }
-      return lineChartData
-    },
-    updateData () {
-      this.updateConditionalRendering()
-      let lessons = {}
-      let lineChartData = {}
-      let tableLessons = {}
-      console.log(this.viewMode)
-      switch (this.viewMode) {
-        case 'All':
-          tableLessons = getLessons(getCountries(), [], [], this.selectedYear)
-          if (this.checkedItems.length === 0) {
-            lessons = getLessons([], [], [], this.selectedYear)
-            lineChartData = this.getLineChartData(lessons, getCountryColorSchme)
-          } else {
-            lessons = tableLessons
-            lineChartData = this.filterLineChartData(this.getLineChartData(lessons, getCountryColorSchme), this.checkedItems)
-          }
-          this.tableData = this.getTableData('Country', tableLessons)
-          this.chartData = lineChartData
-          this.updateColors(getCountryColorSchme)
-          break
-
-        case 'Country':
-          lessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
-          lineChartData = this.filterLineChartData(this.getLineChartData(lessons, getCampColorSchme), this.checkedItems)
-          this.tableData = this.getTableData('Camps', lessons)
-          this.chartData = lineChartData
-          this.updateColors(getCampColorSchme)
-          break
-
-        case 'Camp':
-          lessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
-          lineChartData = this.filterLineChartData(this.getLineChartData(lessons, getSchoolColorSchme), this.checkedItems)
-          this.tableData = this.getTableData('Schools', lessons)
-          this.chartData = lineChartData
-          this.updateColors(getSchoolColorSchme)
+        case 'School':
+          this.linechartShow = false
+          this.stackedChartShow = true
           break
       }
     },
-    updateColors (colorScheme) {
-      for (let i = 0; i < this.tableData.length; i++) {
-        const cssId = this.tableData[i].cssId
+    filterTopics (tableData) {
+      const filtered = tableData.filter(el => el.totalLessons !== 0)
+      return filtered
+    },
+    updateColors (view, colorScheme) {
+      const tableFontDomIndex = view === 'School' ? 7 : 9
+      for (let i = 0; i < this.summaryBoxData.length; i++) {
+        const cssId = this.summaryBoxData[i].cssId
         const dom = document.getElementsByClassName(`${cssId}`)
-        console.log('dom', dom)
         if (dom.length !== 0 && dom[0].checked === true) {
-          const checkedColor = colorScheme(i)
+          const checkedColor = colorScheme(this.summaryBoxData[i].colorIndex)
           dom[1].style.color = checkedColor // label
           dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
           dom[3].style.color = checkedColor // V
           dom[4].style.color = checkedColor // Topic text
-          dom[7].style.color = checkedColor // Table name
+          dom[tableFontDomIndex].style.color = checkedColor // Table name
         } else if (dom.length !== 0 && !dom[0].checked) {
           dom[1].style.color = '#D8D8D8'
           dom[2].style.border = '1px solid #D8D8D8'
           dom[3].style.color = '#ffffff'
           dom[4].style.color = '#D8D8D8'
-          dom[7].style.color = '#686868'
+          dom[tableFontDomIndex].style.color = '#212529'
         }
       }
     }
@@ -534,15 +490,8 @@ export default {
     },
     selectedSchool () {
       this.viewMode = 'School'
-      if (this.checkedItems) this.uncheckAllCheckboxes()
-      if (this.selectedSchool !== null) {
-        const country = this.selectedCountry
-        const camp = this.selectedCamp
-        const school = this.selectedSchool
-        this.linechartShow = false
-        this.stackedChartShow = true
-        this.setTopicsData(country, camp, school)
-      }
+      this.uncheckAllCheckboxes()
+      this.updateData()
     }
   }
 }
@@ -659,14 +608,27 @@ main {
   display: flex;
   color: var(--color-purple);
   margin-top: 1.5rem;
-  /* margin-left: 10.5rem;
-  margin-top: 5rem; */
+}
+
+.chart-summary {
+  display: flex;
+  flex-direction: row;
+}
+
+.growth-rate {
+  margin-left: 2rem;
+}
+
+.growth-rate h3 {
+  font-size: 1rem;
+  font-weight: 100;
 }
 
 .total-lessons {
   display: flex;
   flex-direction: column;
-  padding-left: 10rem;
+  padding-left: 7rem;
+  padding-right: 2rem;
 }
 
 .total-lessons h1,
@@ -710,6 +672,7 @@ main {
 
 .chart-title {
   display: flex;
+  padding: 0 !important;
 }
 
 .chart-title h2 {
@@ -719,10 +682,14 @@ main {
 }
 
 .line-chart-area {
-  padding: 3rem !important;
+  padding: 3rem 0 0 3rem !important;
   /* padding-top: 3rem !important; */
   display: flex;
   flex-direction: column;
+}
+
+canvas#line-chart.chartjs-render-monitor {
+  padding-right: 3rem;
 }
 
 .line-chart-area h3 {
@@ -757,6 +724,11 @@ main {
 .chart-container {
   display: flex;
   padding-left: 1.5rem;
+}
+
+.year-select-box {
+  align-self: flex-end;
+  margin-top: 1rem;
 }
 
 #bar-chart #bar-chart {
@@ -805,10 +777,14 @@ label div {
   /* align-self: center; */
 }
 
-/* .table-responsive {
+.table-responsive {
   display: flex;
   color: var(--color-dark-grey);
   overflow: hidden;
+  width: 100%;
+}
+
+table#table-content tr {
   width: 100%;
 }
 
@@ -818,22 +794,24 @@ label div {
 
 .monthly-data {
   font-weight: 200;
-} */
-
-/* #table-content {
-  margin: 3rem;
-  font-size: 1.2rem;
 }
 
-.table thead th {
+#table-content {
+  margin: 3rem;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+#table-content thead th {
   border-bottom: none;
 }
 
-.table thead {
+#table-content.thead{
   width: 100%;
-} */
+}
 
-/* .table {
+#table-content .thead {
   width: 100%;
-} */
+}
+
 </style>
