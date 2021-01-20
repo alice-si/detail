@@ -31,8 +31,6 @@
 </template>
 
 <script>
-import InlineSvg from 'vue-inline-svg'
-
 export default {
   data () {
     return {
@@ -43,23 +41,18 @@ export default {
   watch: {
     '$route' (to, from) {
       const clickedRoute = to.name
-      console.log('clickedRoute', clickedRoute)
       const homeIcon = document.getElementById('home-icon')
       const dashboardIcon = document.getElementById('dashboard')
-
-      switch (clickedRoute) {
-        case 'home':
-          this.homeImgSrc = require('../src/assets/Home-selected.svg')
-          this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
-          dashboardIcon.style.border = '0px'
-          homeIcon.style.borderRight = '3px solid #8954BA'
-          break
-        case 'ins':
-          this.homeImgSrc = require('../src/assets/Home.svg')
-          this.dashboardImgSrc = require('../src/assets/Dashboard-selected.svg')
-          homeIcon.style.border = '0px'
-          dashboardIcon.style.borderRight = '3px solid #8954BA'
-          break
+      if (clickedRoute === 'home') {
+        this.homeImgSrc = require('../src/assets/Home-selected.svg')
+        this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
+        dashboardIcon.style.border = '0px'
+        homeIcon.style.borderRight = '3px solid #8954BA'
+      } else {
+        this.homeImgSrc = require('../src/assets/Home.svg')
+        this.dashboardImgSrc = require('../src/assets/Dashboard-selected.svg')
+        homeIcon.style.border = '0px'
+        dashboardIcon.style.borderRight = '3px solid #8954BA'
       }
     }
   }
