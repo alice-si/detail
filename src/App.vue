@@ -145,9 +145,10 @@ h3 {
   bottom: 0;
   width: 60px;
   height: 95%;
-  padding-top: 9%;
   justify-content: space-around;
-  background-color: #ffffff
+  background-color: #ffffff;
+  top: 62px;
+  padding-top: 100px;
 }
 
 .vertical-nav > ul {
