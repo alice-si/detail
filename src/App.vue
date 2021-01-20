@@ -5,7 +5,7 @@
       <header class="horizontal-nav" :gutter="12">
       <nav class="navbar navbar-light bg-white justify-content-end fixed-top border-bottom">
         <img src="../src/assets/alice_logo.png" width="43" height="40" class="company_logo" alt="company_logo">
-          <img class="search-icon" src="../src/assets/Search.svg" alt="">
+          <img class="search-icon" src="../src/assets/Search.svg" alt="search-icon">
         <form class="form-inline">
           <input class="form-control mr-sm-2" style="width:250px; border: none;" type="search" placeholder="Search e.g. INS exam results" aria-label="Search">
           <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
@@ -16,11 +16,12 @@
       </header>
       <aside class="vertical-nav">
         <nav class="navbar navbar-light bg-white flex-column justify-content-start">
-            <router-link to="/"><img src='../src/assets/Home.svg' class="home" alt="home"></router-link>
-            <router-link to="/ins"><img src='../src/assets/Dashboard.svg' class="dashboard" alt="dashboard"></router-link>
-            <!-- FIXME: change link direcntory -->
+            <!-- <router-link to="/"><inline-svg id="home-icon" :src='require("../src/assets/Home.svg")'></inline-svg></router-link> -->
+            <router-link to="/"><img src='../src/assets/Home.svg' id="home-icon" class="home" alt="home" ></router-link>
+            <router-link to="/ins"><img src='../src/assets/Dashboard.svg' id="dashboard" class="dashboard" alt="dashboard"></router-link>
+            <!-- FIXME: change link directory -->
             <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
-            <!-- FIXME: change link direcntory -->
+            <!-- FIXME: change link directory -->
             <router-link to="/"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link>
         </nav>
 
@@ -30,21 +31,27 @@
   </div>
 </template>
 
+<script>
+import InlineSvg from 'vue-inline-svg'
+
+export default {
+  components: {
+    InlineSvg
+  }
+}
+
+</script>
+
 <style>
 * {
   box-sizing: inherit;
 }
 
 :root {
-  /* --color-south-sudan: #EA4C89;
-  --color-kenya:  #2FB9EF;
-  --color-tanzania: #67B675;
-  --color-dr-congo: #f76511; */
-  --color-light-grey: #D8D8D8;
   /* main font color */
+  --color-light-grey: #D8D8D8;
   --color-dark-grey: #686868;
   --color-purple: #8954BA;
-  --padding-wide: 3rem;
 }
 
 html {
@@ -109,9 +116,12 @@ h3 {
   height: 100%;
 }
 
+.container-fluid {
+  padding: 0px !important;
+}
+
 .form-inline .form-control {
   font-size: 1.5rem;
-  /* margin-right: 3rem; */
 }
 
 .search-icon {
@@ -133,8 +143,9 @@ h3 {
   display: flex;
   position: fixed;
   bottom: 0;
-  width: 50px;
+  width: 60px;
   height: 95%;
+  padding-top: 132px;
   justify-content: space-around;
   background-color: #ffffff
 }
@@ -152,9 +163,13 @@ h3 {
   margin-bottom: 5rem;
 }
 
-.home {
-  margin-top: 8rem;
-  margin-bottom: 5rem;
+#home-icon {
+  padding: 0 12px 0 12px;
+}
+
+.dashboard {
+  padding: 0 12px 0 12px;
+  margin: 0;
 }
 
 #nav a {
@@ -164,5 +179,9 @@ h3 {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.home #Home {
+  background: var(--color-purple)
 }
 </style>

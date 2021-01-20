@@ -36,13 +36,13 @@
 <script>
 // @ is an alias to /src
 // import html2canvas from 'html2canvas'
-import LinkPrevue from 'link-prevue'
+// import LinkPrevue from 'link-prevue'
 
 export default {
 
   name: 'home',
   components: {
-    LinkPrevue
+    // LinkPrevue
   },
   data () {
     return {
@@ -52,25 +52,24 @@ export default {
     }
   },
   mounted () {
-    // this.thumbnails = this.setThumbnails()
+    this.changeIconColor()
+  },
+  methods: {
+    changeIconColor () {
+      const dashboard = document.getElementById('dashboard')
+      const home = document.getElementById('home-icon')
+      dashboard.style.border = '0px'
+      home.style.borderRight = '3px solid #8954BA'
+    }
   }
-  // methods: {
-
-  // }
 }
 </script>
 
 <style>
 
-main {
+main#home {
   display: flex;
   flex-direction: column;
-  padding: 5rem 5rem 5rem 0;
-}
-
-.grid {
-  margin-left: 1rem;
-  margin-right: 1rem;
 }
 
 #filtering-area {
@@ -91,37 +90,35 @@ main {
   justify-content: flex-end;
 }
 
-#vs1__combobox {
-  background-color:#ffffff;
-  border: none;
-  border-radius: 2px;
-}
-
-#vs1__combobox .vs__search::placeholder {
+#vs1__combobox.vs__search::placeholder {
   color: var(--color-dark-grey);
 }
 
-#vs1__combobox .vs__no-options:active {
-  background-color: #ffffff;
-  border-color: #ffffff;
+#vs1__combobox.vs__dropdown-toggle {
+  padding: 1rem;
 }
 
-#vs1__listbox .vs__dropdown-menu {
-  box-shadow: none;
-  border: none;
-  border-radius: 2px;
-  font-size: 1.4rem;
+.grid {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.container[data-v-42e9a5e0] {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 #thumbnail-area {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding-left: 4.5rem;
 }
 
 #thumbnail-area h1 {
   color: var(--color-dark-grey);
-  margin: 4rem 0 4rem 0;
+  padding: 2.5rem 0 4rem 2rem;
+  position: relative;
+  text-align: left;
 }
 
 #thumbnails img {

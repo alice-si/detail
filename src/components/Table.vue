@@ -1,8 +1,8 @@
 <template>
   <div class="table-responsive">
     <table id="table-content" class="table">
-      <thead class="thead">
-        <tr>
+      <thead style="width:100%" class="thead">
+        <tr style="width:100%">
           <th style="width:15%" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
           <th style="width:3%" scope="col">1</th>
           <th style="width:3%" scope="col">2</th>
@@ -19,8 +19,8 @@
           <th style="width:16%" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
           <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
         </tr>
-      <tbody>
-        <tr v-for="country in tableData" v-bind:key="country.name">
+      <tbody style="width:100%">
+        <tr style="width:100%" v-for="country in tableData" v-bind:key="country.name">
           <td v-bind:class="country.cssId" id="country-name">
             {{country.name}}
           </td>

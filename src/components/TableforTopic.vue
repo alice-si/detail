@@ -1,27 +1,27 @@
 <template>
   <div class="table-responsive">
     <table id="table-content" class="table">
-      <thead>
-        <tr>
-          <th scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th scope="col">Jan</th>
-          <th scope="col">Feb</th>
-          <th scope="col">Mar</th>
-          <th scope="col">Apr</th>
-          <th scope="col">May</th>
-          <th scope="col">Jun</th>
-          <th scope="col">Jul</th>
-          <th scope="col">Aug</th>
-          <th scope="col">Sep</th>
-          <th scope="col">Oct</th>
-          <th scope="col">Nov</th>
-          <th scope="col">Dec</th>
-          <th scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+      <thead style="width:100%">
+        <tr style="width:100%">
+          <th style="width:15%" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <th style="width:3%" scope="col">Jan</th>
+          <th style="width:3%" scope="col">Feb</th>
+          <th style="width:3%" scope="col">Mar</th>
+          <th style="width:3%" scope="col">Apr</th>
+          <th style="width:3%" scope="col">May</th>
+          <th style="width:3%" scope="col">Jun</th>
+          <th style="width:3%" scope="col">Jul</th>
+          <th style="width:3%" scope="col">Aug</th>
+          <th style="width:3%" scope="col">Sep</th>
+          <th style="width:3%" scope="col">Oct</th>
+          <th style="width:3%" scope="col">Nov</th>
+          <th style="width:3%" scope="col">Dec</th>
+          <th style="width:16%" scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
           <!-- TODO:% of total usage?? -->
-          <th scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
+          <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
         </tr>
-      <tbody>
-        <tr v-for="topic in TopicTableData" v-bind:key="topic.name">
+      <tbody style="width:100%">
+        <tr style="width:100%" v-for="topic in TopicTableData" v-bind:key="topic.name">
           <td v-bind:class="topic.cssId" id="country-name">
             {{topic.name}}
           </td>

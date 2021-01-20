@@ -1,6 +1,5 @@
 <template>
   <main id="ins">
-
     <section id="page-title" class="container-fluid">
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">INS Lessons</h1></div>
@@ -17,7 +16,7 @@
     </section>
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
-        <column :lg="8" :xs="6"><h2>Number of lessons using INS {{country}} {{school}}</h2></column>
+        <column :lg="8" :xs="6"><h2>Number of lessons using INS {{country}} {{camp}} {{school}}</h2></column>
         <column class="chart-summary" :lg="4" :xs="6">
           <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span><h3>using INS</h3></div>
           <div class="growth-rate"> <h1>{{growthRate}}</h1> <h3>last 12months</h3></div>
@@ -27,7 +26,7 @@
     <section class="chart-area">
       <row :gutter="12" class="chart-main">
         <column :lg="7.5" class="line-chart-area">
-          <h3> No of lessons</h3>
+          <h3> No of lessons in {{selectedYear}}</h3>
           <line-chart :chart-data="chartData" :options="options" v-if="linechartShow === true"></line-chart>
           <stacked-bar-chart id="stacked-bar-chart" :chart-data="stackedBarChartData" :options="stackedBarchartOption" v-if="stackedChartShow === true"></stacked-bar-chart>
           <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column>
@@ -57,9 +56,9 @@
                 <!-- Topic summary -->
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="stackedChartShow === true">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                      <h2 style="display: inline; margin-right: 5px; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.vForId }}
-                      </h1>
+                      </h2>
                   </div>
                 </div>
                 <!-- Topic summary end -->
@@ -83,7 +82,7 @@ import BarChart from '../components/BarChart.js'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
-import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTableData } from '../data/data-provider.js'
+import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics } from '../data/data-provider.js'
 import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme, getTopicColorSchme } from '../data/colour-scheme.js'
 
 export default {
@@ -114,6 +113,7 @@ export default {
       camps: [],
       schools: [],
       country: '',
+      camp: '',
       school: '',
       checkedItems: [],
       totalLessons: '',
@@ -157,7 +157,7 @@ export default {
       },
       stackedBarchartOption: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         scales: {
           xAxes: [{
             stacked: true,
@@ -167,8 +167,10 @@ export default {
           }],
           yAxes: [{
             stacked: true,
-            beginAtZero: true,
-            suggestedMin: true
+            suggestedMin: true,
+            ticks: {
+              beginAtZero: true
+            }
           }]
         },
         legend: {
@@ -183,8 +185,15 @@ export default {
     this.countries = getCountries() // Set initial Country select box options
     this.yearOptions = setYearSelectBox() // Set initial Year select box options
     this.updateData()
+    this.changeIconColor()
   },
   methods: {
+    changeIconColor () {
+      const dashboard = document.getElementById('dashboard')
+      const home = document.getElementById('home-icon')
+      home.style.border = '0px'
+      dashboard.style.borderRight = '3px solid #8954BA'
+    },
     uncheckAllCheckboxes () {
       for (let i = 0; i < this.checkedItems.length; i++) {
         const checkedItem = this.checkedItems[i]
@@ -423,6 +432,9 @@ export default {
           this.selectedCountry = null
           this.selectedCamp = null
           this.selectedSchool = null
+          this.country = ''
+          this.camp = ''
+          this.school = ''
           break
         case 'Country':
           this.linechartShow = true
@@ -430,17 +442,22 @@ export default {
           this.selectedCamp = null
           this.selectedSchool = null
           this.camps = getCamps(this.selectedCountry)
+          this.country = '- ' + this.selectedCountry
+          this.camp = ''
+          this.school = ''
           break
         case 'Camp':
           this.linechartShow = true
           this.stackedChartShow = false
           this.selectedSchool = null
           this.schools = getSchools(this.selectedCountry, this.selectedCamp)
-          this.school = ', ' + this.selectedCamp
+          this.camp = ', ' + this.selectedCamp
+          this.school = ''
           break
         case 'School':
           this.linechartShow = false
           this.stackedChartShow = true
+          this.school = ', ' + this.selectedSchool
           break
       }
     },
@@ -479,29 +496,48 @@ export default {
       this.updateData()
     },
     selectedCountry () {
-      this.viewMode = 'Country'
-      this.uncheckAllCheckboxes()
-      this.updateData()
+      if (this.selectedCountry === null) {
+        console.log(this.selectedCountry)
+        this.viewMode = 'All'
+        this.uncheckAllCheckboxes()
+        this.updateData()
+      } else {
+        this.viewMode = 'Country'
+        this.uncheckAllCheckboxes()
+        this.updateData()
+      }
     },
     selectedCamp () {
-      this.viewMode = 'Camp'
-      this.uncheckAllCheckboxes()
-      this.updateData()
+      if (this.selectedCamp === null) {
+        this.viewMode = 'Country'
+        this.uncheckAllCheckboxes()
+        this.updateData()
+      } else {
+        this.viewMode = 'Camp'
+        this.uncheckAllCheckboxes()
+        this.updateData()
+      }
     },
     selectedSchool () {
-      this.viewMode = 'School'
-      this.uncheckAllCheckboxes()
-      this.updateData()
+      if (this.selectedSchool === null) {
+        this.viewMode = 'Camp'
+        this.uncheckAllCheckboxes()
+        this.updateData()
+      } else {
+        this.viewMode = 'School'
+        this.uncheckAllCheckboxes()
+        this.updateData()
+      }
     }
   }
 }
 </script>
 
 <style>
-main {
+main#ins {
   display: flex;
   flex-direction: column;
-  padding: 10rem 6rem 5rem 10rem;
+  padding: 10rem 8rem 5rem 12rem;
 }
 
 .navbar {
@@ -509,6 +545,7 @@ main {
 }
 .back {
   align-self: start;
+  padding: 1.5rem 0 1.5rem 0;
 }
 
 .title {
@@ -525,7 +562,7 @@ main {
 }
 
 .back {
-  padding-bottom: var(--padding-wide);
+  padding-bottom: 3rem;
   align-items: center;
 }
 
@@ -535,18 +572,17 @@ main {
 }
 
 .title {
-  padding-bottom: calc(var(--padding-wide)/1.5);
+  padding-bottom: 2rem;
 }
 
 .container[data-v-42e9a5e0] {
   width: 100% !important;
 }
 
-#select-area{
+#select-area {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
-  padding-bottom: calc(var(--padding-wide)/1.5);
 }
 
 #select-area h3 {
@@ -599,15 +635,10 @@ main {
 }
 
 /* selectbox design customizing end */
-
-/* #vs1__listbox {
-  border: 1px, solid
-} */
-
 .chart-title-area {
   display: flex;
   color: var(--color-purple);
-  margin-top: 1.5rem;
+  margin-top: 3rem;
 }
 
 .chart-summary {
@@ -683,9 +714,9 @@ main {
 
 .line-chart-area {
   padding: 3rem 0 0 3rem !important;
-  /* padding-top: 3rem !important; */
   display: flex;
   flex-direction: column;
+  border-right: 1px solid var(--color-light-grey)
 }
 
 canvas#line-chart.chartjs-render-monitor {
@@ -695,7 +726,6 @@ canvas#line-chart.chartjs-render-monitor {
 .line-chart-area h3 {
   font-family: Helvetica;
   font-size: 12px;
-  /* color: #666666; */
   letter-spacing: -0.01px;
   text-align: left;
 }
@@ -704,21 +734,19 @@ canvas#line-chart.chartjs-render-monitor {
   display: flex;
   flex-direction: column;
   height: 100%;
+  border: none;
   align-items: center;
-  border-left: solid 1px var(--color-light-grey);
+  padding: 1rem;
 }
 
 .text-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   height: 100%;
-  margin-right: 1rem;
+  width: 100%;
 }
 
 .summary-text{
   color: #D8D8D8;
-  align-items: flex-start;
 }
 
 .chart-container {
@@ -731,36 +759,27 @@ canvas#line-chart.chartjs-render-monitor {
   margin-top: 1rem;
 }
 
-#bar-chart #bar-chart {
+.summary-area #bar-chart #bar-chart {
   width: 100px !important;
   height: 50px !important;
 }
 
-.stacked-bar-chart {
-  display: flex;
-}
-
-#stacked-bar-chart #bar-chart {
+#stacked-bar-chart canvas#bar-chart.chartjs-render-monitor {
   width: 100% !important;
-  height: 50% !important;
-}
-
-#stacked-bar-chart canvas {
-  width: 100% !important;
-  height: 50% !important;
+  height: 400px !important;
+  padding-right: 3rem;
 }
 
 .country-wrapper {
   display: flex;
   align-items: center;
-  height: 100px;
-  padding: 10px;
+  height: 80px;
+  padding: 1rem 2.5rem 1rem 2.5rem;
 }
 
 label {
   display: flex;
   flex-direction: row;
-  /* align-content: center; */
   text-align: left;
   color: var(--color-light-grey);
 }
@@ -770,11 +789,10 @@ label div {
   width:18px;
   height:18px;
   background:white;
-  border:1px solid var(--color-light-grey);
+  /* border:1px solid var(--color-light-grey); */
   cursor:pointer;
   border-radius: 3px;
-  margin-right: 10px;
-  /* align-self: center; */
+  /* margin-right: 10px; */
 }
 
 .table-responsive {
