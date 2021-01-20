@@ -145,7 +145,7 @@ h3 {
   bottom: 0;
   width: 60px;
   height: 95%;
-  padding-top: 132px;
+  padding-top: 9%;
   justify-content: space-around;
   background-color: #ffffff
 }
