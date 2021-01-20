@@ -52,15 +52,15 @@ export default {
     }
   },
   mounted () {
-    this.changeIconColor()
+    // this.changeIconColor()
   },
   methods: {
-    changeIconColor () {
-      const dashboard = document.getElementById('dashboard')
-      const home = document.getElementById('home-icon')
-      dashboard.style.border = '0px'
-      home.style.borderRight = '3px solid #8954BA'
-    }
+    // changeIconColor () {
+    //   const dashboard = document.getElementById('dashboard')
+    //   const home = document.getElementById('home-icon')
+    //   dashboard.style.border = '0px'
+    //   home.style.borderRight = '3px solid #8954BA'
+    // }
   }
 }
 </script>

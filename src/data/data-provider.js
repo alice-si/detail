@@ -111,5 +111,5 @@ export function setYearSelectBox (country, camp, school) {
     uniqueYear = yearlyIndex.filter((item, index) => yearlyIndex.indexOf(item) === index).sort((a, b) => b - a)
   }
 
-  return uniqueYear
+  return uniqueYear.slice(1, uniqueYear.length)
 }

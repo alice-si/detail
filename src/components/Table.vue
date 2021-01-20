@@ -17,7 +17,7 @@
           <th style="width:3%" scope="col">11</th>
           <th style="width:3%" scope="col">12</th>
           <th style="width:16%" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
-          <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
+          <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
       <tbody style="width:100%">
         <tr style="width:100%" v-for="country in tableData" v-bind:key="country.name">
@@ -44,6 +44,7 @@ export default {
     return {
       sortedByName: false,
       sortedByLessons: false,
+      sortedByDifference: false,
       tableName: 'Name'
     }
   },
@@ -67,6 +68,17 @@ export default {
       } else if (this.sortedByLessons === true) {
         const sorted = this.tableData
         sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
+        this.sortedByLessons = false
+      }
+    },
+    sortTableDatabyDifference () {
+      if (this.sortedByDifference === false) {
+        const unsorted = this.tableData
+        unsorted.sort((a, b) => (a.difference > b.difference) ? 1 : -1)
+        this.sortedByLessons = true
+      } else if (this.sortedByDifference === true) {
+        const sorted = this.tableData
+        sorted.sort((a, b) => (a.difference < b.difference) ? 1 : -1)
         this.sortedByLessons = false
       }
     }

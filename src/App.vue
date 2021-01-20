@@ -16,9 +16,8 @@
       </header>
       <aside class="vertical-nav">
         <nav class="navbar navbar-light bg-white flex-column justify-content-start">
-            <!-- <router-link to="/"><inline-svg id="home-icon" :src='require("../src/assets/Home.svg")'></inline-svg></router-link> -->
-            <router-link to="/"><img src='../src/assets/Home.svg' id="home-icon" class="home" alt="home" ></router-link>
-            <router-link to="/ins"><img src='../src/assets/Dashboard.svg' id="dashboard" class="dashboard" alt="dashboard"></router-link>
+            <router-link to="/"><img :src="homeImgSrc" id="home-icon" class="home" alt="home"></router-link>
+            <router-link to="/ins"><img :src="dashboardImgSrc" id="dashboard" class="dashboard" alt="dashboard"></router-link>
             <!-- FIXME: change link directory -->
             <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
             <!-- FIXME: change link directory -->
@@ -35,8 +34,34 @@
 import InlineSvg from 'vue-inline-svg'
 
 export default {
-  components: {
-    InlineSvg
+  data () {
+    return {
+      homeImgSrc: require('../src/assets/Home-selected.svg'),
+      dashboardImgSrc: require('../src/assets/Dashboard.svg')
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      const clickedRoute = to.name
+      console.log('clickedRoute', clickedRoute)
+      const homeIcon = document.getElementById('home-icon')
+      const dashboardIcon = document.getElementById('dashboard')
+
+      switch (clickedRoute) {
+        case 'home':
+          this.homeImgSrc = require('../src/assets/Home-selected.svg')
+          this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
+          dashboardIcon.style.border = '0px'
+          homeIcon.style.borderRight = '3px solid #8954BA'
+          break
+        case 'ins':
+          this.homeImgSrc = require('../src/assets/Home.svg')
+          this.dashboardImgSrc = require('../src/assets/Dashboard-selected.svg')
+          homeIcon.style.border = '0px'
+          dashboardIcon.style.borderRight = '3px solid #8954BA'
+          break
+      }
+    }
   }
 }
 
@@ -166,6 +191,7 @@ h3 {
 
 #home-icon {
   padding: 0 12px 0 12px;
+  border-right: 3px solid #8954BA;
 }
 
 .dashboard {

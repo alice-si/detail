@@ -99,7 +99,7 @@ export default {
       selectedCountry: null,
       selectedCamp: null,
       selectedSchool: null,
-      selectedYear: 2020,
+      selectedYear: 2019,
       chartData: {},
       linechartShow: true,
       stackedChartShow: false,
@@ -185,15 +185,15 @@ export default {
     this.countries = getCountries() // Set initial Country select box options
     this.yearOptions = setYearSelectBox() // Set initial Year select box options
     this.updateData()
-    this.changeIconColor()
+    // this.changeIconColor()
   },
   methods: {
-    changeIconColor () {
-      const dashboard = document.getElementById('dashboard')
-      const home = document.getElementById('home-icon')
-      home.style.border = '0px'
-      dashboard.style.borderRight = '3px solid #8954BA'
-    },
+    // changeIconColor () {
+    //   const dashboard = document.getElementById('dashboard')
+    //   const home = document.getElementById('home-icon')
+    //   home.style.border = '0px'
+    //   dashboard.style.borderRight = '3px solid #8954BA'
+    // },
     uncheckAllCheckboxes () {
       for (let i = 0; i < this.checkedItems.length; i++) {
         const checkedItem = this.checkedItems[i]
