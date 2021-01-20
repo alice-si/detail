@@ -16,10 +16,10 @@
     </section>
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
-        <column :lg="8" :xs="6"><h2>Number of lessons using INS {{country}} {{camp}} {{school}}</h2></column>
+        <column :lg="8" :xs="6"><h2 style="font-size:2rem;">Number of lessons using INS {{country}} {{camp}} {{school}}</h2></column>
         <column class="chart-summary" :lg="4" :xs="6">
-          <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span><h3>using INS</h3></div>
-          <div class="growth-rate"> <h1>{{growthRate}}</h1> <h3>last 12months</h3></div>
+          <div class="total-lessons"> <span><h1 style="font-size:2.5rem;">{{ totalLessons }}</h1> <h2 style="font-size:2rem;">lessons</h2></span><h3 style="font-size:1rem;">using INS</h3></div>
+          <div class="growth-rate"> <h1 style="font-size:2.5rem;">{{growthRate}}</h1> <h3>last 12months</h3></div>
         </column>
       </row>
     </section>
@@ -43,10 +43,10 @@
                 <!-- Lessons summary start-->
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="linechartShow === true">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                      <h1 style="display: inline; margin-right: 5px; color:'#D8D8D8'; font-size:2.5rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.totalLessons }}
                       </h1>
-                      <h2 style="display: inline; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
+                      <h2 style="display: inline; color:'#D8D8D8'; font-size:2rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
                   </div>
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
                     <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
@@ -56,7 +56,7 @@
                 <!-- Topic summary -->
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="stackedChartShow === true">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h2 style="display: inline; margin-right: 5px; color:'#D8D8D8';" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                      <h2 style="display: inline; margin-right: 5px; color:'#D8D8D8'; font-size: 2rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.vForId }}
                       </h2>
                   </div>

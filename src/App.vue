@@ -77,7 +77,7 @@ html {
   background-color: #F5F7FC;
   width: 100vw;
   height: 100vh;
-  font-size: 10px;
+  font-size: 62.5%;
   font-family: Helvetica;
 }
 
