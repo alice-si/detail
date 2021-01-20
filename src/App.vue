@@ -148,7 +148,7 @@ h3 {
   justify-content: space-around;
   background-color: #ffffff;
   top: 62px;
-  padding-top: 100px;
+  padding-top: 110px;
 }
 
 .vertical-nav > ul {
