@@ -825,4 +825,8 @@ table#table-content tr {
   width: 100%;
 }
 
+.sort-button {
+  margin-left: 0.7rem;
+}
+
 </style>
