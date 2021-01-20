@@ -469,6 +469,7 @@ export default {
           dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
           dom[3].style.color = checkedColor // V
           dom[4].style.color = checkedColor // Topic text
+
           dom[tableFontDomIndex].style.color = checkedColor // Table name
         } else if (dom.length !== 0 && !dom[0].checked) {
           dom[1].style.color = '#D8D8D8'
@@ -490,7 +491,6 @@ export default {
     },
     selectedCountry () {
       if (this.selectedCountry === null) {
-        console.log(this.selectedCountry)
         this.viewMode = 'All'
         this.uncheckAllCheckboxes()
         this.updateData()

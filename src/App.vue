@@ -39,7 +39,7 @@ export default {
     }
   },
   watch: {
-    '$route' (to, from) {
+    '$route' (to) {
       const clickedRoute = to.name
       const homeIcon = document.getElementById('home-icon')
       const dashboardIcon = document.getElementById('dashboard')
@@ -77,7 +77,7 @@ html {
   background-color: #F5F7FC;
   width: 100vw;
   height: 100vh;
-  font-size: 62.5%;
+  font-size: 10px;
   font-family: Helvetica;
 }
 

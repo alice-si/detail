@@ -23,38 +23,10 @@
         </column>
       </row>
     </section>
-    <!-- <section class="chart-area">
-      <row :gutter="12" class="chart-main">
-        <column :lg="8" class="line-chart-area">
-          <h3> No of lessons</h3>
-          <line-chart :chart-data="chartData" :options="options"></line-chart>
-        </column>
-        <column :lg="4" class="summary-area">
-          <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
-            <div class="text-container">
-              <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
-                <label v-bind:class="country.cssId" v-bind:for="country.cssId">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="justify-content:center; align-item:center;">
-                    <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px; width:10px; height:10px;">V</span>
-                  </div>
-                </label>
-                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">{{ lessonsByCountries[country.propId] }}</h1>
-                      <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
-                  </div>
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
-                    <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
-                  </div>
-                </div>
-            </div>
-            <div class="chart-container">
-              <bar-chart :chart-data="barChartData[country.propId]" :options="barchartOption"></bar-chart>
-            </div>
-          </div>
-        </column>
-      </row>
-     </section>  -->
+    <section class="chart-area">
+
+    </section>
+
   </main>
 </template>
 
