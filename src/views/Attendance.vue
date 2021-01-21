@@ -24,28 +24,92 @@
       </row>
     </section>
     <section class="chart-area">
+      <row :gutter="12" class="chart-main">
+        <column :lg="7.5" class="line-chart-area">
+          <h3> No of students attending</h3>
+          <attendance-bar-chart :chart-data="barChartData"></attendance-bar-chart>
+          <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column>
+        </column>
+        <column :lg="4" class="summary-area">
+          here comes summary
+        </column>
+      </row>
 
+      <Table :tableData="tableData" v-if="linechartShow === true"></Table>
+      <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic>
     </section>
 
   </main>
 </template>
 
 <script>
-
+import AttendanceBarChart from '../components/AttendanceBarChart'
 export default {
-  name: 'attendance'
-  // components: {
+  name: 'attendance',
+  components: {
+    AttendanceBarChart
+  },
+  data () {
+    return {
+      barChartData: { title: {
+        text: 'Multiple Y Axis'
+      },
+      axisX: {
+        valueFormatString: '####',
+        interval: 1
+      },
+      axisY: [{
+        title: 'Linear Scale',
+        lineColor: '#369EAD',
+        titleFontColor: '#369EAD',
+        labelFontColor: '#369EAD'
+      }],
+      data: [{
+        type: 'column',
+        showInLegend: true,
+        // axisYIndex: 0, //Defaults to Zero
+        name: 'Axis Y-1',
+        xValueFormatString: '####',
+        dataPoints: [
+          { x: 2006, y: 6 },
+          { x: 2007, y: 2 },
+          { x: 2008, y: 5 },
+          { x: 2009, y: 7 },
+          { x: 2010, y: 1 },
+          { x: 2011, y: 5 },
+          { x: 2012, y: 5 },
+          { x: 2013, y: 2 },
+          { x: 2014, y: 2 }
+        ] },
+      {
+        type: 'column',
+        showInLegend: true,
+        axisYType: 'secondary',
+        // axisYIndex: 0, //Defaults to Zero
+        name: 'Axis Y2-1',
+        xValueFormatString: '####',
+        dataPoints: [
+          { x: 2006, y: 12 },
+          { x: 2007, y: 20 },
+          { x: 2008, y: 28 },
+          { x: 2009, y: 34 },
+          { x: 2010, y: 24 },
+          { x: 2011, y: 45 },
+          { x: 2012, y: 15 },
+          { x: 2013, y: 34 },
+          { x: 2014, y: 22 }
+        ]
+      }]
+      }
 
-  // },
-  // data () {
-  //   return {
-
-  //   }
+    }
+  }
   // },
   // mounted () {
 
   // },
   // methods: {
+  //   getBarChartData() {
 
   // }
 }
