@@ -17,49 +17,134 @@
     <section id="select-area" class="container-fluid">
       <row :gutter="12">
         <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5"><v-select :options="countries" @input="changeCountry" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
+        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
         <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5"><v-select :options="camps" @input="changeCamp" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate"></v-select></column>
+        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate"></v-select></column>
         <column :lg="1.5"><h3>Select School</h3></column>
-        <column :lg="2.5"><v-select :options="schools" @input="changeSchool" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column>
+        <column :lg="2.5"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column>
       </row>
     </section>
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
-        <column :lg="7" :xs="6"><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
+        <column :lg="9" :xs="6"><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
         <column :lg="3" :xs="6">
-          <div class="total-lessons"> <span><h1>+38%</h1> <h3>skills/students</h3></span><h3>after INS(Oct 2020)</h3></div>
+          <div class="total-skills"> <span><h1>+38%</h1><h2>skills/students</h2></span></br><h3>after INS (Oct 2020)</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
     </section>
-       <section class="chart-area">
+    <section class="chart-area">
       <row :gutter="12" class="chart-main">
-        <column :lg="7.5" class="attendance-bar-chart-area">
-          <h3> No of students attending</h3>
+        <column :lg="8" class="ictskills-bar-chart-area">
+          <h3> Avg No of ICT skills/student</h3>
           <group-bar-chart :chart-data="barChartData" :options="options"></group-bar-chart>
-          <!-- <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column> -->
+          <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
         </column>
         <column :lg="4" class="summary-area">
-          here comes summary
+          <row>
+            <column class="summary-grid" :lg="6">
+            <input type="checkbox" id="select-1" style="display:none">
+              <label class="select-1" for="select-1">
+                <div style="justify-content:center; align-item:center;">
+                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div class="checkbox-text-area">
+                <h1>+30%</h1>
+                <h3>in Lycee de Paix</h3>
+              </div>
+            </column>
+            <column class="summary-grid" :lg="6">
+              <input type="checkbox" id="select-2" style="display:none">
+              <label class="select-2" for="select-2">
+                <div style="justify-content:center; align-item:center;">
+                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div class="checkbox-text-area">
+                <h1>+42%</h1>
+                <h3>in Amani</h3>
+              </div>
+            </column>
+          </row>
+          <row>
+            <column class="summary-grid" :lg="6">
+              <input type="checkbox" id="select-3" style="display:none">
+              <label class="select-3" for="select-3">
+                <div style="justify-content:center; align-item:center;">
+                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div class="checkbox-text-area">
+                <h1>+51%</h1>
+                <h3>in Amitie</h3>
+              </div>
+            </column>
+            <column class="summary-grid" :lg="6">
+              <input type="checkbox" id="select-4" style="display:none">
+              <label class="select-4" for="select-4">
+                <div style="justify-content:center; align-item:center;">
+                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div class="checkbox-text-area">
+                <h1>+33%</h1>
+                <h3>in Rehema</h3>
+              </div>
+            </column>
+          </row>
+          <row>
+            <column class="summary-grid" :lg="6">
+              <input type="checkbox" id="select-5" style="display:none">
+              <label class="select-5" for="select-5">
+                <div style="justify-content:center; align-item:center;">
+                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div class="checkbox-text-area">
+                <h1>+22%</h1>
+                <h3>in Hodari</h3>
+              </div>
+            </column>
+            <column class="summary-grid" :lg="6">
+              <input type="checkbox" id="select-6" style="display:none">
+              <label class="select-6" for="select-6">
+                <div style="justify-content:center; align-item:center;">
+                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div class="checkbox-text-area">
+                <h1>+18%</h1>
+                <h3>in Fraternite</h3>
+              </div>
+            </column>
+          </row>
         </column>
       </row>
-
-      <!-- <Table :tableData="tableData" v-if="linechartShow === true"></Table>
-      <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic> -->
+      <table-for-ICT></table-for-ICT>
     </section>
   </main>
 </template>
 
 <script>
 import GroupBarChart from '../components/GroupBarChart'
+import TableForICT from '../components/TableForICT.vue'
+import { getCountries } from '../data/data-provider'
 export default {
   name: 'attendance',
   components: {
-    GroupBarChart
+    GroupBarChart,
+    TableForICT
   },
   data () {
     return {
+      countries: [],
+      camps: [],
+      schools: [],
+      selectedCountry: null,
+      selectedCamp: null,
+      selectedSchool: null,
+      compareyears: ['Before INS (Oct 2017) vs After INS (Oct 2018)', 'Before INS (Oct 2017) vs After INS (Oct 2019)', 'Before INS (Oct 2017) vs After INS (Oct 2020)'],
       barChartData: {
         labels: ['Kenya', 'Tanzania', 'Soutn Sudan', 'DR Congo'],
         datasets: [{
@@ -84,6 +169,7 @@ export default {
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
+            gridLines: { color: '#ffffff' },
             display: true,
             stacked: false,
             ticks: {
@@ -101,8 +187,13 @@ export default {
     }
   },
   mounted () {
-    console.log('this.barChartData', this.barChartData)
+    this.countries = getCountries()
   }
+  // methods: {
+  //   updateData () {
+
+  //   }
+  // }
 }
 </script>
 
@@ -118,7 +209,7 @@ main#ict-skills {
   padding: 1.5rem 0 1.5rem 0;
 }
 
-.title {
+.page-title-container .title {
   font-family: Helvetica;
   font-size: 3.4rem;
   color: var(--color-purple);
@@ -195,9 +286,69 @@ main#ict-skills {
   box-shadow: 0 0 0 0 #f2f2f2 inset;
   border-radius: 8px;
 }
+/* toggle end */
 
-.container[data-v-42e9a5e0] {
-  width: 100% !important;
+/* fake checkbox decoration  */
+.summary-area label div {
+  display:flex;
+  width:18px;
+  height:18px;
+  background:white;
+  border:1px solid var(--color-light-grey);
+  cursor:pointer;
+  border-radius: 3px;
+  margin: 0 2rem 0 2rem;
+}
+
+.summary-grid {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom : 1.5rem;
+  color: var(--color-dark-grey);
+}
+
+.summary-grid h1 {
+  font-size: 2.5rem;
+}
+
+.summary-grid h3 {
+  font-size: 1rem;
+}
+
+.checkbox-text-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-text-area {
+  text-align: left;
+}
+
+.chart-title h2 {
+  font-size: 2rem;
+  font-weight: 100;
+}
+
+.total-skills h1,
+.total-skills h2,
+.total-skills h3 {
+  display: inline;
+  color: var(--color-purple);
+}
+
+.total-skills h1 {
+  font-size: 2.5rem;
+  margin-right: 0.5rem;
+}
+
+.total-skills h2 {
+  font-size: 2rem;
+  font-weight: 100;
+}
+
+.total-skills h3 {
+  font-size: 1rem;
+  font-weight: 100;
 }
 
 #select-area {
@@ -292,32 +443,46 @@ main#ict-skills {
   color: var(--color-purple)
 }
 
-.attendance-bar-chart-area {
-  padding: 3rem 0 0 3rem !important;
+.ictskills-bar-chart-area {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--color-light-grey)
 }
 
-.attendance-bar-chart-area h3 {
+.ictskills-bar-chart-area h3 {
   font-family: Helvetica;
   font-size: 12px;
   letter-spacing: -0.01px;
   text-align: left;
 }
 
-.attendance-bar-chart-area canvas#bar-chart.chartjs-render-monitor {
-  width: 100% !important;
-  height: 100% !important;
+.ictskills-bar-chart-area #bar-chart {
+  padding: 2rem 3rem 1.5rem 0;
 }
 
 .summary-area {
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
   border: none;
   align-items: center;
-  padding: 1rem;
+  padding-left: 1rem;
+}
+
+#compare-select-box {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+#compare-select-box .vs__dropdown-toggle .vs__selected-options .vs__search::placeholder {
+  text-align: right;
+}
+
+#compare-year {
+  width: 350px;
+  padding: 0 3rem 1.5rem 0;
 }
 
 </style>

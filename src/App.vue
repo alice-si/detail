@@ -206,7 +206,7 @@ h3 {
 }
 
 /* selectbox design customizing start */
-/* #vs__selected {
+#vs__selected {
   font-size: 1.4rem;
 }
 
@@ -242,7 +242,7 @@ h3 {
   border: none;
   border-radius: 2px;
   font-size: 1.4rem;
-} */
+}
 
 /* selectbox design customizing end */
 </style>

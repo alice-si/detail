@@ -69,7 +69,6 @@
           </div>
         </column>
       </row>
-
       <Table :tableData="tableData" v-if="linechartShow === true"></Table>
       <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic>
     </section>
