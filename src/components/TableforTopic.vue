@@ -20,6 +20,7 @@
           <!-- TODO:% of total usage?? -->
           <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
+      </thead>
       <tbody style="width:100%">
         <tr style="width:100%" v-for="topic in TopicTableData" v-bind:key="topic.name">
           <td v-bind:class="topic.cssId" id="country-name">
@@ -30,7 +31,6 @@
           </th>
         </tr>
       </tbody>
-      </thead>
     </table>
   </div>
 </template>

@@ -204,4 +204,45 @@ h3 {
 .home #Home {
   background: var(--color-purple)
 }
+
+/* selectbox design customizing start */
+/* #vs__selected {
+  font-size: 1.4rem;
+}
+
+.select-country .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
+
+.select-camp .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
+
+.select-school .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
+
+.vs__dropdown-toggle {
+  border-radius: 2px;
+  background-color: #ffffff70;
+  border-color:#ffffff70;
+  padding: 1rem;
+}
+
+.vs__dropdown-toggle:active {
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+
+.vs__dropdown-menu {
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.4rem;
+} */
+
+/* selectbox design customizing end */
 </style>

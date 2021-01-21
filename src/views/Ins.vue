@@ -43,7 +43,7 @@
                 <!-- Lessons summary start-->
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="linechartShow === true">
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; color:'#D8D8D8'; font-size:2.5rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                      <h1 style="display: inline; color:'#D8D8D8'; font-size:2.5rem; font-weight:500;" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.totalLessons }}
                       </h1>
                       <h2 style="display: inline; color:'#D8D8D8'; font-size:2rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
@@ -106,8 +106,8 @@ export default {
       barChartData: [],
       stackedBarChartData: {},
       tableData: [],
-      summaryBoxData: [],
       TopicTableData: [],
+      summaryBoxData: [],
       yearOptions: [],
       countries: [],
       camps: [],
@@ -789,22 +789,23 @@ canvas#line-chart.chartjs-render-monitor {
   padding: 1rem 2.5rem 1rem 2.5rem;
 }
 
-label {
+.text-container {
   display: flex;
   flex-direction: row;
   text-align: left;
   color: var(--color-light-grey);
+  align-items: center;
 }
 
-label div {
+.text-container label div {
   display:flex;
   width:18px;
   height:18px;
   background:white;
-  /* border:1px solid var(--color-light-grey); */
+  border:1px solid var(--color-light-grey);
   cursor:pointer;
   border-radius: 3px;
-  /* margin-right: 10px; */
+  margin-right: 10px;
 }
 
 .table-responsive {

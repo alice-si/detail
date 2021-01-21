@@ -59,6 +59,7 @@ export default {
 main#home {
   display: flex;
   flex-direction: column;
+  padding: 10rem 8rem 5rem 12rem;
 }
 
 #filtering-area {

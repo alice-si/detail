@@ -2,7 +2,17 @@
   <main id="ict-skills">
     <section id="page-title" class="container-fluid">
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
-      <div><h1 class="title">ICT Skills</h1></div>
+      <row :gutter="12" class="page-title-container">
+        <column :lg="7" :xs="6"><h1 class="title">ICT Skills</h1></column>
+        <column :lg="5" :xs="6" class="toggle-area">
+        <h3>Students</h3>
+          <div class="wrap">
+            <input type="checkbox" id="s5" />
+            <label class="slider" for="s5"></label>
+          </div>
+        <h3>Teachers</h3>
+        </column>
+      </row>
     </section>
     <section id="select-area" class="container-fluid">
       <row :gutter="12">
@@ -16,357 +26,298 @@
     </section>
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
-        <column :lg="8" xs-6><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
-        <column :lg="4" xs-6>
-          <div class="total-lessons"> <span><h1>+38%</h1> <h2>skills/students</h2></span><h3>after INS(Oct 2020)</h3></div>
+        <column :lg="7" :xs="6"><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
+        <column :lg="3" :xs="6">
+          <div class="total-lessons"> <span><h1>+38%</h1> <h3>skills/students</h3></span><h3>after INS(Oct 2020)</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
     </section>
-    <!-- <section class="chart-area">
+       <section class="chart-area">
       <row :gutter="12" class="chart-main">
-        <column :lg="8" class="line-chart-area">
-          <h3> No of lessons</h3>
-          <line-chart :chart-data="chartData" :options="options"></line-chart>
+        <column :lg="7.5" class="attendance-bar-chart-area">
+          <h3> No of students attending</h3>
+          <group-bar-chart :chart-data="barChartData" :options="options"></group-bar-chart>
+          <!-- <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column> -->
         </column>
         <column :lg="4" class="summary-area">
-          <div class="country-wrapper" v-for="country in dictForVfor" v-bind:key="country.vForId" :value="country.vForId">
-            <div class="text-container">
-              <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedCountries">
-                <label v-bind:class="country.cssId" v-bind:for="country.cssId">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="justify-content:center; align-item:center;">
-                    <span v-bind:class="country.cssId" v-bind:for="country.cssId" style="color:#ffffff; margin:2px; width:10px; height:10px;">V</span>
-                  </div>
-                </label>
-                <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; margin-right: 5px;" v-bind:class="country.cssId" v-bind:for="country.cssId">{{ lessonsByCountries[country.propId] }}</h1>
-                      <h2 style="display: inline;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
-                  </div>
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8';">
-                    <h2 style="font-size:1rem; text-align:left">in {{country.vForId}}</h2>
-                  </div>
-                </div>
-            </div>
-            <div class="chart-container">
-              <bar-chart :chart-data="barChartData[country.propId]" :options="barchartOption"></bar-chart>
-            </div>
-          </div>
+          here comes summary
         </column>
       </row>
-     </section>  -->
+
+      <!-- <Table :tableData="tableData" v-if="linechartShow === true"></Table>
+      <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic> -->
+    </section>
   </main>
 </template>
 
 <script>
-
+import GroupBarChart from '../components/GroupBarChart'
 export default {
-  name: 'attendance'
-  // components: {
-
-  // },
-  // data () {
-  //   return {
-
-  //   }
-  // },
-  // mounted () {
-
-  // },
-  // methods: {
-
-  // }
+  name: 'attendance',
+  components: {
+    GroupBarChart
+  },
+  data () {
+    return {
+      barChartData: {
+        labels: ['Kenya', 'Tanzania', 'Soutn Sudan', 'DR Congo'],
+        datasets: [{
+          // label: '2017',
+          // fill: true,
+          backgroundColor: ['rgb(232, 79, 137, 0.5)', 'rgb(47, 185, 239, 0.5)', 'rgb(103, 182, 117, 0.5)', 'rgb(247, 101, 17, 0.5)'],
+          borderColor: ['rgb(232, 79, 137, 0.5)', 'rgb(47, 185, 239, 0.5)', 'rgb(103, 182, 117, 0.5)', 'rgb(247, 101, 17, 0.5)'],
+          barThickness: 15,
+          data: ['30', '20', '10', '15']
+        }, {
+          // label: '2018',
+          // fill: true,
+          backgroundColor: ['#EA4C89', '#2FB9EF', '#67B675', '#f76511'],
+          borderColor: ['#EA4C89', '#2FB9EF', '#67B675', '#f76511'],
+          barThickness: 15,
+          data: ['56', '41', '53', '46']
+        }]
+      },
+      options: {
+        legend: { display: false },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{
+            display: true,
+            stacked: false,
+            ticks: {
+              // fontColor: '#EA4C89'
+            }
+          }],
+          yAxes: [{
+            display: true,
+            position: 'left',
+            ticks: {
+              beginAtZero: true
+            } }]
+        }
+      }
+    }
+  },
+  mounted () {
+    console.log('this.barChartData', this.barChartData)
+  }
 }
 </script>
 
 <style>
-  .text {
-    padding: 100px;
-    font-size: 100px;
-  }
-  main {
+main#ict-skills {
   display: flex;
   flex-direction: column;
-  padding: 10rem 6rem 5rem 10rem;
+  padding: 10rem 8rem 5rem 12rem;
 }
 
-    .navbar {
-      background: white;
-    }
-    .back {
-      align-self: start;
-    }
+.back {
+  align-self: start;
+  padding: 1.5rem 0 1.5rem 0;
+}
 
-    .title {
-      font-family: Helvetica;
-      font-size: 3.4rem;
-      color: var(--color-purple);
-      font-weight: 300;
-      text-align: left;
-    }
+.title {
+  font-family: Helvetica;
+  font-size: 3.4rem;
+  color: var(--color-purple);
+  font-weight: 300;
+  text-align: left;
+}
 
-    #page-title {
-      display: flex;
-      flex-direction: column;
-    }
+#page-title {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
 
-    .back {
-      padding-bottom: var(--padding-wide);
-      align-items: center;
-    }
+.back {
+  padding-bottom: 3rem;
+  align-items: center;
+}
 
-    .back a {
-      color: var(--color-dark-grey);
-      font-size: 1.2rem;
-    }
+.back a {
+  color: var(--color-dark-grey);
+  font-size: 1.2rem;
+}
 
-    .title {
-      padding-bottom: calc(var(--padding-wide)/1.5);
-    }
+.title {
+  padding-bottom: 0rem;
+}
 
-    .container[data-v-42e9a5e0] {
-      width: 100% !important;
-    }
+.toggle-area {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
 
-    #select-area{
-      display: flex !important;
-      flex-direction: row !important;
-      align-items: center !important;
-      padding-bottom: calc(var(--padding-wide)/1.5);
-    }
+.toggle-area h3 {
+  font-size: 1.2rem;
+  font-weight: 100;
+  margin: 0;
+}
 
-    #select-area h3 {
-      color: var(--color-dark-grey)
-    }
+/* toggle */
+/* background */
+.wrap label { margin: 0 1rem 0 1rem }
+.wrap input { position:absolute; left:-9999px }
 
-    .colVGR {
-      padding: 0px !important;
-      align-self: center;
-      border-radius: 0px;
-    }
+.slider {
+  position: relative; display: block;
+  width: 14em; height: 2em;
+  cursor: pointer;
+  transition: 550ms;
+  border: 1px solid var(--color-light-grey);
+  border-radius: 8px;
+}
 
-    /* selectbox design customizing start */
-    #vs__selected {
-      font-size: 1.4rem;
-    }
+/* switch */
+.slider::after {
+  position: absolute; content:'';
+  width: 4em; height: 2em;
+  top: 0em; left: 0em;
+  border-radius: 8px;
+  transition:
+    width 200ms ease-out,
+    height 300ms 50ms ease-in,
+    top 300ms 50ms ease-in,
+    left 250ms 50ms ease-in,
+    background 300ms ease-in,
+    box-shadow 300ms ease-in;
+  background:  var(--color-purple);
+}
 
-    .select-country .vs__search::placeholder {
-      color: var(--color-dark-grey);
-      font-size: 1.4rem;
-    }
+.wrap input:checked + .slider::after {
+  width: 4em; height: 2em;
+	top: 0; left: 10em;
+  background: var(--color-purple);
+  box-shadow: 0 0 0 0 #f2f2f2 inset;
+  border-radius: 8px;
+}
 
-    .select-camp .vs__search::placeholder {
-      color: var(--color-dark-grey);
-      font-size: 1.4rem;
-    }
+.container[data-v-42e9a5e0] {
+  width: 100% !important;
+}
 
-    .select-school .vs__search::placeholder {
-      color: var(--color-dark-grey);
-      font-size: 1.4rem;
-    }
+#select-area {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
 
-    .vs__dropdown-toggle {
-      border-radius: 2px;
-      background-color: #ffffff70;
-      border-color:#ffffff70;
-      padding: 1rem;
-    }
+#select-area h3 {
+  color: var(--color-dark-grey)
+}
 
-    .vs__dropdown-toggle:active {
-      background-color: #ffffff;
-      border-color: #ffffff;
-    }
+.colVGR {
+  padding: 0px !important;
+  align-self: center;
+  border-radius: 0px;
+}
 
-    .vs__dropdown-menu {
-      box-shadow: none;
-      border: none;
-      border-radius: 2px;
-      font-size: 1.4rem;
-    }
+/* selectbox design customizing start */
+#vs__selected {
+  font-size: 1.4rem;
+}
 
-    #vs1__combobox {
-      background-color:#ffffff;
-      border: none;
-      border-radius: 2px;
-    }
+.select-country .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
 
-    #vs1__combobox .vs__search::placeholder {
-      color: var(--color-dark-grey);
-    }
+.select-camp .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
 
-    #vs1__combobox .vs__no-options:active {
-      background-color: #ffffff;
-      border-color: #ffffff;
-    }
+.select-school .vs__search::placeholder {
+  color: var(--color-dark-grey);
+  font-size: 1.4rem;
+}
 
-    #vs1__listbox .vs__dropdown-menu {
-      box-shadow: none;
-      border: none;
-      border-radius: 2px;
-      font-size: 1.4rem;
-    }
+.vs__dropdown-toggle {
+  border-radius: 2px;
+  background-color: #ffffff70;
+  border-color:#ffffff70;
+  padding: 1rem;
+}
 
-    /* selectbox design customizing end */
+.vs__dropdown-toggle:active {
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
 
-    /* #vs1__listbox {
-      border: 1px, solid
-    } */
+.vs__dropdown-menu {
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.4rem;
+}
 
-    .chart-title-area {
-      display: flex;
-      color: var(--color-purple);
-      margin-top: 1.5rem;
-      /* margin-left: 10.5rem;
-      margin-top: 5rem; */
-    }
+/* selectbox design customizing end */
+.chart-title-area {
+  display: flex;
+  color: var(--color-purple);
+  margin-top: 3rem;
+}
 
-    .total-lessons {
-      display: flex;
-      flex-direction: column;
-      padding-left: 10rem;
-    }
+.chart-summary {
+  display: flex;
+  flex-direction: row;
+}
 
-    .total-lessons h1,
-    .total-lessons h2,
-    .total-lessons h3 {
-      display: inline;
-      color: var(--color-purple);
-    }
+.chart-area {
+  margin-top: 3rem;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  height: 45%;
+  background-color: #ffffff;
+}
 
-    .total-lessons span {
-      align-self: start;
-    }
+.chart-main {
+  display: flex;
+  background-color:#ffffff;
+}
 
-    .total-lessons h1 {
-      margin-right: 1rem;
-    }
+.chart-title {
+  display: flex;
+  padding: 0 !important;
+}
 
-    .total-lessons h2 {
-      font-weight: 100;
-    }
+.chart-title h2 {
+  text-align:left;
+  margin: 0;
+  color: var(--color-purple)
+}
 
-    .total-lessons h3 {
-      text-align: left;
-      font-size: 1rem;
-      font-weight: 100;
-    }
+.attendance-bar-chart-area {
+  padding: 3rem 0 0 3rem !important;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-light-grey)
+}
 
-    .chart-area {
-      margin-top: 3rem;
-      padding: 3rem;
-      display: flex;
-      flex-direction: column;
-      height: 45%;
-    }
+.attendance-bar-chart-area h3 {
+  font-family: Helvetica;
+  font-size: 12px;
+  letter-spacing: -0.01px;
+  text-align: left;
+}
 
-    .chart-main {
-      display: flex;
-      background-color:#ffffff;
-    }
+.attendance-bar-chart-area canvas#bar-chart.chartjs-render-monitor {
+  width: 100% !important;
+  height: 100% !important;
+}
 
-    .chart-title {
-      display: flex;
-    }
+.summary-area {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: none;
+  align-items: center;
+  padding: 1rem;
+}
 
-    .chart-title h2 {
-      text-align:left;
-      margin: 0;
-      color: var(--color-purple)
-    }
-
-    .line-chart-area {
-      padding: 3rem !important;
-      /* padding-top: 3rem !important; */
-      display: flex;
-      flex-direction: column;
-    }
-
-    .line-chart-area h3 {
-      font-family: Helvetica;
-      font-size: 12px;
-      color: #666666;
-      letter-spacing: -0.01px;
-      text-align: left;
-    }
-
-    .summary-area {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      border-left: solid 1px var(--color-light-grey);
-      align-items: center;
-    }
-
-    .text-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-      margin-right: 1rem;
-    }
-
-    .summary-text{
-      color: #D8D8D8;
-      align-items: flex-start;
-    }
-
-    .chart-container {
-      display: flex;
-      padding-left: 1.5rem;
-    }
-
-    /* #line-chart {
-      width: 100% !important;
-      height: 100% !important;
-    } */
-
-    #bar-chart {
-      width: 100px !important;
-      height: 50px !important;
-    }
-
-    .country-wrapper {
-      display: flex;
-      align-items: center;
-      height: 100px;
-      padding: 10px;
-    }
-
-    label {
-      display: flex;
-      flex-direction: row;
-      /* align-content: center; */
-      text-align: left;
-      color: var(--color-light-grey);
-    }
-
-    label div {
-      display:flex;
-      width:18px;
-      height:18px;
-      background:white;
-      border:1px solid var(--color-light-grey);
-      cursor:pointer;
-      border-radius: 3px;
-      margin-right: 10px;
-      /* align-self: center; */
-    }
-    #south-sudan {
-      display: none;
-    }
-    #kenya {
-      display: none;
-    }
-    #tanzania {
-      display: none;
-    }
-    #dr-congo{
-      display: none;
-    }
-
-    .table {
-      margin-top: 3rem;
-      background-color: #ffffff;
-      display: flex;
-    }
 </style>

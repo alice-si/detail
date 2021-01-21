@@ -19,17 +19,18 @@
           <th style="width:16%" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
           <th style="width:21%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
+      </thead>
       <tbody style="width:100%">
         <tr style="width:100%" v-for="country in tableData" v-bind:key="country.name">
-          <td v-bind:class="country.cssId" id="country-name">
+          <th v-bind:class="country.cssId" id="country-name">
             {{country.name}}
-          </td>
-          <th scope="row" class="monthly-data" v-for="(month, index) in country.monthlyData.lessons"  v-bind:key="index">
-            {{month}}
           </th>
+          <td scope="row" class="monthly-data" v-for="(month, index) in country.monthlyData.lessons"  v-bind:key="index">
+            {{month}}
+          </td>
         </tr>
       </tbody>
-      </thead>
+
     </table>
   </div>
 </template>
@@ -78,7 +79,7 @@ export default {
         this.sortedByLessons = true
       } else if (this.sortedByDifference === true) {
         const sorted = this.tableData
-        sorted.sort((a, b) => (a.difference < b.difference) ? 1 : -1)
+        sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
         this.sortedByLessons = false
       }
     }
