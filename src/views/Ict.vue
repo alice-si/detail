@@ -121,7 +121,7 @@
           </row>
         </column>
       </row>
-      <table-for-ICT></table-for-ICT>
+      <table-for-ICT class="table-area"></table-for-ICT>
     </section>
   </main>
 </template>
@@ -483,6 +483,10 @@ main#ict-skills {
 #compare-year {
   width: 350px;
   padding: 0 3rem 1.5rem 0;
+}
+
+.table-area {
+  margin-top: 1.5rem;
 }
 
 </style>

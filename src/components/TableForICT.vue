@@ -3,7 +3,7 @@
     <table id="table-content" class="table">
       <thead style="width:100%" class="thead">
         <tr style="width:100%">
-          <th scope="col">Students<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <th scope="col">Students<img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
           <th scope="col">Schools</th>
           <th scope="col">Lycee de la Paix</th>
           <th scope="col">Amani</th>
@@ -11,23 +11,102 @@
           <th scope="col">Rechema</th>
           <th scope="col">Hodari</th>
           <th scope="col">Fraternite</th>
-          <th scope="col">Avg No of ICT skills/student across schools <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
+          <th scope="col">Avg No of ICT skills/student across schools <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
         </tr>
       </thead>
       <tbody style="width:100%">
-        <tr style="width:100%" v-for="country in tableData" v-bind:key="country.name">
-          <th v-bind:class="country.cssId" id="country-name">
-            total
-          </th>
-          <th v-bind:class="country.cssId" id="country-name">
-            Male
-          </th>
-          <th v-bind:class="country.cssId" id="country-name">
-            Female
-          </th>
-          <!-- <td scope="row" class="monthly-data" v-for="(month, index) in country.monthlyData.lessons"  v-bind:key="index">
-            {{month}}
-          </td> -->
+        <tr>
+          <th rowspan="3" align = "center">Total</th>
+          <td>before INS</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>after INS</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>Difference</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <th rowspan="3" align = "center">Male</th>
+          <td>before INS</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>after INS</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>Difference</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <th rowspan="3" align = "center">Female</th>
+          <td>before INS</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>after INS</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+        </tr>
+        <tr>
+          <td>Difference</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
+          <td>20%</td>
         </tr>
       </tbody>
 

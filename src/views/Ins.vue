@@ -83,6 +83,7 @@ import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
 import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics } from '../data/data-provider.js'
 import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme, getTopicColorSchme } from '../data/colour-scheme.js'
+import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
 
 export default {
   components: {
@@ -186,6 +187,26 @@ export default {
     this.updateData()
   },
   methods: {
+    getLineChartData (lessons, colorScheme) {
+      const lineChartData = getLineChartData(lessons, colorScheme)
+      return lineChartData
+    },
+    getTableData (tabletype, lessons, prevYear) {
+      const tableData = getTableData(tabletype, lessons, prevYear)
+      return tableData
+    },
+    getBarChartData (dataByCountry) {
+      const barChartData = getBarChartData(dataByCountry)
+      return barChartData
+    },
+    getStackedBarChartData (lessons, colorScheme) {
+      const stackedBarChartData = getStackedBarChartData(lessons, colorScheme)
+      return stackedBarChartData
+    },
+    filterTopics (tableData) {
+      const filtered = tableData.filter(el => el.totalLessons !== 0)
+      return filtered
+    },
     uncheckAllCheckboxes () {
       for (let i = 0; i < this.checkedItems.length; i++) {
         const checkedItem = this.checkedItems[i]
@@ -195,89 +216,6 @@ export default {
       }
       this.checkedItems = []
     },
-    getLineChartData (lessons, colorScheme) {
-      const totalLessons = lessons.lessons.flatMap(el => Object.values(el))
-      const sum = this.calcSum(totalLessons)
-
-      const labels = lessons.labels
-      const dataset = lessons.lessons
-      const lineChartData = []
-      let chartDataObj = {}
-
-      if (sum === 0) {
-        chartDataObj = {
-          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-          datasets: [{
-            label: 'No lessons data for this year',
-            backgroundColor: 'transparent',
-            borderColor: '#D8D8D8',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            pointRadius: 6,
-            borderWidth: 1.5,
-            pointBackgroundColor: '#FFFFFF',
-            lineTension: 0
-          }]
-        }
-      } else {
-        for (let i = 0; i < dataset.length; i++) {
-          const color = colorScheme(i)
-          const lineChartDataSet = {
-            label: labels[i],
-            backgroundColor: 'transparent',
-            borderColor: color,
-            data: Object.values(dataset[i]),
-            pointRadius: 6,
-            borderWidth: 1.5,
-            pointBackgroundColor: '#FFFFFF',
-            lineTension: 0
-          }
-          lineChartData.push(lineChartDataSet)
-        }
-        chartDataObj = {
-          labels: Object.keys(dataset[0]),
-          datasets: lineChartData
-        }
-      }
-      return chartDataObj
-    },
-    getTableData (tabletype, lessons, prevYear) {
-      const countries = lessons.labels
-      const tableDataArray = []
-
-      for (let countryIndex = 0; countryIndex < countries.length; countryIndex++) {
-        const lessonsData = lessons.lessons[countryIndex]
-        const prevYearLessonsData = prevYear.lessons[countryIndex]
-        const total = this.calcSum(Object.values(lessonsData))
-        let growthRate = ''
-
-        if (prevYearLessonsData) {
-          growthRate = this.compareDataByYear(Object.values(prevYearLessonsData), Object.values(lessonsData))
-        } else {
-          growthRate = '+100%'
-        }
-
-        const tableDataSet = {
-          type: tabletype,
-          name: countries[countryIndex],
-          totalLessons: total,
-          cssId: countries[countryIndex].toLowerCase().replaceAll(' ', '-'),
-          vForId: countries[countryIndex],
-          propId: countries[countryIndex].replace(/\s+/g, ''),
-          monthlyData: {
-            lessons: Object.values(lessonsData),
-            months: Object.keys(lessonsData)
-          },
-          colorIndex: countryIndex
-        }
-
-        tableDataSet.monthlyData.lessons.push(total)
-        tableDataSet.monthlyData.lessons.push(growthRate)
-        tableDataSet.monthlyData.months.push('Total Lessons')
-        tableDataSet.monthlyData.months.push('Difference in 12 Months')
-        tableDataArray.push(tableDataSet)
-      }
-      return tableDataArray
-    },
     filterChartData (chartData, filter) {
       if (filter.length !== 0) {
         const filtered = chartData.datasets.filter(el => filter.indexOf(el.label) !== -1)
@@ -285,68 +223,27 @@ export default {
       }
       return chartData
     },
-    calcSum (lessons) {
-      const sum = lessons.reduce(
-        (prev, curr) => prev + curr
-      )
-      return sum
-    },
-    compareDataByYear (prevYearLessons, currYearLessons) {
-      const prevSum = this.calcSum(prevYearLessons)
-      const currSum = this.calcSum(currYearLessons)
-      const growthRate = ((currSum / prevSum) - 1) * 100
-      if (Number.isNaN(growthRate)) {
-        return '-'
-      } else if (growthRate !== Infinity) {
-        return growthRate.toFixed(0) + '%'
-      } else {
-        return '+ 100%'
-      }
-    },
-    getBarChartData (dataByCountry) {
-      const allDataDict = {}
-      dataByCountry.forEach(el => {
-        let key = el.name
-        let value = el.monthlyData.lessons.slice(0, 12)
-        allDataDict[key] = {
-          labels: el.monthlyData.months.slice(0, 12),
-          datasets: [{
-            data: value
-          }]
-        }
-      })
-      return allDataDict
-    },
-    getStackedBarChartData (lessons, colorScheme) {
-      const totalLessons = lessons.lessons.flatMap(el => Object.values(el))
-      const sum = this.calcSum(totalLessons)
-      const barChartData = []
-      for (let i = 0; i < lessons.labels.length; i++) {
-        const barChartDataSet = {
-          label: lessons.labels[i],
-          backgroundColor: colorScheme(i),
-          data: Object.values(lessons.lessons[i])
-        }
-        barChartData.push(barChartDataSet)
-      }
+    updateColors (view, colorScheme) {
+      const tableFontDomIndex = view === 'School' ? 7 : 9
+      for (let i = 0; i < this.summaryBoxData.length; i++) {
+        const cssId = this.summaryBoxData[i].cssId
+        const dom = document.getElementsByClassName(`${cssId}`)
+        if (dom.length !== 0 && dom[0].checked === true) {
+          const checkedColor = colorScheme(this.summaryBoxData[i].colorIndex)
+          dom[1].style.color = checkedColor // label
+          dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
+          dom[3].style.color = checkedColor // V
+          dom[4].style.color = checkedColor // Topic text
 
-      let chartDataObj = {}
-      if (sum === 0) {
-        chartDataObj = {
-          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
-          datasets: [{
-            label: 'No lessons data for this year',
-            backgroundColor: 'transparent',
-            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-          }]
-        }
-      } else if (lessons.lessons.length > 0) {
-        chartDataObj = {
-          labels: Object.keys(lessons.lessons[0]),
-          datasets: barChartData
+          dom[tableFontDomIndex].style.color = checkedColor // Table name
+        } else if (dom.length !== 0 && !dom[0].checked) {
+          dom[1].style.color = '#D8D8D8'
+          dom[2].style.border = '1px solid #D8D8D8'
+          dom[3].style.color = '#ffffff'
+          dom[4].style.color = '#D8D8D8'
+          dom[tableFontDomIndex].style.color = '#212529'
         }
       }
-      return chartDataObj
     },
     updateData () {
       this.updateConditionalRendering()
@@ -362,8 +259,8 @@ export default {
           if (this.checkedItems.length === 0) {
             lessons = getLessons([], [], [], this.selectedYear)
             prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
-            this.totalLessons = this.calcSum(Object.values(lessons.lessons[0]))
-            this.growthRate = this.compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
+            this.totalLessons = calcSum(Object.values(lessons.lessons[0]))
+            this.growthRate = compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
             this.chartData = this.getLineChartData(lessons, getCountryColorSchme)
           } else {
             lessons = tableLessons
@@ -380,8 +277,8 @@ export default {
           prevYearLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
           totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
-          this.totalLessons = this.calcSum(totalCurrLessons)
-          this.growthRate = this.compareDataByYear(totalPrevLessons, totalCurrLessons)
+          this.totalLessons = calcSum(totalCurrLessons)
+          this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
           this.chartData = this.filterChartData(this.getLineChartData(lessons, getCampColorSchme), this.checkedItems)
           this.barChartData = this.getBarChartData(this.getTableData('Camps', lessons, prevYearLessons))
           this.tableData = this.getTableData('Camps', lessons, prevYearLessons)
@@ -394,8 +291,8 @@ export default {
           prevYearLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
           totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
-          this.totalLessons = this.calcSum(totalCurrLessons)
-          this.growthRate = this.compareDataByYear(totalPrevLessons, totalCurrLessons)
+          this.totalLessons = calcSum(totalCurrLessons)
+          this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
           this.chartData = this.filterChartData(this.getLineChartData(lessons, getSchoolColorSchme), this.checkedItems)
           this.barChartData = this.getBarChartData(this.getTableData('Schools', lessons, prevYearLessons))
           this.tableData = this.getTableData('Schools', lessons, prevYearLessons)
@@ -408,8 +305,8 @@ export default {
           prevYearLessons = getLessonsByTopics([this.selectedCountry], [this.selectedCamp], [this.selectedSchool], this.selectedYear - 1)
           totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
-          this.totalLessons = this.calcSum(totalCurrLessons)
-          this.growthRate = this.compareDataByYear(totalPrevLessons, totalCurrLessons)
+          this.totalLessons = calcSum(totalCurrLessons)
+          this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
           this.stackedBarChartData = this.filterChartData(this.getStackedBarChartData(lessons, getTopicColorSchme), this.checkedItems)
           this.TopicTableData = this.getTableData('Topics', lessons, prevYearLessons)
           this.summaryBoxData = this.filterTopics(this.getTableData('Topics', lessons, prevYearLessons)) // for checkbox rendering
@@ -451,32 +348,6 @@ export default {
           this.stackedChartShow = true
           this.school = ', ' + this.selectedSchool
           break
-      }
-    },
-    filterTopics (tableData) {
-      const filtered = tableData.filter(el => el.totalLessons !== 0)
-      return filtered
-    },
-    updateColors (view, colorScheme) {
-      const tableFontDomIndex = view === 'School' ? 7 : 9
-      for (let i = 0; i < this.summaryBoxData.length; i++) {
-        const cssId = this.summaryBoxData[i].cssId
-        const dom = document.getElementsByClassName(`${cssId}`)
-        if (dom.length !== 0 && dom[0].checked === true) {
-          const checkedColor = colorScheme(this.summaryBoxData[i].colorIndex)
-          dom[1].style.color = checkedColor // label
-          dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
-          dom[3].style.color = checkedColor // V
-          dom[4].style.color = checkedColor // Topic text
-
-          dom[tableFontDomIndex].style.color = checkedColor // Table name
-        } else if (dom.length !== 0 && !dom[0].checked) {
-          dom[1].style.color = '#D8D8D8'
-          dom[2].style.border = '1px solid #D8D8D8'
-          dom[3].style.color = '#ffffff'
-          dom[4].style.color = '#D8D8D8'
-          dom[tableFontDomIndex].style.color = '#212529'
-        }
       }
     }
   },
