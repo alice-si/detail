@@ -682,7 +682,7 @@ canvas#line-chart.chartjs-render-monitor {
   display: flex;
   color: var(--color-dark-grey);
   overflow: hidden;
-  width: 100%;
+  max-width: 1133px;
 }
 
 table#table-content tr {

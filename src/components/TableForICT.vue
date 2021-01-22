@@ -14,9 +14,9 @@
           <th scope="col">Avg No of ICT skills/student across schools <img src="../../src/assets/Sorting.svg" class="sort-button"/></th>
         </tr>
       </thead>
-      <tbody style="width:100%">
+      <tbody style="width:100%; border-bottom:1px solid #D8D8D8;">
         <tr>
-          <th rowspan="3" align = "center">Total</th>
+          <th rowspan="3" align="center">Total</th>
           <td>before INS</td>
           <td>20%</td>
           <td>20%</td>
