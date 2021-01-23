@@ -1,3 +1,4 @@
+// For INS Page
 export function calcSum (lessons) {
   const sum = lessons.reduce(
     (prev, curr) => prev + curr
@@ -149,3 +150,5 @@ export function getStackedBarChartData (lessons, colorScheme) {
   }
   return chartDataObj
 }
+
+// For ICT page

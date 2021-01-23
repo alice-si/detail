@@ -59,13 +59,22 @@ export default {
 main#home {
   display: flex;
   flex-direction: column;
-  padding: 10rem 8rem 5rem 12rem;
+  margin: 6.2rem 0 0 6.2rem;
+  padding: 6.5rem 4.5rem 4.5rem 8rem;
+  max-width: 1440px;
+}
+
+.container {
+  padding: 0;
+  margin: 0;
 }
 
 #filtering-area {
   width: 100%;
+  height: 5rem;
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 3rem;
 }
 
 #filtering-area h3 {
@@ -106,7 +115,7 @@ main#home {
 
 #thumbnail-area h1 {
   color: var(--color-dark-grey);
-  padding: 2.5rem 0 4rem 2rem;
+  /* padding: 2.5rem 0 4rem 2rem; */
   position: relative;
   text-align: left;
 }

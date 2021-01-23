@@ -7,8 +7,8 @@
         <column :lg="5" :xs="6" class="toggle-area">
         <h3>Students</h3>
           <div class="wrap">
-            <input type="checkbox" id="s5" />
-            <label class="slider" for="s5"></label>
+            <input type="checkbox" id="view-toggle" v-on:click="viewToggle"/>
+            <label class="slider" for="view-toggle"></label>
           </div>
         <h3>Teachers</h3>
         </column>
@@ -17,9 +17,9 @@
     <section id="select-area" class="container-fluid">
       <row :gutter="12">
         <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
+        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" ></v-select></column>
         <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate"></v-select></column>
+        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Nyarugusu"></v-select></column>
         <column :lg="1.5"><h3>Select School</h3></column>
         <column :lg="2.5"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column>
       </row>
@@ -37,12 +37,12 @@
       <row :gutter="12" class="chart-main">
         <column :lg="8" class="ictskills-bar-chart-area">
           <h3> Avg No of ICT skills/student</h3>
-          <group-bar-chart :chart-data="barChartData" :options="options"></group-bar-chart>
+          <group-bar-chart :chart-data="groupBarChartData" :options="options"></group-bar-chart>
           <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
         </column>
         <column :lg="4" class="summary-area">
           <row>
-            <column class="summary-grid" :lg="6">
+            <column class="summary-grid" :lg="6" :xs="6">
             <input type="checkbox" id="select-1" style="display:none">
               <label class="select-1" for="select-1">
                 <div style="justify-content:center; align-item:center;">
@@ -54,7 +54,7 @@
                 <h3>in Lycee de Paix</h3>
               </div>
             </column>
-            <column class="summary-grid" :lg="6">
+            <column class="summary-grid" :lg="6" :xs="6">
               <input type="checkbox" id="select-2" style="display:none">
               <label class="select-2" for="select-2">
                 <div style="justify-content:center; align-item:center;">
@@ -68,7 +68,7 @@
             </column>
           </row>
           <row>
-            <column class="summary-grid" :lg="6">
+            <column class="summary-grid" :lg="6" :xs="6">
               <input type="checkbox" id="select-3" style="display:none">
               <label class="select-3" for="select-3">
                 <div style="justify-content:center; align-item:center;">
@@ -80,7 +80,7 @@
                 <h3>in Amitie</h3>
               </div>
             </column>
-            <column class="summary-grid" :lg="6">
+            <column class="summary-grid" :lg="6" :xs="6">
               <input type="checkbox" id="select-4" style="display:none">
               <label class="select-4" for="select-4">
                 <div style="justify-content:center; align-item:center;">
@@ -94,7 +94,7 @@
             </column>
           </row>
           <row>
-            <column class="summary-grid" :lg="6">
+            <column class="summary-grid" :lg="6" :xs="6">
               <input type="checkbox" id="select-5" style="display:none">
               <label class="select-5" for="select-5">
                 <div style="justify-content:center; align-item:center;">
@@ -106,7 +106,7 @@
                 <h3>in Hodari</h3>
               </div>
             </column>
-            <column class="summary-grid" :lg="6">
+            <column class="summary-grid" :lg="6" :xs="6">
               <input type="checkbox" id="select-6" style="display:none">
               <label class="select-6" for="select-6">
                 <div style="justify-content:center; align-item:center;">
@@ -121,15 +121,16 @@
           </row>
         </column>
       </row>
-      <table-for-ICT class="table-area"></table-for-ICT>
+      <table-for-ICT class="table-area" v-bind:tableData="tableData" ></table-for-ICT>
     </section>
   </main>
 </template>
 
 <script>
 import GroupBarChart from '../components/GroupBarChart'
-import TableForICT from '../components/TableForICT.vue'
-import { getCountries } from '../data/data-provider'
+import TableForICT from '../components/TableForICT'
+import { getIctSchoolList, getIctSchoolAvg } from '../data/data-provider'
+import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
   name: 'attendance',
   components: {
@@ -138,6 +139,7 @@ export default {
   },
   data () {
     return {
+      viewMode: 'Students',
       countries: [],
       camps: [],
       schools: [],
@@ -145,24 +147,8 @@ export default {
       selectedCamp: null,
       selectedSchool: null,
       compareyears: ['Before INS (Oct 2017) vs After INS (Oct 2018)', 'Before INS (Oct 2017) vs After INS (Oct 2019)', 'Before INS (Oct 2017) vs After INS (Oct 2020)'],
-      barChartData: {
-        labels: ['Kenya', 'Tanzania', 'Soutn Sudan', 'DR Congo'],
-        datasets: [{
-          // label: '2017',
-          // fill: true,
-          backgroundColor: ['rgb(232, 79, 137, 0.5)', 'rgb(47, 185, 239, 0.5)', 'rgb(103, 182, 117, 0.5)', 'rgb(247, 101, 17, 0.5)'],
-          borderColor: ['rgb(232, 79, 137, 0.5)', 'rgb(47, 185, 239, 0.5)', 'rgb(103, 182, 117, 0.5)', 'rgb(247, 101, 17, 0.5)'],
-          barThickness: 15,
-          data: ['30', '20', '10', '15']
-        }, {
-          // label: '2018',
-          // fill: true,
-          backgroundColor: ['#EA4C89', '#2FB9EF', '#67B675', '#f76511'],
-          borderColor: ['#EA4C89', '#2FB9EF', '#67B675', '#f76511'],
-          barThickness: 15,
-          data: ['56', '41', '53', '46']
-        }]
-      },
+      groupBarChartData: {},
+      tableData: {},
       options: {
         legend: { display: false },
         responsive: true,
@@ -187,13 +173,98 @@ export default {
     }
   },
   mounted () {
-    this.countries = getCountries()
-  }
-  // methods: {
-  //   updateData () {
+    this.countries = ['Tanzania']
+    this.camps = ['Nyarugusu']
+    this.schools = getIctSchoolList()
+    this.switchViewMode()
+  },
+  methods: {
+    switchViewMode () {
+      console.log(this.viewMode)
+      switch (this.viewMode) {
+        case 'Students':
+          this.groupBarChartData = this.getGroupBarChartData()
+          this.tableData = this.getTableData()
+      }
+    },
+    viewToggle () {
+      if (this.viewMode === 'Students') {
+        this.viewMode = 'Teachers'
+      } else {
+        this.viewMode = 'Students'
+      }
+    },
+    getGroupBarChartData () {
+      const labelArr = getIctSchoolList()
+      const baseYearData = {}
+      const endYearData = {}
 
-  //   }
-  // }
+      labelArr.forEach(el => {
+        baseYearData[el] = getIctSchoolAvg(`${el}`, 'Total', 'Base')
+      })
+      labelArr.forEach(el => {
+        endYearData[el] = getIctSchoolAvg(`${el}`, 'Total', 'End')
+      })
+
+      const dataset = {
+        labels: labelArr,
+        datasets: [{ // label: 'baseYear',
+          backgroundColor: getGroupBarChartColorSheme().opacity,
+          barThickness: 15,
+          data: Object.values(baseYearData)
+        }, {// label: 'endYear',
+          backgroundColor: getGroupBarChartColorSheme().normal,
+          barThickness: 15,
+          data: Object.values(endYearData)
+        }]
+      }
+      return dataset
+    },
+    getIctRate (school, type, year) {
+      const avgSchoolIctSkill = getIctSchoolAvg(`${school}`, `${type}`, `${year}`)
+      return avgSchoolIctSkill
+    },
+    getTableData () {
+      const labelArr = getIctSchoolList()
+      const totalBaseYearData = {}
+      const totalEndYearData = {}
+      const maleBaseYearData = {}
+      const maleEndYearData = {}
+      const femaleBaseYearData = {}
+      const femaleEndYearData = {}
+      const tableProp = {}
+
+      labelArr.forEach(el => {
+        totalBaseYearData[el] = this.getIctRate(`${el}`, 'Total', 'Base')
+        totalEndYearData[el] = this.getIctRate(`${el}`, 'Total', 'End')
+        maleBaseYearData[el] = this.getIctRate(`${el}`, 'Male', 'Base')
+        maleEndYearData[el] = this.getIctRate(`${el}`, 'Male', 'End')
+        femaleBaseYearData[el] = this.getIctRate(`${el}`, 'Female', 'Base')
+        femaleEndYearData[el] = this.getIctRate(`${el}`, 'Female', 'End')
+      })
+
+      tableProp.columns = Object.keys(totalBaseYearData)
+      tableProp.total = {
+        beforeIns: Object.values(totalBaseYearData),
+        afterIns: Object.values(totalEndYearData)
+      }
+      tableProp.male = {
+        beforeIns: Object.values(maleBaseYearData),
+        afterIns: Object.values(maleEndYearData)
+      }
+      tableProp.female = {
+        beforeIns: Object.values(femaleBaseYearData),
+        afterIns: Object.values(femaleEndYearData)
+      }
+      console.log('tableProp', tableProp)
+      return tableProp
+    }
+  },
+  watch: {
+    viewMode () {
+      this.switchViewMode()
+    }
+  }
 }
 </script>
 
@@ -201,7 +272,9 @@ export default {
 main#ict-skills {
   display: flex;
   flex-direction: column;
-  padding: 10rem 8rem 5rem 12rem;
+  margin: 6.2rem 0 0 6.2rem;
+  padding: 8rem 4.5rem 4.5rem 8rem;
+  max-width: 1440px;
 }
 
 .back {

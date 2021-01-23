@@ -187,22 +187,6 @@ export default {
     this.updateData()
   },
   methods: {
-    getLineChartData (lessons, colorScheme) {
-      const lineChartData = getLineChartData(lessons, colorScheme)
-      return lineChartData
-    },
-    getTableData (tabletype, lessons, prevYear) {
-      const tableData = getTableData(tabletype, lessons, prevYear)
-      return tableData
-    },
-    getBarChartData (dataByCountry) {
-      const barChartData = getBarChartData(dataByCountry)
-      return barChartData
-    },
-    getStackedBarChartData (lessons, colorScheme) {
-      const stackedBarChartData = getStackedBarChartData(lessons, colorScheme)
-      return stackedBarChartData
-    },
     filterTopics (tableData) {
       const filtered = tableData.filter(el => el.totalLessons !== 0)
       return filtered
@@ -261,14 +245,14 @@ export default {
             prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
             this.totalLessons = calcSum(Object.values(lessons.lessons[0]))
             this.growthRate = compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
-            this.chartData = this.getLineChartData(lessons, getCountryColorSchme)
+            this.chartData = getLineChartData(lessons, getCountryColorSchme)
           } else {
             lessons = tableLessons
-            this.chartData = this.filterChartData(this.getLineChartData(lessons, getCountryColorSchme), this.checkedItems)
+            this.chartData = this.filterChartData(getLineChartData(lessons, getCountryColorSchme), this.checkedItems)
           }
-          this.barChartData = this.getBarChartData(this.getTableData('Country', tableLessons, prevTableLessons))
-          this.tableData = this.getTableData('Country', tableLessons, prevTableLessons)
-          this.summaryBoxData = this.filterTopics(this.getTableData('Country', tableLessons, prevTableLessons))
+          this.barChartData = getBarChartData(getTableData('Country', tableLessons, prevTableLessons))
+          this.tableData = getTableData('Country', tableLessons, prevTableLessons)
+          this.summaryBoxData = this.filterTopics(getTableData('Country', tableLessons, prevTableLessons))
           this.updateColors(this.viewMode, getCountryColorSchme)
           break
 
@@ -279,10 +263,10 @@ export default {
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.chartData = this.filterChartData(this.getLineChartData(lessons, getCampColorSchme), this.checkedItems)
-          this.barChartData = this.getBarChartData(this.getTableData('Camps', lessons, prevYearLessons))
-          this.tableData = this.getTableData('Camps', lessons, prevYearLessons)
-          this.summaryBoxData = this.filterTopics(this.getTableData('Camps', lessons, prevYearLessons))
+          this.chartData = this.filterChartData(getLineChartData(lessons, getCampColorSchme), this.checkedItems)
+          this.barChartData = getBarChartData(getTableData('Camps', lessons, prevYearLessons))
+          this.tableData = getTableData('Camps', lessons, prevYearLessons)
+          this.summaryBoxData = this.filterTopics(getTableData('Camps', lessons, prevYearLessons))
           this.updateColors(this.viewMode, getCampColorSchme)
           break
 
@@ -293,10 +277,10 @@ export default {
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.chartData = this.filterChartData(this.getLineChartData(lessons, getSchoolColorSchme), this.checkedItems)
-          this.barChartData = this.getBarChartData(this.getTableData('Schools', lessons, prevYearLessons))
-          this.tableData = this.getTableData('Schools', lessons, prevYearLessons)
-          this.summaryBoxData = this.filterTopics(this.getTableData('Schools', lessons, prevYearLessons))
+          this.chartData = this.filterChartData(getLineChartData(lessons, getSchoolColorSchme), this.checkedItems)
+          this.barChartData = getBarChartData(getTableData('Schools', lessons, prevYearLessons))
+          this.tableData = getTableData('Schools', lessons, prevYearLessons)
+          this.summaryBoxData = this.filterTopics(getTableData('Schools', lessons, prevYearLessons))
           this.updateColors(this.viewMode, getSchoolColorSchme)
           break
 
@@ -307,10 +291,11 @@ export default {
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.stackedBarChartData = this.filterChartData(this.getStackedBarChartData(lessons, getTopicColorSchme), this.checkedItems)
-          this.TopicTableData = this.getTableData('Topics', lessons, prevYearLessons)
-          this.summaryBoxData = this.filterTopics(this.getTableData('Topics', lessons, prevYearLessons)) // for checkbox rendering
+          this.stackedBarChartData = this.filterChartData(getStackedBarChartData(lessons, getTopicColorSchme), this.checkedItems)
+          this.TopicTableData = getTableData('Topics', lessons, prevYearLessons)
+          this.summaryBoxData = this.filterTopics(getTableData('Topics', lessons, prevYearLessons)) // for checkbox rendering
           this.updateColors(this.viewMode, getTopicColorSchme)
+          break
       }
     },
     updateConditionalRendering () {
@@ -400,7 +385,9 @@ export default {
 main#ins {
   display: flex;
   flex-direction: column;
-  padding: 10rem 8rem 5rem 12rem;
+  margin: 6.2rem 0 0 6.2rem;
+  padding: 8rem 4.5rem 4.5rem 8rem;
+  max-width: 1440px;
 }
 
 .navbar {
@@ -449,7 +436,8 @@ main#ins {
 }
 
 #select-area h3 {
-  color: var(--color-dark-grey)
+  color: var(--color-dark-grey);
+  text-align: left;
 }
 
 .colVGR {
@@ -459,6 +447,10 @@ main#ins {
 }
 
 /* selectbox design customizing start */
+#select-area .vs__open-indicator {
+  color: var(--color-dark-gery);
+}
+
 #vs__selected {
   font-size: 1.4rem;
 }

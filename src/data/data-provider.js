@@ -1,5 +1,7 @@
 const data = require('./parsed.json')
+const ICT_DATA = require('./ict-data.json')
 
+// for INS
 export function getCountries () {
   const countryList = Object.keys(data.children)
   return countryList
@@ -112,4 +114,33 @@ export function setYearSelectBox (country, camp, school) {
   }
 
   return uniqueYear.slice(1, uniqueYear.length)
+}
+
+// for ICT
+export function getIctCountries () {
+  const countries = ICT_DATA
+  return Object.keys(countries.children)
+}
+
+export function getAvgPercentage (absolute) {
+  const MAX_ICT = 21
+  const percentage = absolute / MAX_ICT * 100
+  return percentage
+}
+
+export function getIctSchoolList () {
+  const list = Object.keys(ICT_DATA.children.Tanzania.children.Nyarugusu.children)
+  return list
+}
+
+export function getIctSchoolAvg (school, type, year) {
+  let percentage = ''
+  if (year === 'Base') {
+    const base = ICT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].base_avg
+    percentage = getAvgPercentage(base).toFixed(0)
+  } else if (year === 'End') {
+    const end = ICT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].end_avg
+    percentage = getAvgPercentage(end).toFixed(0)
+  }
+  return percentage
 }

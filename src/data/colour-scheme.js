@@ -52,3 +52,32 @@ export function getTopicColorSchme (index) {
   ]
   return COLOR_SCHEME[index % COLOR_SCHEME.length]
 }
+
+export function getGroupBarChartColorSheme () {
+  const COLOR_SCHEME = [
+    '#EA4C89',
+    '#2FB9EF',
+    '#67B675',
+    '#f76511',
+    '#1CB8C4',
+    '#F7B500',
+    '#4908d4'
+  ]
+
+  const OPACITY_COLOR_SCHEME = [
+    'rgb(232, 79, 137, 0.5)',
+    'rgb(47, 185, 239, 0.5)',
+    'rgb(103, 182, 117, 0.5)',
+    'rgb(247, 101, 17, 0.5)',
+    'rgb(28, 184, 196, 0.5)',
+    'rgb(247, 181, 0, 0.5',
+    'rgb(73, 8, 212, 0.5)'
+  ]
+
+  const colorSchemeObj = {
+    normal: COLOR_SCHEME,
+    opacity: OPACITY_COLOR_SCHEME
+  }
+
+  return colorSchemeObj
+}
