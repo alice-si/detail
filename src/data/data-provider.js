@@ -144,3 +144,15 @@ export function getIctSchoolAvg (school, type, year) {
   }
   return percentage
 }
+
+export function getAvgAcrossSchools (type, year) {
+  let percentage = ''
+  if (year === 'Base') {
+    const base = ICT_DATA.values[type].base_avg
+    percentage = getAvgPercentage(base).toFixed(0)
+  } else if (year === 'End') {
+    const end = ICT_DATA.values[type].end_avg
+    percentage = getAvgPercentage(end).toFixed(0)
+  }
+  return percentage
+}

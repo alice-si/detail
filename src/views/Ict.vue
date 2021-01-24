@@ -35,12 +35,12 @@
     </section>
     <section class="chart-area">
       <row :gutter="12" class="chart-main">
-        <column :lg="8" class="ictskills-bar-chart-area">
+        <column :lg="9" class="ictskills-bar-chart-area">
           <h3> Avg No of ICT skills/student</h3>
           <group-bar-chart :chart-data="groupBarChartData" :options="options"></group-bar-chart>
           <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
         </column>
-        <column :lg="4" class="summary-area">
+        <column :lg="3" class="summary-area">
           <row>
             <column class="summary-grid" :lg="6" :xs="6">
             <input type="checkbox" id="select-1" style="display:none">
@@ -129,7 +129,7 @@
 <script>
 import GroupBarChart from '../components/GroupBarChart'
 import TableForICT from '../components/TableForICT'
-import { getIctSchoolList, getIctSchoolAvg } from '../data/data-provider'
+import { getIctSchoolList, getIctSchoolAvg, getAvgAcrossSchools } from '../data/data-provider'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
   name: 'attendance',
@@ -224,6 +224,19 @@ export default {
       const avgSchoolIctSkill = getIctSchoolAvg(`${school}`, `${type}`, `${year}`)
       return avgSchoolIctSkill
     },
+    calcDifference (base, end) {
+      const difference = end.map((end, index) => {
+        if (end - base[index] < 0) {
+          return '-' + end - base[index] + '%'
+        } else if (end - base[index] > 0) {
+          const plus = '+'
+          return plus.concat('', end - base[index]) + '%'
+        } else {
+          return 0 + '%'
+        }
+      })
+      return difference
+    },
     getTableData () {
       const labelArr = getIctSchoolList()
       const totalBaseYearData = {}
@@ -243,6 +256,8 @@ export default {
         femaleEndYearData[el] = this.getIctRate(`${el}`, 'Female', 'End')
       })
 
+      console.log('totalBaseYearData', totalBaseYearData)
+
       tableProp.columns = Object.keys(totalBaseYearData)
       tableProp.total = {
         beforeIns: Object.values(totalBaseYearData),
@@ -256,6 +271,15 @@ export default {
         beforeIns: Object.values(femaleBaseYearData),
         afterIns: Object.values(femaleEndYearData)
       }
+      tableProp.total.beforeIns.push(getAvgAcrossSchools('Total', 'Base'))
+      tableProp.total.afterIns.push(getAvgAcrossSchools('Total', 'End'))
+      tableProp.total.difference = this.calcDifference(tableProp.total.beforeIns, tableProp.total.afterIns)
+      tableProp.male.beforeIns.push(getAvgAcrossSchools('Male', 'Base'))
+      tableProp.male.afterIns.push(getAvgAcrossSchools('Male', 'End'))
+      tableProp.male.difference = this.calcDifference(tableProp.male.beforeIns, tableProp.male.afterIns)
+      tableProp.female.beforeIns.push(getAvgAcrossSchools('Female', 'Base'))
+      tableProp.female.afterIns.push(getAvgAcrossSchools('Female', 'End'))
+      tableProp.female.difference = this.calcDifference(tableProp.female.beforeIns, tableProp.female.afterIns)
       console.log('tableProp', tableProp)
       return tableProp
     }
