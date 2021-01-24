@@ -28,7 +28,7 @@
       <row class="chart-title">
         <column :lg="9" :xs="6"><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
         <column :lg="3" :xs="6">
-          <div class="total-skills"> <span><h1>+38%</h1><h2>skills/students</h2></span></br><h3>after INS (Oct 2020)</h3></div>
+          <div class="total-skills"> <span><h1>{{growthRate}}</h1><h2>skills/students</h2></span></br><h3>after INS (Oct 2020)</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
@@ -41,84 +41,22 @@
           <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
         </column>
         <column :lg="3" class="summary-area">
-          <row>
-            <column class="summary-grid" :lg="6" :xs="6">
-            <input type="checkbox" id="select-1" style="display:none">
-              <label class="select-1" for="select-1">
-                <div style="justify-content:center; align-item:center;">
-                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+        <row v-for="i in setNoOfColumns" v-bind:key="i">
+          <column v-for="j in [0, 1]" v-bind:key="i*2+j" :lg="6" :xs="6">
+            <div v-if="i*2+j < summaryBoxData.length" class="summary-grid">
+             <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].name" v-bind:class="summaryBoxData[i*2+j].name" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
+              <label v-bind:class="summaryBoxData[i*2+j].name" v-bind:for="summaryBoxData[i*2+j].name">
+                <div v-bind:class="summaryBoxData[i*2+j].name" style="justify-content:center; align-item:center;">
+                  <span v-bind:class="summaryBoxData[i*2+j].name" style="color: #ffffff; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
                 </div>
               </label>
-              <div class="checkbox-text-area">
-                <h1>+30%</h1>
-                <h3>in Lycee de Paix</h3>
+              <div v-bind:class="summaryBoxData[i*2+j].name" id="checkbox-text-area">
+                <h1>{{summaryBoxData[i*2+j].difference}}</h1>
+                <h3>{{summaryBoxData[i*2+j].name}}</h3>
               </div>
-            </column>
-            <column class="summary-grid" :lg="6" :xs="6">
-              <input type="checkbox" id="select-2" style="display:none">
-              <label class="select-2" for="select-2">
-                <div style="justify-content:center; align-item:center;">
-                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
-                </div>
-              </label>
-              <div class="checkbox-text-area">
-                <h1>+42%</h1>
-                <h3>in Amani</h3>
               </div>
-            </column>
-          </row>
-          <row>
-            <column class="summary-grid" :lg="6" :xs="6">
-              <input type="checkbox" id="select-3" style="display:none">
-              <label class="select-3" for="select-3">
-                <div style="justify-content:center; align-item:center;">
-                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
-                </div>
-              </label>
-              <div class="checkbox-text-area">
-                <h1>+51%</h1>
-                <h3>in Amitie</h3>
-              </div>
-            </column>
-            <column class="summary-grid" :lg="6" :xs="6">
-              <input type="checkbox" id="select-4" style="display:none">
-              <label class="select-4" for="select-4">
-                <div style="justify-content:center; align-item:center;">
-                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
-                </div>
-              </label>
-              <div class="checkbox-text-area">
-                <h1>+33%</h1>
-                <h3>in Rehema</h3>
-              </div>
-            </column>
-          </row>
-          <row>
-            <column class="summary-grid" :lg="6" :xs="6">
-              <input type="checkbox" id="select-5" style="display:none">
-              <label class="select-5" for="select-5">
-                <div style="justify-content:center; align-item:center;">
-                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
-                </div>
-              </label>
-              <div class="checkbox-text-area">
-                <h1>+22%</h1>
-                <h3>in Hodari</h3>
-              </div>
-            </column>
-            <column class="summary-grid" :lg="6" :xs="6">
-              <input type="checkbox" id="select-6" style="display:none">
-              <label class="select-6" for="select-6">
-                <div style="justify-content:center; align-item:center;">
-                  <span style="color:#5b34eb; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
-                </div>
-              </label>
-              <div class="checkbox-text-area">
-                <h1>+18%</h1>
-                <h3>in Fraternite</h3>
-              </div>
-            </column>
-          </row>
+          </column>
+        </row>
         </column>
       </row>
       <table-for-ICT class="table-area" v-bind:tableData="tableData" ></table-for-ICT>
@@ -132,7 +70,6 @@ import TableForICT from '../components/TableForICT'
 import { getIctSchoolList, getIctSchoolAvg, getAvgAcrossSchools } from '../data/data-provider'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
-  name: 'attendance',
   components: {
     GroupBarChart,
     TableForICT
@@ -140,15 +77,19 @@ export default {
   data () {
     return {
       viewMode: 'Students',
+      growthRate: '+14%',
       countries: [],
       camps: [],
       schools: [],
+      summaryBoxData: [],
+      checkedItems: [],
       selectedCountry: null,
       selectedCamp: null,
       selectedSchool: null,
-      compareyears: ['Before INS (Oct 2017) vs After INS (Oct 2018)', 'Before INS (Oct 2017) vs After INS (Oct 2019)', 'Before INS (Oct 2017) vs After INS (Oct 2020)'],
+      compareyears: ['Before INS (Oct 2017) vs After INS (Oct 2020)'],
       groupBarChartData: {},
       tableData: {},
+      colorIndex: [],
       options: {
         legend: { display: false },
         responsive: true,
@@ -166,7 +107,10 @@ export default {
             display: true,
             position: 'left',
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              callback: function (value) {
+                return value + '%'
+              }
             } }]
         }
       }
@@ -183,9 +127,65 @@ export default {
       console.log(this.viewMode)
       switch (this.viewMode) {
         case 'Students':
-          this.groupBarChartData = this.getGroupBarChartData()
+          this.groupBarChartData = this.filterChartData(this.getGroupBarChartData())
           this.tableData = this.getTableData()
+          this.summaryBoxData = this.setSummaryBoxData()
+          this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
       }
+    },
+    updateColor (colorScheme, colorIndex) {
+      let haveSet = 0
+      colorIndex.sort((a, b) => a - b)
+      for (let i = 0; i < this.summaryBoxData.length; i++) {
+        const school = this.summaryBoxData[i].name
+        const dom = document.getElementsByClassName(`${school}`)
+        if (dom.length !== 0 && dom[0].checked === true) {
+          const setColor = colorScheme().normal[colorIndex[haveSet]]
+          dom[1].style.color = setColor
+          dom[2].style.border = `1px solid ${setColor}`
+          dom[3].style.color = setColor
+          dom[4].style.color = setColor
+          dom[5].style.color = setColor
+          haveSet += 1
+        } else if (dom.length !== 0) {
+          dom[1].style.color = '#D8D8D8'
+          dom[2].style.border = `1px solid ${'#D8D8D8'}`
+          dom[3].style.color = '#ffffff'
+          dom[4].style.color = '#D8D8D8'
+          dom[5].style.color = '#212529'
+        }
+      }
+    },
+    filterChartData (chartData) {
+      if (this.checkedItems.length === 0) {
+        return chartData
+      } else {
+        const checked = this.checkedItems
+        const colorIndex = []
+        checked.forEach(el => {
+          colorIndex.push(chartData.labels.indexOf(el))
+        })
+        this.colorIndex = colorIndex
+
+        const dataIndex = [...Array(chartData.labels.length).keys()].filter(el => colorIndex.includes(el) === false)
+        dataIndex.forEach(el => {
+          chartData.datasets[0].data.splice(el, 1, '-')
+          chartData.datasets[1].data.splice(el, 1, '-')
+          chartData.labels.splice(el, 1, '-')
+        })
+        return chartData
+      }
+    },
+    setSummaryBoxData () {
+      const summaryBoxDataArr = []
+      for (let schoolIndex = 0; schoolIndex < this.tableData.columns.length; schoolIndex++) {
+        const dictForVFor = {
+          name: this.tableData.columns[schoolIndex],
+          difference: this.tableData.total.difference[schoolIndex]
+        }
+        summaryBoxDataArr.push(dictForVFor)
+      }
+      return summaryBoxDataArr
     },
     viewToggle () {
       if (this.viewMode === 'Students') {
@@ -256,8 +256,6 @@ export default {
         femaleEndYearData[el] = this.getIctRate(`${el}`, 'Female', 'End')
       })
 
-      console.log('totalBaseYearData', totalBaseYearData)
-
       tableProp.columns = Object.keys(totalBaseYearData)
       tableProp.total = {
         beforeIns: Object.values(totalBaseYearData),
@@ -280,12 +278,19 @@ export default {
       tableProp.female.beforeIns.push(getAvgAcrossSchools('Female', 'Base'))
       tableProp.female.afterIns.push(getAvgAcrossSchools('Female', 'End'))
       tableProp.female.difference = this.calcDifference(tableProp.female.beforeIns, tableProp.female.afterIns)
-      console.log('tableProp', tableProp)
       return tableProp
+    }
+  },
+  computed: {
+    setNoOfColumns () {
+      return Array(Math.ceil(this.summaryBoxData.length / 2)).keys()
     }
   },
   watch: {
     viewMode () {
+      this.switchViewMode()
+    },
+    checkedItems () {
       this.switchViewMode()
     }
   }
@@ -398,10 +403,11 @@ main#ict-skills {
 }
 
 .summary-grid {
-  display: inline-flex;
+ display: inline-flex;
   align-items: center;
   margin-bottom : 1.5rem;
-  color: var(--color-dark-grey);
+  width: 100%;
+  color: #d8d8d8
 }
 
 .summary-grid h1 {
@@ -412,12 +418,9 @@ main#ict-skills {
   font-size: 1rem;
 }
 
-.checkbox-text-area {
+#checkbox-text-area {
   display: flex;
   flex-direction: column;
-}
-
-.checkbox-text-area {
   text-align: left;
 }
 
@@ -543,7 +546,7 @@ main#ict-skills {
 .ictskills-bar-chart-area {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--color-light-grey)
+  border-right: 1px solid var(--color-light-grey);
 }
 
 .ictskills-bar-chart-area h3 {
@@ -564,7 +567,6 @@ main#ict-skills {
   height: 100%;
   border: none;
   align-items: center;
-  padding-left: 1rem;
 }
 
 #compare-select-box {

@@ -5,7 +5,7 @@
         <tr style="width:100%">
           <th style="width:10%; border-right:1px solid #D8D8D8;" scope="col">Students</th>
           <th style="width:10%" scope="col">Schools</th>
-          <th style="width:7.4%" v-for="(school, index) in column" v-bind:key="index">
+          <th style="width:7.4%" v-for="(school, index) in column" v-bind:key="index" v-bind:class="school">
             {{school}}
           </th>
           <th scope="col" style="border-left:1px solid #D8D8D8;">Avg No of ICT skills/student across schools</th>
@@ -109,9 +109,7 @@ export default {
   },
   watch: {
     tableData () {
-      console.log('this.tableData', this.tableData)
       if (this.tableData.columns.length !== 0) {
-        console.log('prop loaded')
         this.column = this.tableData.columns
         this.totalBeforeIns = this.tableData.total.beforeIns
         this.totalAfterIns = this.tableData.total.afterIns
