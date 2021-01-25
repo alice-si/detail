@@ -4,14 +4,14 @@
     <div id="nav">
       <header class="horizontal-nav" :gutter="12">
       <nav class="navbar navbar-light bg-white justify-content-end fixed-top border-bottom">
-        <img src="../src/assets/alice_logo.png" width="43" height="40" class="company_logo" alt="company_logo">
+        <img src="../src/assets/alice_logo.png" width="42" height="42" class="company_logo" alt="company_logo">
           <img class="search-icon" src="../src/assets/Search.svg" alt="search-icon">
         <form class="form-inline">
           <input class="form-control mr-sm-2" style="width:250px; border: none;" type="search" placeholder="Search e.g. INS exam results" aria-label="Search">
           <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
         </form>
         <div class="notification-icon"><img src="../src/assets/Alert.svg" alt="alert"/></div>
-        <div class="profile-icon"><img src="../src/assets/Profile.svg" alt="profile"/></div>
+        <div class="profile-icon"><img src="../src/assets/Profile.svg" alt="profile" class="profile-picture"/></div>
       </nav>
       </header>
       <aside class="vertical-nav">
@@ -68,7 +68,7 @@ export default {
 :root {
   /* main font color */
   --color-light-grey: #D8D8D8;
-  --color-dark-grey: #686868;
+  --color-dark-grey: #585858;
   --color-purple: #8954BA;
 }
 
@@ -109,7 +109,7 @@ h2 {
 
 h3 {
   font-family: Helvetica;
-  font-size: 1.4rem;
+  font-size: 1.68rem;
   font-weight: 300;
   margin: 0;
   letter-spacing: -0.01px;
@@ -120,8 +120,8 @@ h3 {
 .company_logo {
   align-self: start;
   position: fixed;
-  top: 0.5rem;
-  left: 0.5rem;
+  top: 0.9rem;
+  left: 0.8rem;
 }
 
 #app {
@@ -157,6 +157,10 @@ h3 {
   border-left: 1px solid var(--color-light-grey);
 }
 
+.profile-picture {
+  border-radius: 70%;
+}
+
 .vertical-nav {
   display: flex;
   position: fixed;
@@ -179,7 +183,7 @@ h3 {
 }
 
 .vertical-nav img {
-  margin-bottom: 5rem;
+  margin-bottom: 7.7rem;
 }
 
 #home-icon {
@@ -204,45 +208,4 @@ h3 {
 .home #Home {
   background: var(--color-purple)
 }
-
-/* selectbox design customizing start */
-#vs__selected {
-  font-size: 1.4rem;
-}
-
-.select-country .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-camp .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-school .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.vs__dropdown-toggle {
-  border-radius: 2px;
-  background-color: #ffffff70;
-  border-color:#ffffff70;
-  padding: 1rem;
-}
-
-.vs__dropdown-toggle:active {
-  background-color: #ffffff;
-  border-color: #ffffff;
-}
-
-.vs__dropdown-menu {
-  box-shadow: none;
-  border: none;
-  border-radius: 2px;
-  font-size: 1.4rem;
-}
-
-/* selectbox design customizing end */
 </style>

@@ -17,11 +17,11 @@
     <section id="select-area" class="container-fluid">
       <row :gutter="12">
         <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" ></v-select></column>
+        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" :searchable="false"></v-select></column>
         <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Nyarugusu"></v-select></column>
+        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Nyarugusu" :searchable="false"></v-select></column>
         <column :lg="1.5"><h3>Select School</h3></column>
-        <column :lg="2.5"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column>
+        <column :lg="2.5"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false"></v-select></column>
       </row>
     </section>
     <section :gutter="12" class="chart-title-area">
@@ -41,7 +41,7 @@
           <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
         </column>
         <column :lg="3" class="summary-area">
-        <row v-for="i in setNoOfColumns" v-bind:key="i">
+        <row v-for="i in setNoOfRows" v-bind:key="i">
           <column v-for="j in [0, 1]" v-bind:key="i*2+j" :lg="6" :xs="6">
             <div v-if="i*2+j < summaryBoxData.length" class="summary-grid">
              <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].name" v-bind:class="summaryBoxData[i*2+j].name" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
@@ -68,6 +68,7 @@
 import GroupBarChart from '../components/GroupBarChart'
 import TableForICT from '../components/TableForICT'
 import { getIctSchoolList, getIctSchoolAvg, getAvgAcrossSchools } from '../data/data-provider'
+import { getIctRate, calcDifference } from '../data/data-handler'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
   components: {
@@ -77,7 +78,7 @@ export default {
   data () {
     return {
       viewMode: 'Students',
-      growthRate: '+14%',
+      growthRate: '',
       countries: [],
       camps: [],
       schools: [],
@@ -131,6 +132,7 @@ export default {
           this.tableData = this.getTableData()
           this.summaryBoxData = this.setSummaryBoxData()
           this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
+          this.growthRate = calcDifference([getAvgAcrossSchools('Total', 'Base')], [getAvgAcrossSchools('Total', 'End')])[0]
       }
     },
     updateColor (colorScheme, colorIndex) {
@@ -220,23 +222,6 @@ export default {
       }
       return dataset
     },
-    getIctRate (school, type, year) {
-      const avgSchoolIctSkill = getIctSchoolAvg(`${school}`, `${type}`, `${year}`)
-      return avgSchoolIctSkill
-    },
-    calcDifference (base, end) {
-      const difference = end.map((end, index) => {
-        if (end - base[index] < 0) {
-          return '-' + end - base[index] + '%'
-        } else if (end - base[index] > 0) {
-          const plus = '+'
-          return plus.concat('', end - base[index]) + '%'
-        } else {
-          return 0 + '%'
-        }
-      })
-      return difference
-    },
     getTableData () {
       const labelArr = getIctSchoolList()
       const totalBaseYearData = {}
@@ -248,12 +233,12 @@ export default {
       const tableProp = {}
 
       labelArr.forEach(el => {
-        totalBaseYearData[el] = this.getIctRate(`${el}`, 'Total', 'Base')
-        totalEndYearData[el] = this.getIctRate(`${el}`, 'Total', 'End')
-        maleBaseYearData[el] = this.getIctRate(`${el}`, 'Male', 'Base')
-        maleEndYearData[el] = this.getIctRate(`${el}`, 'Male', 'End')
-        femaleBaseYearData[el] = this.getIctRate(`${el}`, 'Female', 'Base')
-        femaleEndYearData[el] = this.getIctRate(`${el}`, 'Female', 'End')
+        totalBaseYearData[el] = getIctRate(`${el}`, 'Total', 'Base')
+        totalEndYearData[el] = getIctRate(`${el}`, 'Total', 'End')
+        maleBaseYearData[el] = getIctRate(`${el}`, 'Male', 'Base')
+        maleEndYearData[el] = getIctRate(`${el}`, 'Male', 'End')
+        femaleBaseYearData[el] = getIctRate(`${el}`, 'Female', 'Base')
+        femaleEndYearData[el] = getIctRate(`${el}`, 'Female', 'End')
       })
 
       tableProp.columns = Object.keys(totalBaseYearData)
@@ -271,18 +256,18 @@ export default {
       }
       tableProp.total.beforeIns.push(getAvgAcrossSchools('Total', 'Base'))
       tableProp.total.afterIns.push(getAvgAcrossSchools('Total', 'End'))
-      tableProp.total.difference = this.calcDifference(tableProp.total.beforeIns, tableProp.total.afterIns)
+      tableProp.total.difference = calcDifference(tableProp.total.beforeIns, tableProp.total.afterIns)
       tableProp.male.beforeIns.push(getAvgAcrossSchools('Male', 'Base'))
       tableProp.male.afterIns.push(getAvgAcrossSchools('Male', 'End'))
-      tableProp.male.difference = this.calcDifference(tableProp.male.beforeIns, tableProp.male.afterIns)
+      tableProp.male.difference = calcDifference(tableProp.male.beforeIns, tableProp.male.afterIns)
       tableProp.female.beforeIns.push(getAvgAcrossSchools('Female', 'Base'))
       tableProp.female.afterIns.push(getAvgAcrossSchools('Female', 'End'))
-      tableProp.female.difference = this.calcDifference(tableProp.female.beforeIns, tableProp.female.afterIns)
+      tableProp.female.difference = calcDifference(tableProp.female.beforeIns, tableProp.female.afterIns)
       return tableProp
     }
   },
   computed: {
-    setNoOfColumns () {
+    setNoOfRows () {
       return Array(Math.ceil(this.summaryBoxData.length / 2)).keys()
     }
   },

@@ -4,29 +4,59 @@
       <section id="filtering-area" >
         <row :gutter="12">
           <column :lg="2.5" :xs="2"><h3>Select programme</h3></column>
-          <column :lg="3" :xs="2"><v-select placeholder="Instant Network Schools"> :options="dashboards"</v-select></column>
+          <column :lg="3" :xs="2">
+            <v-select class="dashboard-select" placeholder="Instant Network Schools" :searchable="false">
+              <span slot="no-options">
+                <h3 style="text-align:left; padding-left: 1.8rem;">No more available options</h3>
+              </span>
+            </v-select>
+          </column>
           <column :lg="1" :xs="1"><img src="../../src/assets/Grid.svg" alt="grid" class="grid"/></column>
           <column :lg="0.5" :xs="1"><img src="../../src/assets/List.svg" class="list"/></column>
         </row>
       </section>
-      <section id="thumbnail-area" class="container-fluid">
+      <section id="thumbnail-area">
         <row :gutter="12">
           <h1>See the impact of your work</h1>
         </row>
         <row :gutter="12" id="thumbnails">
-          <column class="thumb-1" :lg="4">
-            <!-- {{dashboardName}} -->
-            <!-- <link-prevue url="https://dashboard.joannakang.vercel.app/#/ins"></link-prevue> -->
-            <router-link to="/ins"><img src="../../src/assets/dummy1.png" width="90%" height="90%"/></router-link>
-            <!-- {{thumbnails}} -->
-            <!-- Showing data till {{lastUpdate}} -->
-          </column>
-           <column class="thumb-2" :lg="4">
-            <router-link to="/attendance"><img src="../../src/assets/dummy2.png" width="90%" height="90%"/></router-link>
-          </column>
-          <column class="thumb-3" :lg="4">
-            <router-link to="/ict"><img src="../../src/assets/dummy3.png" width="90%" height="90%"/></router-link>
-          </column>
+          <router-link to="/ins">
+            <column class="thumbnail-tile" :lg="4">
+              <div class="thumbnail-wrapper">
+                <div class="link-title">
+                  <h1>INS Lessons</h1>
+                  <h1 style="color:#8954BA;">{{insGrowthRate}}</h1>
+                  </div>
+                  <img src="../../src/assets/dummy1.svg"/>
+                  <h3>Showing data till {{lastUpdate}}</h3>
+              </div>
+            </column>
+          </router-link>
+          <router-link to="/attendance">
+            <column class="thumbnail-tile" :lg="4">
+              <div class="thumbnail-wrapper">
+                <div class="link-title"> 
+                <h1>Students attendance</h1>
+                <!-- update growth rate later -->
+                <h1 style="color:#8954BA;"></h1>
+                </div>
+                <img src="../../src/assets/dummy2.svg"/>
+                <h3>Showing data till {{lastUpdate}}</h3>
+              </div>
+            </column>
+          </router-link>
+          <router-link to="/ict">
+            <column class="thumbnail-tile" :lg="4">
+              <div class="thumbnail-wrapper">
+                <div class="link-title">  
+                <h1>ICT skills acquired</h1>
+                <h1 style="color:#8954BA;">{{ictGrowthRate}}</h1>
+                </div>
+                <img src="../../src/assets/dummy3.svg"/>
+                <h3>Showing data till {{lastUpdate}}</h3>
+              </div>
+            </column>
+          </router-link>
         </row>
       </section>
     </main>
@@ -37,6 +67,8 @@
 // @ is an alias to /src
 // import html2canvas from 'html2canvas'
 // import LinkPrevue from 'link-prevue'
+import { getLessons, getAvgAcrossSchools } from '../data/data-provider.js'
+import { compareDataByYear, calcDifference } from '../data/data-handler'
 
 export default {
 
@@ -47,8 +79,20 @@ export default {
   data () {
     return {
       dashboardName: 'INS Lessons',
-      lastUpdate: '11/10/2020',
-      thumbnails: ''
+      lastUpdate: '31/12/2019',
+      insGrowthRate: '',
+      ictGrowthRate: ''
+    }
+  },
+  mounted() {
+    this.getInsGrowthRate()
+  },
+  methods: {
+    getInsGrowthRate() {
+      const prevYear = getLessons([], [], [], '2018')
+      const currYear = getLessons([], [], [], '2019')
+      this.insGrowthRate = compareDataByYear(Object.values(prevYear.lessons[0]), Object.values(currYear.lessons[0]))
+      this.ictGrowthRate = calcDifference([getAvgAcrossSchools('Total', 'Base')], [getAvgAcrossSchools('Total', 'End')])[0]
     }
   }
 }
@@ -60,7 +104,7 @@ main#home {
   display: flex;
   flex-direction: column;
   margin: 6.2rem 0 0 6.2rem;
-  padding: 6.5rem 4.5rem 4.5rem 8rem;
+  padding: 6.5rem 4.5rem 4.5rem 9rem;
   max-width: 1440px;
 }
 
@@ -85,16 +129,9 @@ main#home {
 }
 
 #filtering-area .container {
-  display: flex;
+  /* display: flex; */
   justify-content: flex-end;
-}
-
-#vs1__combobox.vs__search::placeholder {
-  color: var(--color-dark-grey);
-}
-
-#vs1__combobox.vs__dropdown-toggle {
-  padding: 1rem;
+  width: 100%;
 }
 
 .grid {
@@ -107,22 +144,98 @@ main#home {
   padding: 0 !important;
 }
 
-#thumbnail-area {
-  display: flex;
-  flex-direction: column;
-  padding-left: 4.5rem;
+/* selectbox design customizing start */
+
+.v-select {
+  background-color: #ffffff;
+  font-family: Helvetica;
 }
 
-#thumbnail-area h1 {
-  color: var(--color-dark-grey);
-  /* padding: 2.5rem 0 4rem 2rem; */
-  position: relative;
+.dashboard-select .vs__selected-options {
+  height: 3.5rem;
+  padding: 0;
+}
+
+.dashboard-select .vs__search {
+  color: #686868;
+  font-size: 1.68rem;
+}
+
+.dashboard-select .vs__dropdown-menu {
   text-align: left;
 }
 
-#thumbnails img {
+.vs__dropdown-toggle {
+  border-radius: 2px;
+  background-color: #ffffff;
+  border-color:#ffffff;
+  padding: 0.5rem;
+}
+
+.vs__dropdown-toggle:active {
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+
+.vs__dropdown-menu {
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.68rem;
+}
+
+.vs__search::placeholder {
+  font-size: 1.68rem;
+}
+/* selectbox design customizing end */
+
+ #thumbnails a {
+   text-decoration: none;
+ }
+
+.thumbnail-tile {
+  background-color: #ffffff;
+  width: 32.4rem;
+  height: 32.8rem;
+  margin-top: 4.5rem;
+  margin-right: 4.2rem;
   box-shadow: -13px 11px 25px 0 #adb6d92b;
-  border-radius: 0.12rem;
+}
+
+.thumbnail-wrapper {
+  padding: 3.5rem 2.5rem 2rem 2.5rem;
+  width: 32.4rem;
+  height: 31.2rem;
+  text-align: left;
+  display:flex;
+  flex-direction: column;
+}
+
+.thumbnail-wrapper img {
+  margin-top: 3rem;
+  margin-bottom: 1.6rem;
+  width: 27.9rem;
+  height: 18.1rem;
+  border: 1px solid  var(--color-light-grey);
+}
+
+.thumbnail-wrapper h1 {
+  display: inline;
+  font-family: Helvetica;
+  font-size: 2.16rem;
+  color: var(--color-dark-grey);
+}
+
+.thumbnail-wrapper h3 {
+  font-family: Helvetica;
+  font-size: 1.68rem;
+  margin: 0;
+  color: #A6A7A8;
+}
+
+.link-title {
+display: flex;
+justify-content:space-between;
 }
 
 </style>

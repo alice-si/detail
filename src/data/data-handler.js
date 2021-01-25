@@ -152,3 +152,23 @@ export function getStackedBarChartData (lessons, colorScheme) {
 }
 
 // For ICT page
+import { getIctSchoolAvg } from './data-provider'
+
+export function getIctRate (school, type, year) {
+  const avgSchoolIctSkill = getIctSchoolAvg(`${school}`, `${type}`, `${year}`)
+  return avgSchoolIctSkill
+}
+
+export function calcDifference (base, end) {
+  const difference = end.map((end, index) => {
+    if (end - base[index] < 0) {
+      return '-' + end - base[index] + '%'
+    } else if (end - base[index] > 0) {
+      const plus = '+'
+      return plus.concat('', end - base[index]) + '%'
+    } else {
+      return 0 + '%'
+    }
+  })
+  return difference
+}
