@@ -127,7 +127,8 @@ export function getStackedBarChartData (lessons, colorScheme) {
     const barChartDataSet = {
       label: lessons.labels[i],
       backgroundColor: colorScheme(i),
-      data: Object.values(lessons.lessons[i])
+      data: Object.values(lessons.lessons[i]),
+      barThickness: 15
     }
     barChartData.push(barChartDataSet)
   }

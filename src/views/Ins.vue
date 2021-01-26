@@ -1,37 +1,49 @@
 <template>
   <main id="ins">
-    <section id="page-title" class="container-fluid">
+    <section id="page-title">
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">INS Lessons</h1></div>
     </section>
-    <section id="select-area" class="container-fluid">
-      <row :gutter="12">
+    <section>
+      <row :gutter="12" class="ins-select-area">
         <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" :searchable="false"></v-select></column>
+        <column :lg="2.5" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" :searchable="false"></v-select></column>
         <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false"></v-select></column>
+        <column :lg="2.5" class="ins-select-box">
+          <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false">
+            <span slot="no-options">
+              <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
+            </span>            
+          </v-select>
+        </column>
         <column :lg="1.5"><h3>Select School</h3></column>
-        <column :lg="2.5"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false"></v-select></column>
+        <column :lg="2.5" class="ins-select-box">
+          <v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false">
+            <span slot="no-options">
+              <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
+            </span>            
+          </v-select>
+        </column>
       </row>
     </section>
     <section :gutter="12" class="chart-title-area">
       <row class="chart-title">
-        <column :lg="8" :xs="6"><h2 style="font-size:2rem; font-weight: 500;">Number of lessons using INS {{country}} {{camp}} {{school}}</h2></column>
+        <column :lg="8" :xs="6"><h2 class="ins-sub-title">Number of lessons using INS {{country}} {{camp}} {{school}}</h2></column>
         <column class="chart-summary" :lg="4" :xs="6">
-          <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span> <h3>using INS</h3></div>
-          <div class="growth-rate"> <h1>{{growthRate}}</h1> <h3>last 12months</h3></div>
+          <div class="total-lessons"> <span><h1>{{ totalLessons }}</h1> <h2>lessons</h2></span> <h3 style="font-family:'Source Sans Pro';">using INS</h3></div>
+          <div class="growth-rate"> <h1>{{growthRate}}</h1> <h3 style="font-family:'Source Sans Pro';">in {{selectedYear}}</h3></div>
         </column>
       </row>
     </section>
-    <section class="chart-area">
+    <section id="chart-area">
       <row :gutter="12" class="chart-main">
-        <column :lg="7.5" class="line-chart-area">
+        <column :lg="8.16" class="line-chart-area">
           <h3> No of lessons in {{selectedYear}}</h3>
           <line-chart :chart-data="chartData" :options="options" v-if="linechartShow === true"></line-chart>
           <stacked-bar-chart id="stacked-bar-chart" :chart-data="stackedBarChartData" :options="stackedBarchartOption" v-if="stackedChartShow === true"></stacked-bar-chart>
           <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column>
         </column>
-        <column :lg="4" class="summary-area">
+        <column :lg="3.84" class="summary-area">
           <div class="country-wrapper" v-for="country in summaryBoxData" v-bind:key="country.vForId" :value="country.vForId">
             <div class="text-container">
               <input type="checkbox" v-bind:class="country.cssId" v-bind:id="country.cssId" v-bind:key="country.vForId" :value="country.vForId" v-model="checkedItems" style="display:none">
@@ -42,14 +54,19 @@
                 </label>
                 <!-- Lessons summary start-->
                 <div class="summary-text" v-bind:class="country.cssId" v-bind:for="country.cssId" v-if="linechartShow === true">
-                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important;">
-                      <h1 style="display: inline; color:'#D8D8D8'; font-size:2.5rem; font-weight:500;" v-bind:class="country.cssId" v-bind:for="country.cssId">
+                  <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="border:none; color:'#D8D8D8' !important; display:flex; width:27.7rem; justify-content:space-between; align-items:flex-end;">
+                    <div>
+                      <h1 style="display: inline; color:'#D8D8D8'; font-family: Helvetica; font-size:3rem; font-weight:500;" v-bind:class="country.cssId" v-bind:for="country.cssId">
                         {{ country.totalLessons }}
                       </h1>
-                      <h2 style="display: inline; color:'#D8D8D8'; font-size:2rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
+                      <h2 style="display: inline; color:'#D8D8D8'; font-family:'Source Sans Pro'; font-size:2.2rem;" v-bind:class="country.cssId" v-bind:for="country.cssId">lessons </h2>
+                    </div>
+                    <div class="summary-bar-chart-container" v-if="linechartShow === true" style="align-self:flex-end;">
+                      <bar-chart id="bar-chart" class="barChart" :chart-data="barChartData[country.name]" :options="barchartOption"></bar-chart>
+                    </div>
                   </div>
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="text-align:left; border:none; color:'#D8D8D8';">
-                    <h2 style="font-size:1rem;">in {{country.vForId}}</h2>
+                    <h2 style="font-family:'Source Sans Pro'; font-size:1.4rem;">in {{country.vForId}}</h2>
                   </div>
                 </div>
                 <!-- Lessons summary end-->
@@ -63,9 +80,7 @@
                 </div>
                 <!-- Topic summary end -->
             </div>
-            <div class="chart-container" v-if="linechartShow === true">
-              <bar-chart id="bar-chart" class="barChart" :chart-data="barChartData[country.name]" :options="barchartOption"></bar-chart>
-            </div>
+
           </div>
         </column>
       </row>
@@ -125,6 +140,13 @@ export default {
           xAxes: [{
             gridLines: {
               color: '#ffffff'
+            },
+            ticks: {
+              callback: function (value, index) {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+                value = months[index]
+                return value
+              }
             }
           }],
           yAxes: [{
@@ -163,6 +185,13 @@ export default {
             stacked: true,
             gridLines: {
               color: '#ffffff'
+            },
+            ticks: {
+              callback: function (value, index) {
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+                value = months[index]
+                return value
+              }
             }
           }],
           yAxes: [{
@@ -425,28 +454,31 @@ main#ins {
   padding-bottom: 2rem;
 }
 
-.container[data-v-42e9a5e0] {
+/* .container[data-v-42e9a5e0] {
   width: 100% !important;
+} */
+
+.ins-select-area {
+  width: 100%;
 }
 
-#select-area {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-}
-
-#select-area h3 {
+.ins-select-area h3 {
   color: var(--color-dark-grey);
   text-align: left;
 }
 
-.colVGR {
-  padding: 0px !important;
-  align-self: center;
-  border-radius: 0px;
+/* .ins-select-box {
+  width: 24.2rem;
+  height: 3.9rem;
+} */
+
+.ins-select-area .vs__dropdown-toggle {
+  width: 24.2rem;
+  height: 3.9rem;
 }
 
 /* selectbox design customizing start */
+.vs__dr
 #select-area .vs__open-indicator {
   color: var(--color-dark-gery);
 }
@@ -472,8 +504,8 @@ main#ins {
 
 .vs__dropdown-toggle {
   border-radius: 2px;
-  background-color: #ffffff70;
-  border-color:#ffffff70;
+  background-color: #ffffff;
+  border-color:#ffffff;
   padding: 1rem;
 }
 
@@ -494,6 +526,12 @@ main#ins {
   display: flex;
   color: var(--color-purple);
   margin-top: 3rem;
+}
+
+.ins-sub-title {
+  font-size:2.88rem; 
+  font-family: 'Source Sans Pro';
+  font-weight: 400;
 }
 
 .chart-summary {
@@ -530,42 +568,45 @@ main#ins {
 
 .total-lessons h1 {
   margin-right: 1rem;
-  font-size:2.5rem;
+  font-size:3rem;
   font-weight: 500;
 }
 
 .total-lessons h2 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 300;
 }
 
 .total-lessons h3 {
   text-align: left;
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 100;
 }
 
 .growth-rate h1 {
-  font-size:2.5rem;
+  font-size: 3rem;
   font-weight: 500;
 }
 
 .growth-rate h3 {
-  font-size: 1rem;
+  font-size: 1.4rem;
 }
 
-.chart-area {
-  margin-top: 3rem;
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  height: 45%;
+.container {
+  max-width: 144rem;
+  /* background-color: blue; */
+}
+
+#chart-area {
+  margin-top: 4rem;
+  padding: 4.5rem 3.5rem 4.5rem 3.5rem;
+  max-width: 123.5rem;
   background-color: #ffffff;
 }
 
 .chart-main {
-  display: flex;
-  background-color:#ffffff;
+  /* display: flex; */
+  /* background-color: green; */
 }
 
 .chart-title {
@@ -580,18 +621,25 @@ main#ins {
 }
 
 .line-chart-area {
-  padding: 3rem 0 0 3rem !important;
+  padding: 0 3rem 0 0 !important;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--color-light-grey)
+  border-right: 1px solid var(--color-light-grey);
+  /* background-color: aqua; */
+}
+
+.data-v-300908ca .chartjs-size-monitor {
+  position: relative !important;
 }
 
 canvas#line-chart.chartjs-render-monitor {
-  padding-right: 3rem;
+  padding: 0 3rem 0 10rem;
+  max-width: 80rem !important;
+  max-height: 43.8rem !important;
 }
 
 .line-chart-area h3 {
-  font-family: Helvetica;
+  font-family: Source Sans Pro;
   font-size: 12px;
   letter-spacing: -0.01px;
   text-align: left;
@@ -600,10 +648,12 @@ canvas#line-chart.chartjs-render-monitor {
 .summary-area {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  max-height: 51rem;
+  padding: 0 0 0 0;
+  overflow-y: auto;
   border: none;
-  align-items: center;
-  padding: 1rem;
+  align-items: left;
+  /* background-color: orange; */
 }
 
 .text-container {
@@ -616,14 +666,19 @@ canvas#line-chart.chartjs-render-monitor {
   color: #D8D8D8;
 }
 
+.summary-text h1 {
+  margin: 0 0 0 0;
+}
+
+
 .summary-text h2 {
   display: inline;
-  margin-right: 5px;
+  margin: 0 0.5rem 0 0;
   color:'#D8D8D8';
   font-size: 2rem;
 }
 
-.chart-container {
+.summary-bar-chart-container {
   display: flex;
   padding-left: 1.5rem;
 }
@@ -639,16 +694,17 @@ canvas#line-chart.chartjs-render-monitor {
 }
 
 #stacked-bar-chart canvas#bar-chart.chartjs-render-monitor {
-  width: 100% !important;
-  height: 400px !important;
-  padding-right: 3rem;
+  padding: 0 1.3rem 0 8.5rem;
+  width: 80rem !important;
+  height: 43.8rem !important;
 }
 
 .country-wrapper {
   display: flex;
   align-items: center;
-  height: 80px;
-  padding: 1rem 2.5rem 1rem 2.5rem;
+  height: 8rem;
+  width: 35rem;
+  padding: 1rem 0 1rem 2.75rem;
 }
 
 .text-container {
@@ -661,24 +717,33 @@ canvas#line-chart.chartjs-render-monitor {
 
 .text-container label div {
   display:flex;
-  width:18px;
-  height:18px;
+  width:2rem;
+  height:2rem;
   background:white;
   border:1px solid var(--color-light-grey);
   cursor:pointer;
   border-radius: 3px;
-  margin-right: 10px;
+  margin: 0 1rem 0 0;
 }
 
 .table-responsive {
   display: flex;
   color: var(--color-dark-grey);
   overflow: hidden;
-  max-width: 1133px;
+  max-width: 144rem;
+  margin-top: 3rem;
 }
 
 table#table-content tr {
   width: 100%;
+}
+
+table#table-content th {
+  vertical-align: middle;
+}
+
+table#table-content td {
+  vertical-align: middle;
 }
 
 #country-name {
@@ -690,7 +755,7 @@ table#table-content tr {
 }
 
 #table-content {
-  margin: 3rem;
+  margint-top: 3rem;
   font-size: 1.2rem;
   width: 100%;
 }

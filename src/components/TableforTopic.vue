@@ -3,22 +3,22 @@
     <table id="table-content" class="table">
       <thead style="width:100%">
         <tr style="width:100%">
-          <th style="width:14.5%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th style="width:3.5%" scope="col">Jan</th>
-          <th style="width:3.5%" scope="col">Feb</th>
-          <th style="width:3.5%" scope="col">Mar</th>
-          <th style="width:3.5%" scope="col">Apr</th>
-          <th style="width:3.5%" scope="col">May</th>
-          <th style="width:3.5%" scope="col">Jun</th>
-          <th style="width:3.5%" scope="col">Jul</th>
-          <th style="width:3.5%" scope="col">Aug</th>
-          <th style="width:3.5%" scope="col">Sep</th>
-          <th style="width:3.5%" scope="col">Oct</th>
-          <th style="width:3.5%" scope="col">Nov</th>
-          <th style="width:3.5%; border-right:1px solid #D8D8D8;" scope="col">Dec</th>
-          <th style="width:16%" scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+          <th style="width:7%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <th style="width:3.77%" scope="col">Jan</th>
+          <th style="width:3.77%" scope="col">Feb</th>
+          <th style="width:3.77%" scope="col">Mar</th>
+          <th style="width:3.77%" scope="col">Apr</th>
+          <th style="width:3.77%" scope="col">May</th>
+          <th style="width:3.77%" scope="col">Jun</th>
+          <th style="width:3.77%" scope="col">Jul</th>
+          <th style="width:3.77%" scope="col">Aug</th>
+          <th style="width:3.77%" scope="col">Sep</th>
+          <th style="width:3.77%" scope="col">Oct</th>
+          <th style="width:3.77%" scope="col">Nov</th>
+          <th style="width:3.77%; border-right:1px solid #D8D8D8;" scope="col">Dec</th>
+          <th style="width:10%" scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
           <!-- TODO:% of total usage?? -->
-          <th style="width:16%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
+          <th style="width:14.5%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
       </thead>
       <tbody style="width:100%; border-bottom:1px solid #D8D8D8;">

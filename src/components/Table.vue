@@ -1,27 +1,27 @@
 <template>
   <div class="table-responsive">
     <table id="table-content" class="table">
-      <thead style="width:80%" class="thead">
-        <tr style="width:80%">
-          <th style="width:15%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th style="width:3%" scope="col">1</th>
-          <th style="width:3%" scope="col">2</th>
-          <th style="width:3%" scope="col">3</th>
-          <th style="width:3%" scope="col">4</th>
-          <th style="width:3%" scope="col">5</th>
-          <th style="width:3%" scope="col">6</th>
-          <th style="width:3%" scope="col">7</th>
-          <th style="width:3%" scope="col">8</th>
-          <th style="width:3%" scope="col">9</th>
-          <th style="width:3%" scope="col">10</th>
-          <th style="width:3%" scope="col">11</th>
-          <th style="width:3%; border-right:1px solid #D8D8D8;" scope="col">12</th>
-          <th style="width:15%;" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
-          <th style="width:15%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
+      <thead style="width:100%" class="thead">
+        <tr style="width:100%">
+          <th style="width:7%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
+          <th style="width:3.77%" scope="col">1</th>
+          <th style="width:3.77%" scope="col">2</th>
+          <th style="width:3.77%" scope="col">3</th>
+          <th style="width:3.77%" scope="col">4</th>
+          <th style="width:3.77%" scope="col">5</th>
+          <th style="width:3.77%" scope="col">6</th>
+          <th style="width:3.77%" scope="col">7</th>
+          <th style="width:3.77%" scope="col">8</th>
+          <th style="width:3.77%" scope="col">9</th>
+          <th style="width:3.77%" scope="col">10</th>
+          <th style="width:3.77%" scope="col">11</th>
+          <th style="width:3.77%; border-right:1px solid #D8D8D8;" scope="col">12</th>
+          <th style="width:10%;" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+          <th style="width:14.5%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
       </thead>
-      <tbody style="width:80%; border-bottom:1px solid #D8D8D8;">
-        <tr style="width:80%;" v-for="country in tableData" v-bind:key="country.name">
+      <tbody style="width:100%; border-bottom:1px solid #D8D8D8;">
+        <tr style="width:100%;" v-for="country in tableData" v-bind:key="country.name">
           <th v-bind:class="country.cssId" id="country-name" style="border-right:1px solid #D8D8D8;">
             {{country.name}}
           </th>

@@ -7,7 +7,7 @@
           <column :lg="3" :xs="2">
             <v-select class="dashboard-select" placeholder="Instant Network Schools" :searchable="false">
               <span slot="no-options">
-                <h3 style="text-align:left; padding-left: 1.8rem;">No more available options</h3>
+                <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.68rem;">No more available options</h3> 
               </span>
             </v-select>
           </column>
@@ -123,9 +123,9 @@ main#home {
 
 #filtering-area h3 {
   color: var(--color-dark-grey);
-  font-size: 1.5rem;
+  font-size: 1.68rem;
   text-align: right;
-  margin-right: 1rem;
+  margin-right: 2rem;
 }
 
 #filtering-area .container {
@@ -152,7 +152,8 @@ main#home {
 }
 
 .dashboard-select .vs__selected-options {
-  height: 3.5rem;
+  height: 4.6rem;
+  width: 23.4rem;
   padding: 0;
 }
 

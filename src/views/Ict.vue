@@ -79,8 +79,8 @@ export default {
     return {
       viewMode: 'Students',
       growthRate: '',
-      countries: [],
-      camps: [],
+      countries: ['No more available options'],
+      camps: ['No more available options'],
       schools: [],
       summaryBoxData: [],
       checkedItems: [],
@@ -118,8 +118,8 @@ export default {
     }
   },
   mounted () {
-    this.countries = ['Tanzania']
-    this.camps = ['Nyarugusu']
+    // this.countries = ['Tanzania']
+    // this.camps = ['Nyarugusu']
     this.schools = getIctSchoolList()
     this.switchViewMode()
   },
