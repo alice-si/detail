@@ -146,10 +146,10 @@ main#home {
 
 /* selectbox design customizing start */
 
-.v-select {
+/* .v-select {
   background-color: #ffffff;
   font-family: Helvetica;
-}
+} */
 
 .dashboard-select .vs__selected-options {
   height: 4.6rem;

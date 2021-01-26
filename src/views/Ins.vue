@@ -6,18 +6,18 @@
     </section>
     <section>
       <row :gutter="12" class="ins-select-area">
-        <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" :searchable="false"></v-select></column>
-        <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5" class="ins-select-box">
+        <column :lg="1.2"><h3>Select Country</h3></column>
+        <column :lg="2.8" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" :searchable="false"></v-select></column>
+        <column :lg="1.2"><h3>Select Camp</h3></column>
+        <column :lg="2.8" class="ins-select-box">
           <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false">
             <span slot="no-options">
               <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
             </span>            
           </v-select>
         </column>
-        <column :lg="1.5"><h3>Select School</h3></column>
-        <column :lg="2.5" class="ins-select-box">
+        <column :lg="1.2"><h3>Select School</h3></column>
+        <column :lg="2.8" class="ins-select-box">
           <v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false">
             <span slot="no-options">
               <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
@@ -127,7 +127,7 @@ export default {
       countries: [],
       camps: [],
       schools: [],
-      country: '',
+      country: '- across countries',
       camp: '',
       school: '',
       checkedItems: [],
@@ -467,11 +467,6 @@ main#ins {
   text-align: left;
 }
 
-/* .ins-select-box {
-  width: 24.2rem;
-  height: 3.9rem;
-} */
-
 .ins-select-area .vs__dropdown-toggle {
   width: 24.2rem;
   height: 3.9rem;
@@ -502,11 +497,16 @@ main#ins {
   font-size: 1.4rem;
 }
 
+.vs__search {
+  margin: 0;
+}
+
 .vs__dropdown-toggle {
   border-radius: 2px;
   background-color: #ffffff;
   border-color:#ffffff;
-  padding: 1rem;
+  /* padding: 1rem; */
+  margin: 0;
 }
 
 .vs__dropdown-toggle:active {
@@ -600,14 +600,10 @@ main#ins {
 #chart-area {
   margin-top: 4rem;
   padding: 4.5rem 3.5rem 4.5rem 3.5rem;
-  max-width: 123.5rem;
+  max-width: 125.3rem;
   background-color: #ffffff;
 }
 
-.chart-main {
-  /* display: flex; */
-  /* background-color: green; */
-}
 
 .chart-title {
   display: flex;
@@ -625,7 +621,6 @@ main#ins {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--color-light-grey);
-  /* background-color: aqua; */
 }
 
 .data-v-300908ca .chartjs-size-monitor {
