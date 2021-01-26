@@ -17,7 +17,7 @@
       <aside class="vertical-nav">
         <nav class="navbar navbar-light bg-white flex-column justify-content-start">
             <router-link to="/"><img :src="homeImgSrc" id="home-icon" class="home" alt="home"></router-link>
-            <router-link to="/ins"><img :src="dashboardImgSrc" id="dashboard" class="dashboard" alt="dashboard"></router-link>
+            <img :src="dashboardImgSrc" id="dashboard" class="dashboard" alt="dashboard">
             <!-- FIXME: change link directory -->
             <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
             <!-- FIXME: change link directory -->

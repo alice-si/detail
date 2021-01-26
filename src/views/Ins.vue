@@ -621,7 +621,7 @@ main#ins {
 }
 
 .line-chart-area {
-  padding: 0 3rem 0 0 !important;
+  padding: 0 0 0 0 !important;
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--color-light-grey);
@@ -633,7 +633,8 @@ main#ins {
 }
 
 canvas#line-chart.chartjs-render-monitor {
-  padding: 0 3rem 0 10rem;
+  padding: 0 1.8rem 0 10rem;
+  margin: 0 0 0 0 !important;
   max-width: 80rem !important;
   max-height: 43.8rem !important;
 }
