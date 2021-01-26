@@ -129,7 +129,6 @@ main#home {
 }
 
 #filtering-area .container {
-  /* display: flex; */
   justify-content: flex-end;
   width: 100%;
 }
@@ -144,6 +143,7 @@ main#home {
   padding: 0 !important;
 }
 
+
 /* selectbox design customizing start */
 
 /* .v-select {
@@ -157,10 +157,10 @@ main#home {
   padding: 0;
 }
 
-.dashboard-select .vs__search {
+/* .dashboard-select .vs__search {
   color: #686868;
   font-size: 1.68rem;
-}
+} */
 
 .dashboard-select .vs__dropdown-menu {
   text-align: left;
@@ -178,15 +178,17 @@ main#home {
   border-color: #ffffff;
 }
 
-.vs__dropdown-menu {
+.ins-select-area .vs__dropdown-menu {
   box-shadow: none;
   border: none;
   border-radius: 2px;
   font-size: 1.68rem;
+  width: 24.2rem !important;
 }
 
 .vs__search::placeholder {
-  font-size: 1.68rem;
+  font-size: 1.4rem;
+  color: #686868 !important;
 }
 /* selectbox design customizing end */
 

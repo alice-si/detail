@@ -6,19 +6,24 @@
     </section>
     <section>
       <row :gutter="12" class="ins-select-area">
-        <column :lg="1.2"><h3>Select Country</h3></column>
-        <column :lg="2.8" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Show all" :searchable="false"></v-select></column>
-        <column :lg="1.2"><h3>Select Camp</h3></column>
+        <column :lg="1"><h3 class="ins-select-country">Select Country</h3></column>
+        <column :lg="3" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" placeholder="Show all" :searchable="false"></v-select></column>
+        <column :lg="1.2"><h3 class="ins-select-camp">Select Camp</h3></column>
         <column :lg="2.8" class="ins-select-box">
-          <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false">
+          <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false" :disabled="campSelectboxDisabled">
             <span slot="no-options">
-              <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
+              <h3>No more available options</h3> 
             </span>            
           </v-select>
+          <form>
+            <!-- <select class="test-selectbox">
+              <option v-for="country in countries">{{country}}</option>
+            </select> -->
+          </form>
         </column>
-        <column :lg="1.2"><h3>Select School</h3></column>
+        <column :lg="1.2"><h3 class="ins-select-school">Select School</h3></column>
         <column :lg="2.8" class="ins-select-box">
-          <v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false">
+          <v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false" :disabled="schoolSelectboxDisabled">
             <span slot="no-options">
               <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
             </span>            
@@ -66,7 +71,7 @@
                     </div>
                   </div>
                   <div v-bind:class="country.cssId" v-bind:for="country.cssId" style="text-align:left; border:none; color:'#D8D8D8';">
-                    <h2 style="font-family:'Source Sans Pro'; font-size:1.4rem;">in {{country.vForId}}</h2>
+                    <h2 style="font-family:'Source Sans Pro'; font-size:1.4rem; font-weight:300;">in {{country.vForId}}</h2>
                   </div>
                 </div>
                 <!-- Lessons summary end-->
@@ -118,6 +123,8 @@ export default {
       chartData: {},
       linechartShow: true,
       stackedChartShow: false,
+      campSelectboxDisabled: true,
+      schoolSelectboxDisabled: true,
       barChartData: [],
       stackedBarChartData: {},
       tableData: [],
@@ -127,7 +134,7 @@ export default {
       countries: [],
       camps: [],
       schools: [],
-      country: '- across countries',
+      country: '',
       camp: '',
       school: '',
       checkedItems: [],
@@ -157,7 +164,10 @@ export default {
         },
         legend: {
           labels: {
-            boxWidth: 10
+            boxWidth: 10,
+            fontSize: 14,
+            padding: 5.5,
+            pointStyle:'line'
           }
         }
       },
@@ -332,16 +342,20 @@ export default {
         case 'All':
           this.linechartShow = true
           this.stackedChartShow = false
+          this.camplSelectboxDisabled = true
+          this.schoolSelectboxDisabled = true
           this.selectedCountry = null
           this.selectedCamp = null
           this.selectedSchool = null
-          this.country = ''
+          this.country = '- across countries'
           this.camp = ''
           this.school = ''
           break
         case 'Country':
           this.linechartShow = true
           this.stackedChartShow = false
+          this.campSelectboxDisabled = false
+          this.schoolSelectboxDisabled = true
           this.selectedCamp = null
           this.selectedSchool = null
           this.camps = getCamps(this.selectedCountry)
@@ -352,6 +366,8 @@ export default {
         case 'Camp':
           this.linechartShow = true
           this.stackedChartShow = false
+          this.campSelectboxDisabled = false
+          this.schoolSelectboxDisabled = false
           this.selectedSchool = null
           this.schools = getSchools(this.selectedCountry, this.selectedCamp)
           this.camp = ', ' + this.selectedCamp
@@ -360,6 +376,8 @@ export default {
         case 'School':
           this.linechartShow = false
           this.stackedChartShow = true
+          this.campSelectboxDisabled = false
+          this.schoolSelectboxDisabled = false
           this.school = ', ' + this.selectedSchool
           break
       }
@@ -454,9 +472,26 @@ main#ins {
   padding-bottom: 2rem;
 }
 
-/* .container[data-v-42e9a5e0] {
-  width: 100% !important;
-} */
+.ins-select-area h3 {
+  font-size: 1.4rem;
+  color: #858585;
+}
+
+.ins-select-country {
+  margin: 0;
+}
+
+.ins-select-camp {
+  text-align:right; 
+  padding-left: 3rem;   
+  margin: 0 1rem 0 0
+}
+
+.ins-select-school {
+  text-align:right; 
+  padding-left: 2.8rem; 
+  margin:0 1rem 0 0;
+}
 
 .ins-select-area {
   width: 100%;
@@ -475,7 +510,7 @@ main#ins {
 /* selectbox design customizing start */
 .vs__dr
 #select-area .vs__open-indicator {
-  color: var(--color-dark-gery);
+  color: #686868 !important;
 }
 
 #vs__selected {
@@ -497,14 +532,15 @@ main#ins {
   font-size: 1.4rem;
 }
 
-.vs__search {
+/* .vs__search {
   margin: 0;
-}
+} */
 
 .vs__dropdown-toggle {
   border-radius: 2px;
   background-color: #ffffff;
-  border-color:#ffffff;
+  border: none;
+  /* border-color:#ffffff; */
   /* padding: 1rem; */
   margin: 0;
 }
@@ -512,6 +548,7 @@ main#ins {
 .vs__dropdown-toggle:active {
   background-color: #ffffff;
   border-color: #ffffff;
+  font-size: 1.4rem;
 }
 
 .vs__dropdown-menu {
@@ -521,6 +558,53 @@ main#ins {
   font-size: 1.4rem;
 }
 
+.vs__selected {
+  font-size: 1.4rem !important;
+}
+
+.vs--disabled .vs__dropdown-toggle {
+  background-color: rgba(255, 255, 255, 0.40);
+  font-size: 14px;
+  color: rgba(104,104,104,0.40) !important; 
+}
+
+.vs--disabled .vs__search {
+  background-color: rgba(255, 255, 255, 0.40);
+  font-size: 14px;
+  color: rgba(104,104,104,0.40) !important; 
+}
+
+
+/* .vs__dropdown-menu li:hover {
+ background-color: yellow !important;
+} */
+
+/* .vs__dropdown-option li {
+  background-color: yellow !important;
+} */
+
+
+
+/* <ul id="vs1__listbox" role="listbox" class="vs__dropdown-menu"> <li role="option" id="vs1__option-0" aria-selected="true" class="vs__dropdown-option vs__dropdown-option--highlight">
+          South Sudan
+        </li><li role="option" id="vs1__option-1" class="vs__dropdown-option">
+          DR Congo
+        </li><li role="option" id="vs1__option-2" class="vs__dropdown-option">
+          Kenya
+        </li><li role="option" id="vs1__option-3" class="vs__dropdown-option">
+          Tanzania
+        </li> <!----> </ul> */
+
+/* <ul id="vs1__listbox" role="listbox" class="vs__dropdown-menu"> <li role="option" id="vs1__option-0" class="vs__dropdown-option">
+          South Sudan
+        </li><li role="option" id="vs1__option-1" class="vs__dropdown-option">
+          DR Congo
+        </li><li role="option" id="vs1__option-2" class="vs__dropdown-option">
+          Kenya
+        </li><li role="option" id="vs1__option-3" aria-selected="true" class="vs__dropdown-option vs__dropdown-option--highlight">
+          Tanzania
+        </li> <!----> </ul> */
+
 /* selectbox design customizing end */
 .chart-title-area {
   display: flex;
@@ -529,9 +613,9 @@ main#ins {
 }
 
 .ins-sub-title {
-  font-size:2.88rem; 
+  font-size: 2.88rem; 
   font-family: 'Source Sans Pro';
-  font-weight: 400;
+  font-weight: 300 !important;
 }
 
 .chart-summary {
@@ -628,7 +712,7 @@ main#ins {
 }
 
 canvas#line-chart.chartjs-render-monitor {
-  padding: 0 1.8rem 0 10rem;
+  padding: 0 1.8rem 0 2rem;
   margin: 0 0 0 0 !important;
   max-width: 80rem !important;
   max-height: 43.8rem !important;
@@ -690,7 +774,7 @@ canvas#line-chart.chartjs-render-monitor {
 }
 
 #stacked-bar-chart canvas#bar-chart.chartjs-render-monitor {
-  padding: 0 1.3rem 0 8.5rem;
+  padding: 0 1.3rem 0 2rem;
   width: 80rem !important;
   height: 43.8rem !important;
 }
