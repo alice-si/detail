@@ -67,7 +67,7 @@
 // @ is an alias to /src
 // import html2canvas from 'html2canvas'
 // import LinkPrevue from 'link-prevue'
-import { getLessons, getAvgAcrossSchools } from '../data/data-provider.js'
+import { getLessons, getStudentAvgAcrossSchools } from '../data/data-provider.js'
 import { compareDataByYear, calcDifference } from '../data/data-handler'
 
 export default {
@@ -84,15 +84,15 @@ export default {
       ictGrowthRate: ''
     }
   },
-  mounted() {
+  mounted () {
     this.getInsGrowthRate()
   },
   methods: {
-    getInsGrowthRate() {
+    getInsGrowthRate () {
       const prevYear = getLessons([], [], [], '2018')
       const currYear = getLessons([], [], [], '2019')
       this.insGrowthRate = compareDataByYear(Object.values(prevYear.lessons[0]), Object.values(currYear.lessons[0]))
-      this.ictGrowthRate = calcDifference([getAvgAcrossSchools('Total', 'Base')], [getAvgAcrossSchools('Total', 'End')])[0]
+      this.ictGrowthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
     }
   }
 }

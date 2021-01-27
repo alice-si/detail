@@ -1,5 +1,6 @@
 const data = require('./parsed.json')
-const ICT_DATA = require('./ict-data.json')
+const ICT_STUDENT_DATA = require('./ict-data.json')
+const ICT_TEACHER_DATA = require('./ict-teachers-data.json')
 
 // for INS
 export function getCountries () {
@@ -118,7 +119,7 @@ export function setYearSelectBox (country, camp, school) {
 
 // for ICT
 export function getIctCountries () {
-  const countries = ICT_DATA
+  const countries = ICT_STUDENT_DATA
   return Object.keys(countries.children)
 }
 
@@ -129,29 +130,53 @@ export function getAvgPercentage (absolute) {
 }
 
 export function getIctSchoolList () {
-  const list = Object.keys(ICT_DATA.children.Tanzania.children.Nyarugusu.children)
+  const list = Object.keys(ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children)
   return list
 }
 
-export function getIctSchoolAvg (school, type, year) {
+export function getStudentIctSchoolAvg (school, type, year) {
   let percentage = ''
   if (year === 'Base') {
-    const base = ICT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].base_avg
+    const base = ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].base_avg
     percentage = getAvgPercentage(base).toFixed(0)
   } else if (year === 'End') {
-    const end = ICT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].end_avg
+    const end = ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].end_avg
     percentage = getAvgPercentage(end).toFixed(0)
   }
   return percentage
 }
 
-export function getAvgAcrossSchools (type, year) {
+export function getStudentAvgAcrossSchools (type, year) {
   let percentage = ''
   if (year === 'Base') {
-    const base = ICT_DATA.values[type].base_avg
+    const base = ICT_STUDENT_DATA.values[type].base_avg
     percentage = getAvgPercentage(base).toFixed(0)
   } else if (year === 'End') {
-    const end = ICT_DATA.values[type].end_avg
+    const end = ICT_STUDENT_DATA.values[type].end_avg
+    percentage = getAvgPercentage(end).toFixed(0)
+  }
+  return percentage
+}
+
+export function getTeacherIctSchoolAvg (school, type, year) {
+  let percentage = ''
+  if (year === 'Base') {
+    const base = ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].base_avg
+    percentage = getAvgPercentage(base).toFixed(0)
+  } else if (year === 'End') {
+    const end = ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[type].end_avg
+    percentage = getAvgPercentage(end).toFixed(0)
+  }
+  return percentage
+}
+
+export function getTeacherAvgAcrossSchools (type, year) {
+  let percentage = ''
+  if (year === 'Base') {
+    const base = ICT_TEACHER_DATA.values[type].base_avg
+    percentage = getAvgPercentage(base).toFixed(0)
+  } else if (year === 'End') {
+    const end = ICT_TEACHER_DATA.values[type].end_avg
     percentage = getAvgPercentage(end).toFixed(0)
   }
   return percentage

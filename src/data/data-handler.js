@@ -1,3 +1,6 @@
+import { getStudentIctSchoolAvg, getTeacherIctSchoolAvg, getIctSchoolList } from './data-provider'
+import { getGroupBarChartColorSheme } from './colour-scheme'
+
 // For INS Page
 export function calcSum (lessons) {
   const sum = lessons.reduce(
@@ -153,10 +156,14 @@ export function getStackedBarChartData (lessons, colorScheme) {
 }
 
 // For ICT page
-import { getIctSchoolAvg } from './data-provider'
 
-export function getIctRate (school, type, year) {
-  const avgSchoolIctSkill = getIctSchoolAvg(`${school}`, `${type}`, `${year}`)
+export function getStudentIctRate (school, type, year) {
+  const avgSchoolIctSkill = getStudentIctSchoolAvg(`${school}`, `${type}`, `${year}`)
+  return avgSchoolIctSkill
+}
+
+export function getTeacherIctRate (school, type, year) {
+  const avgSchoolIctSkill = getTeacherIctSchoolAvg(`${school}`, `${type}`, `${year}`)
   return avgSchoolIctSkill
 }
 
@@ -172,4 +179,75 @@ export function calcDifference (base, end) {
     }
   })
   return difference
+}
+
+export function getIctTableData (getRateDataFunc, getAcrossAvgDataFunc) {
+  const labelArr = getIctSchoolList()
+  const totalBaseYearData = {}
+  const totalEndYearData = {}
+  const maleBaseYearData = {}
+  const maleEndYearData = {}
+  const femaleBaseYearData = {}
+  const femaleEndYearData = {}
+  const tableProp = {}
+
+  labelArr.forEach(el => {
+    totalBaseYearData[el] = getRateDataFunc(`${el}`, 'Total', 'Base')
+    totalEndYearData[el] = getRateDataFunc(`${el}`, 'Total', 'End')
+    maleBaseYearData[el] = getRateDataFunc(`${el}`, 'Male', 'Base')
+    maleEndYearData[el] = getRateDataFunc(`${el}`, 'Male', 'End')
+    femaleBaseYearData[el] = getRateDataFunc(`${el}`, 'Female', 'Base')
+    femaleEndYearData[el] = getRateDataFunc(`${el}`, 'Female', 'End')
+  })
+
+  tableProp.columns = Object.keys(totalBaseYearData)
+  tableProp.total = {
+    beforeIns: Object.values(totalBaseYearData),
+    afterIns: Object.values(totalEndYearData)
+  }
+  tableProp.male = {
+    beforeIns: Object.values(maleBaseYearData),
+    afterIns: Object.values(maleEndYearData)
+  }
+  tableProp.female = {
+    beforeIns: Object.values(femaleBaseYearData),
+    afterIns: Object.values(femaleEndYearData)
+  }
+  tableProp.total.beforeIns.push(getAcrossAvgDataFunc('Total', 'Base'))
+  tableProp.total.afterIns.push(getAcrossAvgDataFunc('Total', 'End'))
+  tableProp.total.difference = calcDifference(tableProp.total.beforeIns, tableProp.total.afterIns)
+  tableProp.male.beforeIns.push(getAcrossAvgDataFunc('Male', 'Base'))
+  tableProp.male.afterIns.push(getAcrossAvgDataFunc('Male', 'End'))
+  tableProp.male.difference = calcDifference(tableProp.male.beforeIns, tableProp.male.afterIns)
+  tableProp.female.beforeIns.push(getAcrossAvgDataFunc('Female', 'Base'))
+  tableProp.female.afterIns.push(getAcrossAvgDataFunc('Female', 'End'))
+  tableProp.female.difference = calcDifference(tableProp.female.beforeIns, tableProp.female.afterIns)
+  return tableProp
+}
+
+export function getGroupBarChartData (getInfoFunc) {
+  const labelArr = getIctSchoolList()
+  const baseYearData = {}
+  const endYearData = {}
+
+  labelArr.forEach(el => {
+    baseYearData[el] = getInfoFunc(`${el}`, 'Total', 'Base')
+  })
+  labelArr.forEach(el => {
+    endYearData[el] = getInfoFunc(`${el}`, 'Total', 'End')
+  })
+
+  const dataset = {
+    labels: labelArr,
+    datasets: [{ // label: 'baseYear',
+      backgroundColor: getGroupBarChartColorSheme().opacity,
+      barThickness: 15,
+      data: Object.values(baseYearData)
+    }, {// label: 'endYear',
+      backgroundColor: getGroupBarChartColorSheme().normal,
+      barThickness: 15,
+      data: Object.values(endYearData)
+    }]
+  }
+  return dataset
 }

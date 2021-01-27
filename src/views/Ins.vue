@@ -519,6 +519,10 @@ main#ins {
   font-size: 1.4rem;
 }
 
+.select-camp .vs__search {
+  margin-top: 0.5rem;
+}
+
 .select-country .vs__search::placeholder {
   color: var(--color-dark-grey);
   font-size: 1.4rem;
@@ -578,7 +582,7 @@ main#ins {
 }
 
 .ins-sub-title {
-  font-size: 2.88rem; 
+  font-size: 2.88rem;
   font-family: 'Source Sans Pro';
   font-weight: 300 !important;
 }

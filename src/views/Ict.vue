@@ -3,12 +3,12 @@
     <section id="page-title" class="container-fluid">
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <row :gutter="12" class="page-title-container">
-        <column :lg="7" :xs="6"><h1 class="title">ICT Skills</h1></column>
+        <column :lg="7" :xs="6"><h1 class="title" v-bind:style="colorCode">ICT Skills - {{viewMode}}</h1></column>
         <column :lg="5" :xs="6" class="toggle-area">
         <h3>Students</h3>
           <div class="wrap">
             <input type="checkbox" id="view-toggle" v-on:click="viewToggle"/>
-            <label class="slider" for="view-toggle"></label>
+            <label v-bind:style="colorCode" class="slider" for="view-toggle"></label>
           </div>
         <h3>Teachers</h3>
         </column>
@@ -26,25 +26,25 @@
     </section>
     <section :gutter="12" class="ict-chart-title-area">
       <row class="ict-chart-title">
-        <column :lg="9" :xs="6"><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
+        <column :lg="9" :xs="6"><h2 class="ict-sub-title" v-bind:style="colorCode">Avg No of ICT skills in Tanzania, Nyarugusu, across schools</h2></column>
         <column :lg="3" :xs="6">
-          <div class="total-skills"> <span><h1>{{growthRate}}</h1><h2>skills/students</h2></span></br><h3>after INS (Oct 2020)</h3></div>
+          <div class="total-skills"> <span><h1 v-bind:style="colorCode">{{growthRate}}</h1><h2 v-bind:style="colorCode">skills/students</h2></span></br><h3 v-bind:style="colorCode">after INS (Oct 2020)</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
     </section>
     <section class="chart-area">
       <row :gutter="12" class="chart-main">
-        <column :lg="9" class="ictskills-bar-chart-area">
+        <column :lg="8.56" class="ictskills-bar-chart-area">
           <h3> Avg No of ICT skills/student</h3>
           <group-bar-chart :chart-data="groupBarChartData" :options="options"></group-bar-chart>
           <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
         </column>
-        <column :lg="3" class="summary-area">
+        <column :lg="3.44" class="summary-area" style="padding-left:3rem;">
         <row v-for="i in setNoOfRows" v-bind:key="i">
           <column v-for="j in [0, 1]" v-bind:key="i*2+j" :lg="6" :xs="6">
             <div v-if="i*2+j < summaryBoxData.length" class="summary-grid">
-             <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].name" v-bind:class="summaryBoxData[i*2+j].name" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
+              <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].name" v-bind:class="summaryBoxData[i*2+j].name" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
               <label v-bind:class="summaryBoxData[i*2+j].name" v-bind:for="summaryBoxData[i*2+j].name">
                 <div v-bind:class="summaryBoxData[i*2+j].name" style="justify-content:center; align-item:center;">
                   <span v-bind:class="summaryBoxData[i*2+j].name" style="color: #ffffff; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
@@ -67,8 +67,8 @@
 <script>
 import GroupBarChart from '../components/GroupBarChart'
 import TableForICT from '../components/TableForICT'
-import { getIctSchoolList, getIctSchoolAvg, getAvgAcrossSchools } from '../data/data-provider'
-import { getIctRate, calcDifference } from '../data/data-handler'
+import { getIctSchoolList, getStudentIctSchoolAvg, getStudentAvgAcrossSchools, getTeacherIctSchoolAvg, getTeacherAvgAcrossSchools } from '../data/data-provider'
+import { getTeacherIctRate, getStudentIctRate, calcDifference, getIctTableData, getGroupBarChartData } from '../data/data-handler'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
   components: {
@@ -78,6 +78,7 @@ export default {
   data () {
     return {
       viewMode: 'Students',
+      colorCode: '',
       growthRate: '',
       countries: ['No more available options'],
       camps: ['No more available options'],
@@ -118,21 +119,29 @@ export default {
     }
   },
   mounted () {
-    // this.countries = ['Tanzania']
-    // this.camps = ['Nyarugusu']
     this.schools = getIctSchoolList()
     this.switchViewMode()
   },
   methods: {
     switchViewMode () {
-      console.log(this.viewMode)
       switch (this.viewMode) {
         case 'Students':
-          this.groupBarChartData = this.filterChartData(this.getGroupBarChartData())
-          this.tableData = this.getTableData()
+          this.colorCode = 'color: #8954BA'
+          this.groupBarChartData = this.filterChartData(getGroupBarChartData(getStudentIctSchoolAvg))
+          this.tableData = getIctTableData(getStudentIctRate, getStudentAvgAcrossSchools)
           this.summaryBoxData = this.setSummaryBoxData()
           this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
-          this.growthRate = calcDifference([getAvgAcrossSchools('Total', 'Base')], [getAvgAcrossSchools('Total', 'End')])[0]
+          this.growthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
+          break
+
+        case 'Teachers':
+          this.colorCode = 'color: #0091FF'
+          this.groupBarChartData = this.filterChartData(getGroupBarChartData(getTeacherIctSchoolAvg))
+          this.tableData = getIctTableData(getTeacherIctRate, getTeacherAvgAcrossSchools)
+          this.summaryBoxData = this.setSummaryBoxData()
+          this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
+          this.growthRate = calcDifference([getTeacherAvgAcrossSchools('Total', 'Base')], [getTeacherAvgAcrossSchools('Total', 'End')])[0]
+          break
       }
     },
     updateColor (colorScheme, colorIndex) {
@@ -190,80 +199,19 @@ export default {
       return summaryBoxDataArr
     },
     viewToggle () {
+      this.uncheckCheckboxes()
       if (this.viewMode === 'Students') {
         this.viewMode = 'Teachers'
       } else {
         this.viewMode = 'Students'
       }
     },
-    getGroupBarChartData () {
-      const labelArr = getIctSchoolList()
-      const baseYearData = {}
-      const endYearData = {}
-
-      labelArr.forEach(el => {
-        baseYearData[el] = getIctSchoolAvg(`${el}`, 'Total', 'Base')
-      })
-      labelArr.forEach(el => {
-        endYearData[el] = getIctSchoolAvg(`${el}`, 'Total', 'End')
-      })
-
-      const dataset = {
-        labels: labelArr,
-        datasets: [{ // label: 'baseYear',
-          backgroundColor: getGroupBarChartColorSheme().opacity,
-          barThickness: 15,
-          data: Object.values(baseYearData)
-        }, {// label: 'endYear',
-          backgroundColor: getGroupBarChartColorSheme().normal,
-          barThickness: 15,
-          data: Object.values(endYearData)
-        }]
+    uncheckCheckboxes () {
+      for (let i = 0; i < this.checkedItems.length; i++) {
+        const dom = document.getElementsByClassName(this.checkedItems[i])
+        dom[0].checked = false
       }
-      return dataset
-    },
-    getTableData () {
-      const labelArr = getIctSchoolList()
-      const totalBaseYearData = {}
-      const totalEndYearData = {}
-      const maleBaseYearData = {}
-      const maleEndYearData = {}
-      const femaleBaseYearData = {}
-      const femaleEndYearData = {}
-      const tableProp = {}
-
-      labelArr.forEach(el => {
-        totalBaseYearData[el] = getIctRate(`${el}`, 'Total', 'Base')
-        totalEndYearData[el] = getIctRate(`${el}`, 'Total', 'End')
-        maleBaseYearData[el] = getIctRate(`${el}`, 'Male', 'Base')
-        maleEndYearData[el] = getIctRate(`${el}`, 'Male', 'End')
-        femaleBaseYearData[el] = getIctRate(`${el}`, 'Female', 'Base')
-        femaleEndYearData[el] = getIctRate(`${el}`, 'Female', 'End')
-      })
-
-      tableProp.columns = Object.keys(totalBaseYearData)
-      tableProp.total = {
-        beforeIns: Object.values(totalBaseYearData),
-        afterIns: Object.values(totalEndYearData)
-      }
-      tableProp.male = {
-        beforeIns: Object.values(maleBaseYearData),
-        afterIns: Object.values(maleEndYearData)
-      }
-      tableProp.female = {
-        beforeIns: Object.values(femaleBaseYearData),
-        afterIns: Object.values(femaleEndYearData)
-      }
-      tableProp.total.beforeIns.push(getAvgAcrossSchools('Total', 'Base'))
-      tableProp.total.afterIns.push(getAvgAcrossSchools('Total', 'End'))
-      tableProp.total.difference = calcDifference(tableProp.total.beforeIns, tableProp.total.afterIns)
-      tableProp.male.beforeIns.push(getAvgAcrossSchools('Male', 'Base'))
-      tableProp.male.afterIns.push(getAvgAcrossSchools('Male', 'End'))
-      tableProp.male.difference = calcDifference(tableProp.male.beforeIns, tableProp.male.afterIns)
-      tableProp.female.beforeIns.push(getAvgAcrossSchools('Female', 'Base'))
-      tableProp.female.afterIns.push(getAvgAcrossSchools('Female', 'End'))
-      tableProp.female.difference = calcDifference(tableProp.female.beforeIns, tableProp.female.afterIns)
-      return tableProp
+      this.checkedItems = []
     }
   },
   computed: {
@@ -302,7 +250,8 @@ main#ict-skills {
   color: var(--color-purple);
   font-weight: 300;
   text-align: left;
-  margin-bottom: 4.7rem;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
 }
 
 #page-title {
@@ -319,10 +268,6 @@ main#ict-skills {
 .back a {
   color: var(--color-dark-grey);
   font-size: 1.2rem;
-}
-
-.title {
-  padding-bottom: 0rem;
 }
 
 .toggle-area {
@@ -376,7 +321,7 @@ main#ict-skills {
 .wrap input:checked + .slider::after {
   width: 4rem; height: 2rem;
 	top: -0.1rem; left: 10.4rem;
-  background: var(--color-purple);
+  background: #0091FF;
   box-shadow: 0 0 0 0 #f2f2f2 ictet;
   border-radius: 8px;
 }
@@ -399,7 +344,8 @@ main#ict-skills {
   align-items: center;
   margin-bottom : 1.5rem;
   width: 100%;
-  color: #d8d8d8
+  color: #d8d8d8;
+  padding-left: 2.5rem;
 }
 
 .summary-grid h1 {
@@ -416,9 +362,15 @@ main#ict-skills {
   text-align: left;
 }
 
-.ict-chart-title h2 {
+/* .ict-chart-title h2 {
   font-size: 2.88rem;
   font-weight: 100;
+} */
+
+.ict-sub-title {
+  font-size: 2.88rem;
+  font-family: 'Source Sans Pro';
+  font-weight: 300 !important;
 }
 
 .total-skills h1,
@@ -431,36 +383,23 @@ main#ict-skills {
 .total-skills h1 {
   font-size: 3rem;
   margin-right: 0.5rem;
+  font-weight: 500;
 }
 
 .total-skills h2 {
   font-size: 2.2rem;
-  font-weight: 100;
+  font-family: 'Source Sans Pro';
+  font-weight: 300;
 }
 
 .total-skills h3 {
   font-size: 1.4rem;
+  font-family: 'Source Sans Pro';
   font-weight: 100;
 }
 
-
 /* select area customizing */
-
-/* #select-area {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-} */
-
-/* .container {
-  margin: 0;
-  max-width: 144rem;
-} */
-
-
-
 .container {
-  /* width: 100%; */
   max-width: 144rem;
 }
 
@@ -485,14 +424,14 @@ main#ict-skills {
 }
 
 .ict-select-camp {
-  text-align:right; 
-  padding-left: 3rem;   
+  text-align:right;
+  padding-left: 3rem;
   margin: 0 1rem 0 0
 }
 
 .ict-select-school {
-  text-align:right; 
-  padding-left: 2.8rem; 
+  text-align:right;
+  padding-left: 2.8rem;
   margin:0 1rem 0 0;
 }
 
@@ -568,7 +507,7 @@ main#ict-skills {
 .vs--disabled .vs__dropdown-toggle {
   background-color: rgba(255, 255, 255, 0.40);
   font-size: 14px;
-  color: rgba(104,104,104,0.40) !important; 
+  color: rgba(104,104,104,0.40) !important;
 }
 
 .vs--disabled .vs__search {
@@ -576,17 +515,16 @@ main#ict-skills {
   font-size: 14px;
   color: rgba(104,104,104,0.40) !important;
 }
-
-
-
-
-
 /* select area customizing end */
 
 .ict-chart-title-area {
   display: flex;
   color: var(--color-purple);
   margin-top: 5rem;
+}
+
+.chartjs-size-monitor{
+  margin: 0;
 }
 
 .chart-summary {
@@ -596,7 +534,8 @@ main#ict-skills {
 
 .chart-area {
   margin-top: 6rem;
-  padding: 3rem;
+  padding: 0 2rem 3.5rem 2rem;
+  max-width: 125.3rem;
   display: flex;
   flex-direction: column;
   height: 45%;
@@ -605,7 +544,7 @@ main#ict-skills {
 
 .chart-main {
   display: flex;
-  background-color:#ffffff;
+  max-width: 125.3rem !important;
 }
 
 .ict-chart-title {
@@ -628,14 +567,19 @@ main#ict-skills {
 }
 
 .ictskills-bar-chart-area h3 {
-  font-family: Helvetica;
-  font-size: 12px;
+  font-family: Source Sans Pro;
+  font-size: 1.2rem;
   letter-spacing: -0.01px;
   text-align: left;
+  margin: 2.5rem 0 1.5rem 2.5rem;
 }
 
 .ictskills-bar-chart-area #bar-chart {
-  padding: 2rem 3rem 1.5rem 0;
+  /* padding: 2rem 3rem 1.5rem 0; */
+  padding: 0 1.8rem 0 2rem;
+  margin: 0 0 0 0 !important;
+  max-width: 84rem !important;
+  max-height: 43.8rem !important;
 }
 
 .summary-area {
@@ -664,6 +608,8 @@ main#ict-skills {
 
 .table-area {
   margin-top: 1.5rem;
+  font-size: 1.2rem;
+  color: #686868;
 }
 
 </style>
