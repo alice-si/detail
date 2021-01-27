@@ -102,7 +102,7 @@ import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
 import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics } from '../data/data-provider.js'
-import { getCountryColorSchme, getCampColorSchme, getSchoolColorSchme, getTopicColorSchme } from '../data/colour-scheme.js'
+import { getAllPurpleColor, getLineChartColorScheme, getCountryColorSchme, getCampColorSchme, getSchoolColorSchme, getTopicColorSchme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
 
 export default {
@@ -284,15 +284,15 @@ export default {
             prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
             this.totalLessons = calcSum(Object.values(lessons.lessons[0]))
             this.growthRate = compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
-            this.chartData = getLineChartData(lessons, getCountryColorSchme)
+            this.chartData = getLineChartData(lessons, getAllPurpleColor)
           } else {
             lessons = tableLessons
-            this.chartData = this.filterChartData(getLineChartData(lessons, getCountryColorSchme), this.checkedItems)
+            this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
           }
           this.barChartData = getBarChartData(getTableData('Country', tableLessons, prevTableLessons))
           this.tableData = getTableData('Country', tableLessons, prevTableLessons)
           this.summaryBoxData = this.filterTopics(getTableData('Country', tableLessons, prevTableLessons))
-          this.updateColors(this.viewMode, getCountryColorSchme)
+          this.updateColors(this.viewMode, getLineChartColorScheme)
           break
 
         case 'Country':
@@ -302,11 +302,11 @@ export default {
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.chartData = this.filterChartData(getLineChartData(lessons, getCampColorSchme), this.checkedItems)
+          this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
           this.barChartData = getBarChartData(getTableData('Camps', lessons, prevYearLessons))
           this.tableData = getTableData('Camps', lessons, prevYearLessons)
           this.summaryBoxData = this.filterTopics(getTableData('Camps', lessons, prevYearLessons))
-          this.updateColors(this.viewMode, getCampColorSchme)
+          this.updateColors(this.viewMode, getLineChartColorScheme)
           break
 
         case 'Camp':
@@ -316,11 +316,11 @@ export default {
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.chartData = this.filterChartData(getLineChartData(lessons, getSchoolColorSchme), this.checkedItems)
+          this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
           this.barChartData = getBarChartData(getTableData('Schools', lessons, prevYearLessons))
           this.tableData = getTableData('Schools', lessons, prevYearLessons)
           this.summaryBoxData = this.filterTopics(getTableData('Schools', lessons, prevYearLessons))
-          this.updateColors(this.viewMode, getSchoolColorSchme)
+          this.updateColors(this.viewMode, getLineChartColorScheme)
           break
 
         case 'School':
@@ -330,10 +330,10 @@ export default {
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.stackedBarChartData = this.filterChartData(getStackedBarChartData(lessons, getTopicColorSchme), this.checkedItems)
+          this.stackedBarChartData = this.filterChartData(getStackedBarChartData(lessons, getLineChartColorScheme), this.checkedItems)
           this.TopicTableData = getTableData('Topics', lessons, prevYearLessons)
           this.summaryBoxData = this.filterTopics(getTableData('Topics', lessons, prevYearLessons)) // for checkbox rendering
-          this.updateColors(this.viewMode, getTopicColorSchme)
+          this.updateColors(this.viewMode, getLineChartColorScheme)
           break
       }
     },
@@ -472,6 +472,7 @@ main#ins {
   padding-bottom: 2rem;
 }
 
+/* select box area start */
 .ins-select-area h3 {
   font-size: 1.4rem;
   color: #858585;
@@ -506,6 +507,7 @@ main#ins {
   width: 24.2rem;
   height: 3.9rem;
 }
+/* select box area end */
 
 /* selectbox design customizing start */
 .vs__dr
@@ -532,16 +534,10 @@ main#ins {
   font-size: 1.4rem;
 }
 
-/* .vs__search {
-  margin: 0;
-} */
-
 .vs__dropdown-toggle {
   border-radius: 2px;
   background-color: #ffffff;
   border: none;
-  /* border-color:#ffffff; */
-  /* padding: 1rem; */
   margin: 0;
 }
 
@@ -573,39 +569,8 @@ main#ins {
   font-size: 14px;
   color: rgba(104,104,104,0.40) !important; 
 }
-
-
-/* .vs__dropdown-menu li:hover {
- background-color: yellow !important;
-} */
-
-/* .vs__dropdown-option li {
-  background-color: yellow !important;
-} */
-
-
-
-/* <ul id="vs1__listbox" role="listbox" class="vs__dropdown-menu"> <li role="option" id="vs1__option-0" aria-selected="true" class="vs__dropdown-option vs__dropdown-option--highlight">
-          South Sudan
-        </li><li role="option" id="vs1__option-1" class="vs__dropdown-option">
-          DR Congo
-        </li><li role="option" id="vs1__option-2" class="vs__dropdown-option">
-          Kenya
-        </li><li role="option" id="vs1__option-3" class="vs__dropdown-option">
-          Tanzania
-        </li> <!----> </ul> */
-
-/* <ul id="vs1__listbox" role="listbox" class="vs__dropdown-menu"> <li role="option" id="vs1__option-0" class="vs__dropdown-option">
-          South Sudan
-        </li><li role="option" id="vs1__option-1" class="vs__dropdown-option">
-          DR Congo
-        </li><li role="option" id="vs1__option-2" class="vs__dropdown-option">
-          Kenya
-        </li><li role="option" id="vs1__option-3" aria-selected="true" class="vs__dropdown-option vs__dropdown-option--highlight">
-          Tanzania
-        </li> <!----> </ul> */
-
 /* selectbox design customizing end */
+
 .chart-title-area {
   display: flex;
   color: var(--color-purple);
@@ -678,12 +643,14 @@ main#ins {
 
 .container {
   max-width: 144rem;
-  /* background-color: blue; */
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 #chart-area {
   margin-top: 4rem;
-  padding: 4.5rem 3.5rem 4.5rem 3.5rem;
+  /* padding: 4.5rem 3.5rem 4.5rem 3.5rem; */
+  padding: 0 2rem 3.5rem 2rem;
   max-width: 125.3rem;
   background-color: #ffffff;
 }
@@ -720,20 +687,33 @@ canvas#line-chart.chartjs-render-monitor {
 
 .line-chart-area h3 {
   font-family: Source Sans Pro;
-  font-size: 12px;
+  font-size: 1.2rem;
   letter-spacing: -0.01px;
   text-align: left;
+  margin: 2.5rem 0 1.5rem 2.5rem;
 }
 
 .summary-area {
   display: flex;
   flex-direction: column;
-  max-height: 51rem;
-  padding: 0 0 0 0;
+  max-height: 40rem;
+  /* padding: 5rem 0 5rem 0 !important; */
   overflow-y: auto;
   border: none;
   align-items: left;
   /* background-color: orange; */
+}
+
+.summary-area::-webkit-scrollbar {
+  width: 4px;
+  height: 355px;
+  background-color: rgba(216, 216, 216, 0.4);
+}
+
+.summary-area::-webkit-scrollbar-thumb {
+  width: 4px;
+  height: 60px;
+  background-color: #d8d8d8;
 }
 
 .text-container {
@@ -765,7 +745,7 @@ canvas#line-chart.chartjs-render-monitor {
 
 .year-select-box {
   align-self: flex-end;
-  margin-top: 1rem;
+  margin: 1rem 3.5rem 0 0;
 }
 
 .summary-area #bar-chart #bar-chart {

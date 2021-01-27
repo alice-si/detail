@@ -1,3 +1,27 @@
+export function getAllPurpleColor () {
+  const COLOR_SCHEME = '#8954BA'
+  return COLOR_SCHEME
+}
+
+export function getLineChartColorScheme (index) {
+  let COLOR_SCHEME = [
+    '#E84F89',
+    '#2FB9EF',
+    '#F69855',
+    '#BED23F',
+    '#58CCCA',
+    '#F7B500',
+    '#EF664F',
+    '#869898',
+    '#B643C4',
+    '#5BC87D',
+    '#8C6450',
+    '#E08685',
+    '#50788C'
+  ]
+  return COLOR_SCHEME[index % COLOR_SCHEME.length]
+}
+
 export function getCountryColorSchme (index) {
   let COLOR_SCHEME = [
     '#EA4C89',

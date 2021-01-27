@@ -14,18 +14,18 @@
         </column>
       </row>
     </section>
-    <section id="select-area" class="container-fluid">
-      <row :gutter="12">
-        <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" :searchable="false"></v-select></column>
-        <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Nyarugusu" :searchable="false"></v-select></column>
-        <column :lg="1.5"><h3>Select School</h3></column>
-        <column :lg="2.5"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false"></v-select></column>
+    <section>
+      <row :gutter="12" class="ict-select-area">
+        <column :lg="1" class="ict-select-country"><h3>Select Country</h3></column>
+        <column :lg="3" class="ict-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" :searchable="false"></v-select></column>
+        <column :lg="1.2"><h3 class="ict-select-camp">Select Camp</h3></column>
+        <column :lg="2.8" class="ict-select-box"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Nyarugusu" :searchable="false"></v-select></column>
+        <column :lg="1.2"><h3 class="ict-select-school">Select School</h3></column>
+        <column :lg="2.8" class="ict-select-box"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false"></v-select></column>
       </row>
     </section>
-    <section :gutter="12" class="chart-title-area">
-      <row class="chart-title">
+    <section :gutter="12" class="ict-chart-title-area">
+      <row class="ict-chart-title">
         <column :lg="9" :xs="6"><h2>Avg No of ICT skills/student in Tanzania, Nyarugusu, across schools</h2></column>
         <column :lg="3" :xs="6">
           <div class="total-skills"> <span><h1>{{growthRate}}</h1><h2>skills/students</h2></span></br><h3>after INS (Oct 2020)</h3></div>
@@ -302,6 +302,7 @@ main#ict-skills {
   color: var(--color-purple);
   font-weight: 300;
   text-align: left;
+  margin-bottom: 4.7rem;
 }
 
 #page-title {
@@ -343,18 +344,24 @@ main#ict-skills {
 
 .slider {
   position: relative; display: block;
-  width: 14em; height: 2em;
+  width: 14.4em; height: 2em;
   cursor: pointer;
   transition: 550ms;
   border: 1px solid var(--color-light-grey);
   border-radius: 8px;
 }
 
+.toggle-area h3 {
+  font-family: Helvetica;
+  font-size: 1.4rem;
+  color: #858585;
+}
+
 /* switch */
 .slider::after {
   position: absolute; content:'';
-  width: 4em; height: 2em;
-  top: 0em; left: 0em;
+  width: 4rem; height: 2rem;
+  top: -0.1rem; left: -0.1rem;
   border-radius: 8px;
   transition:
     width 200ms ease-out,
@@ -367,10 +374,10 @@ main#ict-skills {
 }
 
 .wrap input:checked + .slider::after {
-  width: 4em; height: 2em;
-	top: 0; left: 10em;
+  width: 4rem; height: 2rem;
+	top: -0.1rem; left: 10.4rem;
   background: var(--color-purple);
-  box-shadow: 0 0 0 0 #f2f2f2 inset;
+  box-shadow: 0 0 0 0 #f2f2f2 ictet;
   border-radius: 8px;
 }
 /* toggle end */
@@ -409,8 +416,8 @@ main#ict-skills {
   text-align: left;
 }
 
-.chart-title h2 {
-  font-size: 2rem;
+.ict-chart-title h2 {
+  font-size: 2.88rem;
   font-weight: 100;
 }
 
@@ -422,24 +429,39 @@ main#ict-skills {
 }
 
 .total-skills h1 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-right: 0.5rem;
 }
 
 .total-skills h2 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 100;
 }
 
 .total-skills h3 {
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 100;
 }
 
-#select-area {
+
+/* select area customizing */
+
+/* #select-area {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
+} */
+
+/* .container {
+  margin: 0;
+  max-width: 144rem;
+} */
+
+
+
+.container {
+  /* width: 100%; */
+  max-width: 144rem;
 }
 
 #select-area h3 {
@@ -452,9 +474,55 @@ main#ict-skills {
   border-radius: 0px;
 }
 
-/* selectbox design customizing start */
-#vs__selected {
+
+.ict-select-area h3 {
   font-size: 1.4rem;
+  color: #858585;
+}
+
+.ict-select-country {
+  margin: 0;
+}
+
+.ict-select-camp {
+  text-align:right; 
+  padding-left: 3rem;   
+  margin: 0 1rem 0 0
+}
+
+.ict-select-school {
+  text-align:right; 
+  padding-left: 2.8rem; 
+  margin:0 1rem 0 0;
+}
+
+.ict-select-area {
+  width: 100%;
+}
+
+.ict-select-area h3 {
+  color: var(--color-dark-grey);
+  text-align: left;
+}
+
+.ict-select-box .vs__dropdown-toggle {
+  width: 24.2rem;
+  height: 3.9rem;
+}
+
+/* selectbox design customizing start */
+.vs__dr
+#select-area .vs__open-indicator {
+  color: #686868 !important;
+}
+
+.ict-select-area .vs__selected-options .vs__search {
+  padding-left: 2rem;
+}
+
+.ict-select-area .vs__selected {
+  font-size: 1.4rem;
+  width: 24.2rem;
 }
 
 .select-country .vs__search::placeholder {
@@ -474,28 +542,51 @@ main#ict-skills {
 
 .vs__dropdown-toggle {
   border-radius: 2px;
-  background-color: #ffffff70;
-  border-color:#ffffff70;
-  padding: 1rem;
+  background-color: #ffffff;
+  border: none;
+  margin: 0;
 }
 
 .vs__dropdown-toggle:active {
   background-color: #ffffff;
   border-color: #ffffff;
+  font-size: 1.4rem;
 }
 
-.vs__dropdown-menu {
+.v-select .vs__dropdown-menu {
   box-shadow: none;
   border: none;
   border-radius: 2px;
   font-size: 1.4rem;
+  width: 24.2rem;
 }
 
-/* selectbox design customizing end */
-.chart-title-area {
+.vs__selected {
+  font-size: 1.4rem !important;
+}
+
+.vs--disabled .vs__dropdown-toggle {
+  background-color: rgba(255, 255, 255, 0.40);
+  font-size: 14px;
+  color: rgba(104,104,104,0.40) !important; 
+}
+
+.vs--disabled .vs__search {
+  background-color: rgba(255, 255, 255, 0.40);
+  font-size: 14px;
+  color: rgba(104,104,104,0.40) !important;
+}
+
+
+
+
+
+/* select area customizing end */
+
+.ict-chart-title-area {
   display: flex;
   color: var(--color-purple);
-  margin-top: 3rem;
+  margin-top: 5rem;
 }
 
 .chart-summary {
@@ -504,7 +595,7 @@ main#ict-skills {
 }
 
 .chart-area {
-  margin-top: 3rem;
+  margin-top: 6rem;
   padding: 3rem;
   display: flex;
   flex-direction: column;
@@ -517,15 +608,17 @@ main#ict-skills {
   background-color:#ffffff;
 }
 
-.chart-title {
+.ict-chart-title {
   display: flex;
-  padding: 0 !important;
+  max-width: 144rem !important;
+  margin: 5rem 0 0 0 !important;
 }
 
-.chart-title h2 {
+.ict-chart-title h2 {
   text-align:left;
   margin: 0;
-  color: var(--color-purple)
+  color: var(--color-purple);
+  font-size: 2.88rem;
 }
 
 .ictskills-bar-chart-area {
