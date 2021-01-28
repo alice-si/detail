@@ -33,6 +33,23 @@ function getZeroLessonData () {
   }
 }
 
+export function getTotalLessonsByCountry (country, year) {
+  const dataByCountry = {}
+  // console.log('🔥', data.children[country].values[year])
+  const lessonsData = data.children[country].values[year]
+
+  if (lessonsData === undefined) {
+    dataByCountry.lessons = [getZeroLessonData()]
+  } else {
+    dataByCountry.lessons = [lessonsData]
+  }
+
+  // dataByCountry.lessons = [data.children[country].values[year]]
+  dataByCountry.labels = ['All']
+  // console.log('💩', dataByCountry)
+  return dataByCountry
+}
+
 export function getLessons (countries, camps, schools, year) {
   let values = {}
 

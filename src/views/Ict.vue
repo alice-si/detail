@@ -38,7 +38,7 @@
         <column :lg="8.56" class="ictskills-bar-chart-area">
           <h3> Avg No of ICT skills/student</h3>
           <group-bar-chart :chart-data="groupBarChartData" :options="options"></group-bar-chart>
-          <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS vs After INS" ></v-select></column>
+          <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS (Oct 2017) vs After INS (Oct 2020)" :searchable="false" :disabled="true"></v-select></column>
         </column>
         <column :lg="3.44" class="summary-area" style="padding-left:3rem;">
         <row v-for="i in setNoOfRows" v-bind:key="i">
@@ -602,8 +602,12 @@ main#ict-skills {
 }
 
 #compare-year {
-  width: 350px;
-  padding: 0 3rem 1.5rem 0;
+  width: 37rem;
+  margin: 1.5rem 3rem 1.5rem 0;
+}
+
+#compare-year .vs__dropdown-menu {
+  width: 32rem;
 }
 
 .table-area {

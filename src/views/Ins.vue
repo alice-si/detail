@@ -101,8 +101,8 @@ import BarChart from '../components/BarChart.js'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
-import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics } from '../data/data-provider.js'
-import { getAllPurpleColor, getLineChartColorScheme, getCountryColorSchme, getCampColorSchme, getSchoolColorSchme, getTopicColorSchme } from '../data/colour-scheme.js'
+import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry } from '../data/data-provider.js'
+import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
 
 export default {
@@ -167,7 +167,7 @@ export default {
             boxWidth: 10,
             fontSize: 14,
             padding: 5.5,
-            pointStyle:'line'
+            pointStyle: 'line'
           }
         }
       },
@@ -273,11 +273,13 @@ export default {
       let prevYearLessons = {}
       let totalCurrLessons = []
       let totalPrevLessons = []
+      let tableLessons = {}
+      let prevTableLessons = {}
 
       switch (this.viewMode) {
         case 'All':
-          const tableLessons = getLessons(getCountries(), [], [], this.selectedYear)
-          const prevTableLessons = getLessons(getCountries(), [], [], this.selectedYear - 1)
+          tableLessons = getLessons(getCountries(), [], [], this.selectedYear)
+          prevTableLessons = getLessons(getCountries(), [], [], this.selectedYear - 1)
           if (this.checkedItems.length === 0) {
             lessons = getLessons([], [], [], this.selectedYear)
             prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
@@ -295,16 +297,24 @@ export default {
           break
 
         case 'Country':
-          lessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
-          prevYearLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
+          tableLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
+          prevTableLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
+          if (this.checkedItems.length === 0) {
+            lessons = getTotalLessonsByCountry(this.selectedCountry, this.selectedYear)
+            prevYearLessons = getTotalLessonsByCountry(this.selectedCountry, this.selectedYear - 1)
+            this.chartData = getLineChartData(lessons, getAllPurpleColor)
+          } else {
+            lessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
+            prevYearLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
+            this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
+          }
           totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
-          this.barChartData = getBarChartData(getTableData('Camps', lessons, prevYearLessons))
-          this.tableData = getTableData('Camps', lessons, prevYearLessons)
-          this.summaryBoxData = this.filterTopics(getTableData('Camps', lessons, prevYearLessons))
+          this.barChartData = getBarChartData(getTableData('Camps', tableLessons, prevTableLessons))
+          this.tableData = getTableData('Camps', tableLessons, prevTableLessons)
+          this.summaryBoxData = this.filterTopics(getTableData('Camps', tableLessons, prevTableLessons))
           this.updateColors(this.viewMode, getLineChartColorScheme)
           break
 
