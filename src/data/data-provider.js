@@ -35,7 +35,6 @@ function getZeroLessonData () {
 
 export function getTotalLessonsByCountry (country, year) {
   const dataByCountry = {}
-  // console.log('🔥', data.children[country].values[year])
   const lessonsData = data.children[country].values[year]
 
   if (lessonsData === undefined) {
@@ -43,11 +42,23 @@ export function getTotalLessonsByCountry (country, year) {
   } else {
     dataByCountry.lessons = [lessonsData]
   }
-
-  // dataByCountry.lessons = [data.children[country].values[year]]
   dataByCountry.labels = ['All']
-  // console.log('💩', dataByCountry)
+
   return dataByCountry
+}
+
+export function getTotalLessonsByCamp (country, camp, year) {
+  const dataByCamp = {}
+  const lessonsData = data.children[country].children[camp].values[year]
+
+  if (lessonsData === undefined) {
+    dataByCamp.lessons = [getZeroLessonData()]
+  } else {
+    dataByCamp.lessons = [lessonsData]
+  }
+  dataByCamp.labels = ['All']
+
+  return dataByCamp
 }
 
 export function getLessons (countries, camps, schools, year) {

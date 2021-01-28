@@ -101,7 +101,7 @@ import BarChart from '../components/BarChart.js'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
-import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry } from '../data/data-provider.js'
+import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
 import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
 
@@ -226,47 +226,6 @@ export default {
     this.updateData()
   },
   methods: {
-    filterTopics (tableData) {
-      const filtered = tableData.filter(el => el.totalLessons !== 0)
-      return filtered
-    },
-    uncheckAllCheckboxes () {
-      for (let i = 0; i < this.checkedItems.length; i++) {
-        const checkedItem = this.checkedItems[i]
-        const cssId = checkedItem.toLowerCase().replaceAll(' ', '-')
-        const dom = document.getElementsByClassName(`${cssId}`)
-        dom[0].checked = false
-      }
-      this.checkedItems = []
-    },
-    filterChartData (chartData, filter) {
-      if (filter.length !== 0) {
-        const filtered = chartData.datasets.filter(el => filter.indexOf(el.label) !== -1)
-        chartData.datasets = filtered
-      }
-      return chartData
-    },
-    updateColors (view, colorScheme) {
-      const tableFontDomIndex = view === 'School' ? 7 : 9
-      for (let i = 0; i < this.summaryBoxData.length; i++) {
-        const cssId = this.summaryBoxData[i].cssId
-        const dom = document.getElementsByClassName(`${cssId}`)
-        if (dom.length !== 0 && dom[0].checked === true) {
-          const checkedColor = colorScheme(this.summaryBoxData[i].colorIndex)
-          dom[1].style.color = checkedColor // label
-          dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
-          dom[3].style.color = checkedColor // V
-          dom[4].style.color = checkedColor // Topic text
-          dom[tableFontDomIndex].style.color = checkedColor // Table name
-        } else if (dom.length !== 0 && !dom[0].checked) {
-          dom[1].style.color = '#D8D8D8'
-          dom[2].style.border = '1px solid #D8D8D8'
-          dom[3].style.color = '#ffffff'
-          dom[4].style.color = '#D8D8D8'
-          dom[tableFontDomIndex].style.color = '#212529'
-        }
-      }
-    },
     updateData () {
       this.updateConditionalRendering()
       let lessons = {}
@@ -319,16 +278,26 @@ export default {
           break
 
         case 'Camp':
-          lessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
-          prevYearLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
+          // table lessons data
+          tableLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
+          prevTableLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
+          
+          if (this.checkedItems.length === 0) {
+            lessons = getTotalLessonsByCamp(this.selectedCountry, this.selectedCamp, this.selectedYear)
+            prevYearLessons = getTotalLessonsByCamp(this.selectedCountry, this.selectedCamp, this.selectedYear - 1)
+            this.chartData = getLineChartData(lessons, getAllPurpleColor)
+          } else {
+            lessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
+            prevYearLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
+            this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
+          }
           totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
           totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
           this.totalLessons = calcSum(totalCurrLessons)
           this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
-          this.barChartData = getBarChartData(getTableData('Schools', lessons, prevYearLessons))
-          this.tableData = getTableData('Schools', lessons, prevYearLessons)
-          this.summaryBoxData = this.filterTopics(getTableData('Schools', lessons, prevYearLessons))
+          this.barChartData = getBarChartData(getTableData('Schools', tableLessons, prevTableLessons))
+          this.tableData = getTableData('Schools', tableLessons, prevTableLessons)
+          this.summaryBoxData = this.filterTopics(getTableData('Schools', tableLessons, prevTableLessons))
           this.updateColors(this.viewMode, getLineChartColorScheme)
           break
 
@@ -389,6 +358,47 @@ export default {
           this.schoolSelectboxDisabled = false
           this.school = ', ' + this.selectedSchool
           break
+      }
+    },
+    filterTopics (tableData) {
+      const filtered = tableData.filter(el => el.totalLessons !== 0)
+      return filtered
+    },
+    uncheckAllCheckboxes () {
+      for (let i = 0; i < this.checkedItems.length; i++) {
+        const checkedItem = this.checkedItems[i]
+        const cssId = checkedItem.toLowerCase().replaceAll(' ', '-')
+        const dom = document.getElementsByClassName(`${cssId}`)
+        dom[0].checked = false
+      }
+      this.checkedItems = []
+    },
+    filterChartData (chartData, filter) {
+      if (filter.length !== 0) {
+        const filtered = chartData.datasets.filter(el => filter.indexOf(el.label) !== -1)
+        chartData.datasets = filtered
+      }
+      return chartData
+    },
+    updateColors (view, colorScheme) {
+      const tableFontDomIndex = view === 'School' ? 7 : 9
+      for (let i = 0; i < this.summaryBoxData.length; i++) {
+        const cssId = this.summaryBoxData[i].cssId
+        const dom = document.getElementsByClassName(`${cssId}`)
+        if (dom.length !== 0 && dom[0].checked === true) {
+          const checkedColor = colorScheme(this.summaryBoxData[i].colorIndex)
+          dom[1].style.color = checkedColor // label
+          dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
+          dom[3].style.color = checkedColor // V
+          dom[4].style.color = checkedColor // Topic text
+          dom[tableFontDomIndex].style.color = checkedColor // Table name
+        } else if (dom.length !== 0 && !dom[0].checked) {
+          dom[1].style.color = '#D8D8D8'
+          dom[2].style.border = '1px solid #D8D8D8'
+          dom[3].style.color = '#ffffff'
+          dom[4].style.color = '#D8D8D8'
+          dom[tableFontDomIndex].style.color = '#212529'
+        }
       }
     }
   },
