@@ -152,7 +152,7 @@ main#home {
 } */
 
 .dashboard-select .vs__selected-options {
-  height: 4.6rem;
+  height: 4.1rem;
   width: 23.4rem;
   padding: 0;
 }

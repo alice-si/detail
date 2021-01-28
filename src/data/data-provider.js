@@ -209,3 +209,7 @@ export function getTeacherAvgAcrossSchools (type, year) {
   }
   return percentage
 }
+
+// export function getSchoolSkillData (school, year) {
+
+// }

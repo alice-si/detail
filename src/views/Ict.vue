@@ -59,7 +59,8 @@
         </row>
         </column>
       </row>
-      <table-for-ICT class="table-area" v-bind:tableData="tableData" ></table-for-ICT>
+      <table-for-ICT class="table-area" v-bind:tableData="tableData" v-if="selectedSchool === null"></table-for-ICT>
+      <table-for-ICT-skills v-if="selectedSchool !== null"></table-for-ICT-skills>
     </section>
   </main>
 </template>
@@ -67,17 +68,20 @@
 <script>
 import GroupBarChart from '../components/GroupBarChart'
 import TableForICT from '../components/TableForICT'
+import TableForICTSkills from '../components/TableForICTSkills'
 import { getIctSchoolList, getStudentIctSchoolAvg, getStudentAvgAcrossSchools, getTeacherIctSchoolAvg, getTeacherAvgAcrossSchools } from '../data/data-provider'
 import { getTeacherIctRate, getStudentIctRate, calcDifference, getIctTableData, getGroupBarChartData } from '../data/data-handler'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
   components: {
     GroupBarChart,
-    TableForICT
+    TableForICT,
+    TableForICTSkills
   },
   data () {
     return {
       viewMode: 'Students',
+      // schoolView: true,
       colorCode: '',
       growthRate: '',
       countries: ['No more available options'],
@@ -127,20 +131,23 @@ export default {
       switch (this.viewMode) {
         case 'Students':
           this.colorCode = 'color: #8954BA'
+          this.growthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
+          // If statement 안에 넣을 영역 if(this.selectedSchool.length === 0)
           this.groupBarChartData = this.filterChartData(getGroupBarChartData(getStudentIctSchoolAvg))
           this.tableData = getIctTableData(getStudentIctRate, getStudentAvgAcrossSchools)
           this.summaryBoxData = this.setSummaryBoxData()
           this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
-          this.growthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
+          // If statement 끝
           break
 
         case 'Teachers':
           this.colorCode = 'color: #0091FF'
+          this.growthRate = calcDifference([getTeacherAvgAcrossSchools('Total', 'Base')], [getTeacherAvgAcrossSchools('Total', 'End')])[0]
+          // If statement 안에 넣을 영역
           this.groupBarChartData = this.filterChartData(getGroupBarChartData(getTeacherIctSchoolAvg))
           this.tableData = getIctTableData(getTeacherIctRate, getTeacherAvgAcrossSchools)
           this.summaryBoxData = this.setSummaryBoxData()
           this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
-          this.growthRate = calcDifference([getTeacherAvgAcrossSchools('Total', 'Base')], [getTeacherAvgAcrossSchools('Total', 'End')])[0]
           break
       }
     },
@@ -224,6 +231,10 @@ export default {
       this.switchViewMode()
     },
     checkedItems () {
+      this.switchViewMode()
+    },
+    selectedSchool () {
+      console.log(this.selectedSchool)
       this.switchViewMode()
     }
   }
@@ -616,8 +627,36 @@ main#ict-skills {
 
 .table-area {
   margin-top: 1.5rem;
+  margin-bottom: 1rem;
   font-size: 1.2rem;
   color: #686868;
+}
+
+.summary-area::-webkit-scrollbar {
+  width: 4px;
+  height: 355px;
+  background-color: rgba(216, 216, 216, 0.4);
+}
+
+.summary-area::-webkit-scrollbar-thumb {
+  width: 4px;
+  height: 60px;
+  background-color: #d8d8d8;
+}
+
+#ict-skills .table-responsive {
+  padding: 2.8rem 0 1rem 0;
+}
+
+#ict-skills .table-responsive::-webkit-scrollbar {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(216, 216, 216, 0.4);
+}
+
+#ict-skills .table-responsive::-webkit-scrollbar-thumb {
+  width: 4px;
+  background-color: #d8d8d8;
 }
 
 </style>
