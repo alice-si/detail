@@ -198,7 +198,7 @@ export default {
             },
             ticks: {
               callback: function (value, index) {
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
                 value = months[index]
                 return value
               }
@@ -257,7 +257,6 @@ export default {
           dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
           dom[3].style.color = checkedColor // V
           dom[4].style.color = checkedColor // Topic text
-
           dom[tableFontDomIndex].style.color = checkedColor // Table name
         } else if (dom.length !== 0 && !dom[0].checked) {
           dom[1].style.color = '#D8D8D8'
@@ -796,6 +795,7 @@ canvas#line-chart.chartjs-render-monitor {
   overflow: hidden;
   max-width: 144rem;
   margin-top: 3rem;
+  padding: 0 0.8rem 0 0.8rem;
 }
 
 table#table-content tr {
@@ -819,7 +819,7 @@ table#table-content td {
 }
 
 #table-content {
-  margint-top: 3rem;
+  margin-top: 3rem;
   font-size: 1.2rem;
   width: 100%;
 }
