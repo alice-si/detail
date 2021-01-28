@@ -350,10 +350,14 @@ main#ict-skills {
 
 .summary-grid h1 {
   font-size: 2.5rem;
+  font-family: Helvetica;
+  font-weight: 500;
 }
 
 .summary-grid h3 {
   font-size: 1rem;
+  font-family:'Source Sans Pro'; 
+  font-weight:300;
 }
 
 #checkbox-text-area {
