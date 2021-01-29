@@ -444,11 +444,9 @@ main#ict-skills {
   padding-left: 2.8rem;
   margin:0 1rem 0 0;
 }
-
 /* select box end*/
 
 /* selectbox design customizing start */
-
 #ict-skills .ict-select-area .vs__dropdown-toggle {
   width: 24.2rem;
   height: 3.9rem;
@@ -487,34 +485,6 @@ main#ict-skills {
 #ict-skills .year-select-box .vs--disabled .vs__dropdown-toggle {
   background-color: #ffffff;
 }
-
-/* #ict-skills .year-select-box .vs--disabled .vs__search {
-  background-color: #ffffff;
-} */
-
-/* #ict-skills ictskills-bar-chart-area .year-select-box .vs__dropdown-menu {
-  background-color:  #ffffff;
-  box-shadow: none;
-  border: none;
-  border-radius: 2px;
-  font-size: 1.4rem;
-  width: 35rem !important;
-  color: #686868;
-} */
-
-/* #ict-skills .ictskills-bar-chart-area .ict-select-area .vs__dropdown-toggle {
-  width: 24.2rem;
-  height: 3.9rem;
-  background-color: #ffffff;
-  border: none;
-  font-size: 1.68rem;
-  color: #686868;
-  padding-left: 1rem;
-}
-
-#ict-skills .year-select-box .vs__search {
-  background-color:  #ffffff;
-} */
 /* selectbox design customizing end */
 
 .ict-chart-title-area {
@@ -590,29 +560,6 @@ main#ict-skills {
   align-items: center;
 }
 
-/* Year selectbox customizing start*/
-
-
-/* #compare-select-box {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-#compare-select-box .vs__dropdown-toggle .vs__selected-options .vs__search::placeholder {
-  text-align: right;
-}
-
-#compare-year {
-  width: 37rem;
-  margin: 1.5rem 3rem 1.5rem 0;
-}
-
-#compare-year .vs__dropdown-menu {
-  width: 32rem;
-} */
-/* Year selectbox customizing end*/
-
 .table-area {
   margin-bottom: 1rem;
   font-size: 1.2rem;
@@ -633,6 +580,7 @@ main#ict-skills {
 
 #ict-skills .table-responsive {
   padding: 2.8rem 0 1rem 0;
+  overflow-y: scroll;
 }
 
 #ict-skills .table-responsive::-webkit-scrollbar {

@@ -161,7 +161,18 @@ export default {
             boxWidth: 10,
             fontSize: 14,
             padding: 5.5,
-            pointStyle: 'line'
+            usePointStyle: true
+          }
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItem, data) {
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']          
+              return data.datasets[0].label + ' | ' + months[tooltipItem[0].index]
+            },
+            label: function (tooltipItem, data) {
+              return tooltipItem.value + ' lessons'
+            }
           }
         }
       },
@@ -179,6 +190,9 @@ export default {
         },
         legend: {
           display: false
+        },
+        tooltips: {
+
         }
       },
       stackedBarchartOption: {

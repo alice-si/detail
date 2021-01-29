@@ -49,6 +49,7 @@ export function getLineChartData (lessons, colorScheme) {
     for (let i = 0; i < dataset.length; i++) {
       const color = colorScheme(i)
       const lineChartDataSet = {
+        chartType: 'line',
         label: labels[i],
         backgroundColor: 'transparent',
         borderColor: color,
@@ -56,7 +57,9 @@ export function getLineChartData (lessons, colorScheme) {
         pointRadius: 6,
         borderWidth: 1.5,
         pointBackgroundColor: '#FFFFFF',
-        lineTension: 0
+        lineTension: 0,
+        pointHoverRadius: 8,
+        pointStyle: 'round'
       }
       lineChartData.push(lineChartDataSet)
     }
