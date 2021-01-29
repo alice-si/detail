@@ -485,6 +485,11 @@ main#ict-skills {
 #ict-skills .year-select-box .vs--disabled .vs__dropdown-toggle {
   background-color: #ffffff;
 }
+
+#ict-skills .vs__search {
+  margin: 0;
+  padding: 0;
+}
 /* selectbox design customizing end */
 
 .ict-chart-title-area {

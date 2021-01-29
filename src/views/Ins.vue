@@ -587,6 +587,11 @@ main#ins {
   min-width: 12rem !important;
   color: #686868;
 }
+
+#ins .vs__search {
+  margin: 0;
+  padding: 0;
+}
 /* selectbox design customizing end */
 
 .chart-title-area {

@@ -162,6 +162,11 @@ main#home {
   font-size: 1.68rem;
   width: 29.04rem !important;
 }
+
+#home .vs__search {
+  margin: 0;
+  padding: 0;
+}
 /* selectbox design customizing end */
 
  #thumbnails a {
