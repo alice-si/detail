@@ -190,9 +190,6 @@ export default {
         },
         legend: {
           display: false
-        },
-        tooltips: {
-
         }
       },
       stackedBarchartOption: {
@@ -224,7 +221,16 @@ export default {
           labels: {
             boxWidth: 10
           }
-        }
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItem, data) {
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']          
+              console.log(data)
+              return months[tooltipItem[0].index]
+            }
+          }
+        }        
       }
     }
   },
