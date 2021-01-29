@@ -15,10 +15,12 @@ export function compareDataByYear (prevYearLessons, currYearLessons) {
   const growthRate = ((currSum / prevSum) - 1) * 100
   if (Number.isNaN(growthRate)) {
     return '-'
-  } else if (growthRate !== Infinity) {
+  } else if (growthRate !== Infinity && growthRate > 0 ) {
+    return '+' + growthRate.toFixed(0) + '%'
+  } else if (growthRate !== Infinity && growthRate < 0 ) {
     return growthRate.toFixed(0) + '%'
   } else {
-    return '+ 100%'
+    return '+100%'
   }
 }
 
