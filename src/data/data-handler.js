@@ -1,5 +1,5 @@
 import { getStudentIctSchoolAvg, getTeacherIctSchoolAvg, getIctSchoolList } from './data-provider'
-import { getGroupBarChartColorSheme } from './colour-scheme'
+import { getGroupBarChartColorSheme, getLineChartColorScheme } from './colour-scheme'
 
 // For INS Page
 export function calcSum (lessons) {
@@ -15,9 +15,9 @@ export function compareDataByYear (prevYearLessons, currYearLessons) {
   const growthRate = ((currSum / prevSum) - 1) * 100
   if (Number.isNaN(growthRate)) {
     return '-'
-  } else if (growthRate !== Infinity && growthRate > 0 ) {
+  } else if (growthRate !== Infinity && growthRate > 0) {
     return '+' + growthRate.toFixed(0) + '%'
-  } else if (growthRate !== Infinity && growthRate < 0 ) {
+  } else if (growthRate !== Infinity && growthRate < 0) {
     return growthRate.toFixed(0) + '%'
   } else {
     return '+100%'
@@ -114,13 +114,15 @@ export function getTableData (tabletype, lessons, prevYear) {
 
 export function getBarChartData (dataByCountry) {
   const allDataDict = {}
-  dataByCountry.forEach(el => {
+  dataByCountry.forEach((el, index) => {
     let key = el.name
     let value = el.monthlyData.lessons.slice(0, 12)
     allDataDict[key] = {
       labels: el.monthlyData.months.slice(0, 12),
       datasets: [{
-        data: value
+        data: value,
+        hoverBackgroundColor: getLineChartColorScheme(index),
+        hoverBorderColor: getLineChartColorScheme(index)
       }]
     }
   })
