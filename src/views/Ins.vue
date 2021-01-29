@@ -160,7 +160,7 @@ export default {
           labels: {
             boxWidth: 10,
             fontSize: 14,
-            padding: 5.5,
+            padding: 20,
             usePointStyle: true
           }
         },
@@ -190,6 +190,14 @@ export default {
         },
         legend: {
           display: false
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItem, data) {
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']          
+              return months[tooltipItem[0].index]
+            }
+          }
         }
       },
       stackedBarchartOption: {
@@ -226,7 +234,6 @@ export default {
           callbacks: {
             title: function (tooltipItem, data) {
               const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']          
-              console.log(data)
               return months[tooltipItem[0].index]
             }
           }
