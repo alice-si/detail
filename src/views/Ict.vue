@@ -14,8 +14,8 @@
         </column>
       </row>
     </section>
-    <section>
-      <row :gutter="12" class="ict-select-area">
+    <section class="ict-select-area">
+      <row :gutter="12" style="width: 1255px;">
         <column :lg="1" class="ict-select-country"><h3>Select Country</h3></column>
         <column :lg="3" class="ict-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" :searchable="false"></v-select></column>
         <column :lg="1.2"><h3 class="ict-select-camp">Select Camp</h3></column>
@@ -28,7 +28,7 @@
       <row class="ict-chart-title">
         <column :lg="9" :xs="6"><h2 class="ict-sub-title" v-bind:style="colorCode">Avg No of ICT skills in Tanzania, Nyarugusu, across schools</h2></column>
         <column :lg="3" :xs="6">
-          <div class="total-skills"> <span><h1 v-bind:style="colorCode">{{growthRate}}</h1><h2 v-bind:style="colorCode">skills/students</h2></span></br><h3 v-bind:style="colorCode">after INS (Oct 2020)</h3></div>
+          <div class="total-skills"><span><h1 v-bind:style="colorCode">{{growthRate}}</h1><h2 v-bind:style="colorCode">skills/students</h2></span></br><h3 v-bind:style="colorCode">after INS (Oct 2020)</h3></div>
           <!-- <div> {{'+38%'}} last 12months</div> -->
         </column>
       </row>
@@ -38,7 +38,9 @@
         <column :lg="8.56" class="ictskills-bar-chart-area">
           <h3> Avg No of ICT skills/student</h3>
           <group-bar-chart :chart-data="groupBarChartData" :options="options"></group-bar-chart>
-          <column :lg="8" :xs="12" id="compare-select-box"><v-select :options="compareyears" id="compare-year" placeholder="Before INS (Oct 2017) vs After INS (Oct 2020)" :searchable="false" :disabled="true"></v-select></column>
+          <column :lg="8.56" :xs="12" class="year-select-box">
+            <v-select :options="compareyears" placeholder="Before INS (Oct 2017) vs After INS (Oct 2020)" :searchable="false" :disabled="true"></v-select>
+          </column>
         </column>
         <column :lg="3.44" class="summary-area" style="padding-left:3rem;">
         <row v-for="i in setNoOfRows" v-bind:key="i">
@@ -377,11 +379,6 @@ main#ict-skills {
   text-align: left;
 }
 
-/* .ict-chart-title h2 {
-  font-size: 2.88rem;
-  font-weight: 100;
-} */
-
 .ict-sub-title {
   font-size: 2.88rem;
   font-family: 'Source Sans Pro';
@@ -413,21 +410,19 @@ main#ict-skills {
   font-weight: 100;
 }
 
-/* select area customizing */
-.container {
-  max-width: 144rem;
+/* select box area start */
+/* .container {
+  width: 131.5rem !important;
+} */
+.ict-select-area {
+  max-width: 125.5rem !important;
+  margin: 0;
+  padding: 0;
 }
 
-#select-area h3 {
-  color: var(--color-dark-grey)
+.ict-select-area .container {
+  max-width: 125.5rem !important;
 }
-
-.colVGR {
-  padding: 0px !important;
-  align-self: center;
-  border-radius: 0px;
-}
-
 
 .ict-select-area h3 {
   font-size: 1.4rem;
@@ -450,87 +445,77 @@ main#ict-skills {
   margin:0 1rem 0 0;
 }
 
-.ict-select-area {
-  width: 100%;
-}
-
-.ict-select-area h3 {
-  color: var(--color-dark-grey);
-  text-align: left;
-}
-
-.ict-select-box .vs__dropdown-toggle {
-  width: 24.2rem;
-  height: 3.9rem;
-}
+/* select box end*/
 
 /* selectbox design customizing start */
-.vs__dr
-#select-area .vs__open-indicator {
-  color: #686868 !important;
-}
 
-.ict-select-area .vs__selected-options .vs__search {
-  padding-left: 2rem;
-}
-
-.ict-select-area .vs__selected {
-  font-size: 1.4rem;
+#ict-skills .ict-select-area .vs__dropdown-toggle {
   width: 24.2rem;
-}
-
-.select-country .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-camp .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-school .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.vs__dropdown-toggle {
-  border-radius: 2px;
+  height: 3.9rem;
   background-color: #ffffff;
   border: none;
-  margin: 0;
+  font-size: 1.68rem;
+  color: #686868;
+  padding-left: 1rem;
 }
 
-.vs__dropdown-toggle:active {
+#ict-skills .ict-select-area .vs__dropdown-menu {
   background-color: #ffffff;
-  border-color: #ffffff;
-  font-size: 1.4rem;
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.68rem;
+  width: 24.2rem !important;
+  color: #686868;
 }
 
-.v-select .vs__dropdown-menu {
+#ict-skills .year-select-box {
+  width: 100%;
+  margin: 1.5rem 4rem 1.5rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#ict-skills .year-select-box .vs__dropdown-toggle {
+  width: 25rem;
+  text-align: right;
+  background-color: #ffffff;
+  border: none;
+}
+
+#ict-skills .year-select-box .vs--disabled .vs__search,
+#ict-skills .year-select-box .vs--disabled .vs__dropdown-toggle {
+  background-color: #ffffff;
+}
+
+/* #ict-skills .year-select-box .vs--disabled .vs__search {
+  background-color: #ffffff;
+} */
+
+/* #ict-skills ictskills-bar-chart-area .year-select-box .vs__dropdown-menu {
+  background-color:  #ffffff;
   box-shadow: none;
   border: none;
   border-radius: 2px;
   font-size: 1.4rem;
+  width: 35rem !important;
+  color: #686868;
+} */
+
+/* #ict-skills .ictskills-bar-chart-area .ict-select-area .vs__dropdown-toggle {
   width: 24.2rem;
+  height: 3.9rem;
+  background-color: #ffffff;
+  border: none;
+  font-size: 1.68rem;
+  color: #686868;
+  padding-left: 1rem;
 }
 
-.vs__selected {
-  font-size: 1.4rem !important;
-}
-
-.vs--disabled .vs__dropdown-toggle {
-  background-color: rgba(255, 255, 255, 0.40);
-  font-size: 14px;
-  color: rgba(104,104,104,0.40) !important;
-}
-
-.vs--disabled .vs__search {
-  background-color: rgba(255, 255, 255, 0.40);
-  font-size: 14px;
-  color: rgba(104,104,104,0.40) !important;
-}
-/* select area customizing end */
+#ict-skills .year-select-box .vs__search {
+  background-color:  #ffffff;
+} */
+/* selectbox design customizing end */
 
 .ict-chart-title-area {
   display: flex;
@@ -590,7 +575,6 @@ main#ict-skills {
 }
 
 .ictskills-bar-chart-area #bar-chart {
-  /* padding: 2rem 3rem 1.5rem 0; */
   padding: 0 1.8rem 0 2rem;
   margin: 0 0 0 0 !important;
   max-width: 84rem !important;
@@ -606,7 +590,10 @@ main#ict-skills {
   align-items: center;
 }
 
-#compare-select-box {
+/* Year selectbox customizing start*/
+
+
+/* #compare-select-box {
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -623,10 +610,10 @@ main#ict-skills {
 
 #compare-year .vs__dropdown-menu {
   width: 32rem;
-}
+} */
+/* Year selectbox customizing end*/
 
 .table-area {
-  margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-size: 1.2rem;
   color: #686868;

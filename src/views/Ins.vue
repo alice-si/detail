@@ -12,14 +12,9 @@
         <column :lg="2.8" class="ins-select-box">
           <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false" :disabled="campSelectboxDisabled">
             <span slot="no-options">
-              <h3>No more available options</h3> 
-            </span>            
+              <h3>No more available options</h3>
+            </span>
           </v-select>
-          <form>
-            <!-- <select class="test-selectbox">
-              <option v-for="country in countries">{{country}}</option>
-            </select> -->
-          </form>
         </column>
         <column :lg="1.2"><h3 class="ins-select-school">Select School</h3></column>
         <column :lg="2.8" class="ins-select-box">
@@ -46,7 +41,7 @@
           <h3> No of lessons in {{selectedYear}}</h3>
           <line-chart :chart-data="chartData" :options="options" v-if="linechartShow === true"></line-chart>
           <stacked-bar-chart id="stacked-bar-chart" :chart-data="stackedBarChartData" :options="stackedBarchartOption" v-if="stackedChartShow === true"></stacked-bar-chart>
-          <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column>
+          <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" :searchable="false"></v-select></column>
         </column>
         <column :lg="3.84" class="summary-area">
           <div class="country-wrapper" v-for="country in summaryBoxData" v-bind:key="country.vForId" :value="country.vForId">
@@ -85,7 +80,6 @@
                 </div>
                 <!-- Topic summary end -->
             </div>
-
           </div>
         </column>
       </row>
@@ -150,7 +144,7 @@ export default {
             },
             ticks: {
               callback: function (value, index) {
-                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
                 value = months[index]
                 return value
               }
@@ -502,13 +496,13 @@ main#ins {
 }
 
 .ins-select-camp {
-  text-align:right; 
+  text-align:right;
   padding-left: 3rem;   
   margin: 0 1rem 0 0
 }
 
 .ins-select-school {
-  text-align:right; 
+  text-align:right;
   padding-left: 2.8rem; 
   margin:0 1rem 0 0;
 }
@@ -521,76 +515,57 @@ main#ins {
   color: var(--color-dark-grey);
   text-align: left;
 }
-
-.ins-select-area .vs__dropdown-toggle {
-  width: 24.2rem;
-  height: 3.9rem;
-}
 /* select box area end */
 
 /* selectbox design customizing start */
-.vs__dr
-#select-area .vs__open-indicator {
-  color: #686868 !important;
-}
-
-#vs__selected {
-  font-size: 1.4rem;
-}
-
-.select-camp .vs__search {
-  margin-top: 0.5rem;
-}
-
-.select-country .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-camp .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-school .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.vs__dropdown-toggle {
-  border-radius: 2px;
+#ins .ins-select-area .vs__dropdown-toggle {
+  width: 24.2rem;
+  height: 3.9rem;
   background-color: #ffffff;
   border: none;
-  margin: 0;
+  font-size: 1.68rem;
+  color: #686868;
+  padding-left: 1rem;
 }
 
-.vs__dropdown-toggle:active {
+#ins .ins-select-area .vs__dropdown-menu {
   background-color: #ffffff;
-  border-color: #ffffff;
-  font-size: 1.4rem;
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.68rem;
+  width: 24.2rem !important;
+  color: #686868;
 }
 
-.vs__dropdown-menu {
+#ins .ins-select-area .vs--disabled .vs__dropdown-toggle {
+  background-color: rgba(255, 255, 255, 0.40);
+  font-size: 14px;
+  color: rgba(104,104,104,0.40) !important; 
+}
+
+#ins .ins-select-area .vs--disabled .vs__search {
+  background-color: rgba(255, 255, 255, 0.40);
+  font-size: 14px;
+  color: rgba(104,104,104,0.40) !important; 
+}
+
+#ins .year-select-box .vs__dropdown-toggle {
+  background-color: #ffffff;
+  border: none;
+  font-size: 1.4rem;
+  min-width: 12rem;
+  padding-left: 1rem;
+}
+
+#ins .year-select-box .vs__dropdown-menu {
+  background-color:  #ffffff;
   box-shadow: none;
   border: none;
   border-radius: 2px;
   font-size: 1.4rem;
-}
-
-.vs__selected {
-  font-size: 1.4rem !important;
-}
-
-.vs--disabled .vs__dropdown-toggle {
-  background-color: rgba(255, 255, 255, 0.40);
-  font-size: 14px;
-  color: rgba(104,104,104,0.40) !important; 
-}
-
-.vs--disabled .vs__search {
-  background-color: rgba(255, 255, 255, 0.40);
-  font-size: 14px;
-  color: rgba(104,104,104,0.40) !important; 
+  min-width: 12rem !important;
+  color: #686868;
 }
 /* selectbox design customizing end */
 
@@ -672,12 +647,10 @@ main#ins {
 
 #chart-area {
   margin-top: 4rem;
-  /* padding: 4.5rem 3.5rem 4.5rem 3.5rem; */
   padding: 0 2rem 3.5rem 2rem;
   max-width: 125.3rem;
   background-color: #ffffff;
 }
-
 
 .chart-title {
   display: flex;
@@ -720,11 +693,9 @@ canvas#line-chart.chartjs-render-monitor {
   display: flex;
   flex-direction: column;
   max-height: 40rem;
-  /* padding: 5rem 0 5rem 0 !important; */
   overflow-y: auto;
   border: none;
   align-items: left;
-  /* background-color: orange; */
 }
 
 .summary-area::-webkit-scrollbar {
@@ -752,7 +723,6 @@ canvas#line-chart.chartjs-render-monitor {
 .summary-text h1 {
   margin: 0 0 0 0;
 }
-
 
 .summary-text h2 {
   display: inline;
