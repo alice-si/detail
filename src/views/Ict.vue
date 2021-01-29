@@ -490,6 +490,11 @@ main#ict-skills {
   margin: 0;
   padding: 0;
 }
+
+#ict-skills .vs__selected {
+  margin: 0;
+  padding: 0;
+}
 /* selectbox design customizing end */
 
 .ict-chart-title-area {

@@ -592,6 +592,11 @@ main#ins {
   margin: 0;
   padding: 0;
 }
+
+#ins .vs__selected {
+  margin: 0;
+  padding: 0;
+}
 /* selectbox design customizing end */
 
 .chart-title-area {

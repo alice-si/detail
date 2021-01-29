@@ -167,6 +167,12 @@ main#home {
   margin: 0;
   padding: 0;
 }
+
+#home .vs__selected {
+  margin: 0;
+  padding: 0;
+}
+
 /* selectbox design customizing end */
 
  #thumbnails a {
