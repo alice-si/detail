@@ -15,7 +15,7 @@
       </row>
     </section>
     <section class="ict-select-area">
-      <row :gutter="12" style="width: 1255px;">
+      <row :gutter="12" style="width: 125.5rem;">
         <column :lg="1" class="ict-select-country"><h3>Select Country</h3></column>
         <column :lg="3" class="ict-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" :searchable="false"></v-select></column>
         <column :lg="1.2"><h3 class="ict-select-camp">Select Camp</h3></column>
@@ -42,7 +42,7 @@
             <v-select :options="compareyears" placeholder="Before INS (Oct 2017) vs After INS (Oct 2020)" :searchable="false" :disabled="true"></v-select>
           </column>
         </column>
-        <column :lg="3.44" class="summary-area" style="padding-left:3rem;">
+        <column :lg="3.44" class="summary-area">
         <row v-for="i in setNoOfRows" v-bind:key="i">
           <column v-for="j in [0, 1]" v-bind:key="i*2+j" :lg="6" :xs="6">
             <div v-if="i*2+j < summaryBoxData.length" class="summary-grid">
@@ -62,7 +62,7 @@
         </column>
       </row>
       <table-for-ICT class="table-area" v-bind:tableData="tableData" v-if="selectedSchool === null"></table-for-ICT>
-      <table-for-ICT-skills v-if="selectedSchool !== null"></table-for-ICT-skills>
+      <table-for-ICT-skills v-if="selectedSchool !== null" v-bind:tableData="skillsTableData"></table-for-ICT-skills>
     </section>
   </main>
 </template>
@@ -71,7 +71,7 @@
 import GroupBarChart from '../components/GroupBarChart'
 import TableForICT from '../components/TableForICT'
 import TableForICTSkills from '../components/TableForICTSkills'
-import { getIctSchoolList, getStudentIctSchoolAvg, getStudentAvgAcrossSchools, getTeacherIctSchoolAvg, getTeacherAvgAcrossSchools } from '../data/data-provider'
+import { getStudentSchoolSkillData, getIctSchoolList, getStudentIctSchoolAvg, getStudentAvgAcrossSchools, getTeacherIctSchoolAvg, getTeacherAvgAcrossSchools } from '../data/data-provider'
 import { getTeacherIctRate, getStudentIctRate, calcDifference, getIctTableData, getGroupBarChartData } from '../data/data-handler'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
@@ -97,6 +97,7 @@ export default {
       compareyears: ['Before INS (Oct 2017) vs After INS (Oct 2020)'],
       groupBarChartData: {},
       tableData: {},
+      skillsTableData: {},
       colorIndex: [],
       options: {
         legend: { display: false },
@@ -129,15 +130,52 @@ export default {
     this.switchViewMode()
   },
   methods: {
+    getSkillsTableData (femaleData, maleData) {
+      console.log(femaleData, maleData)
+      const femaleBaseYearData = femaleData.baseSkills.map((el, index) => el + `/${femaleData.baseDenominator}` + '-' + femaleData.baseSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
+      const femaleEndYearData = femaleData.endSkills.map((el, index) => el + `/${femaleData.endDenominator}` + '-' + femaleData.endSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
+      const maleBaseYearData = maleData.baseSkills.map((el, index) => el + `/${maleData.baseDenominator}` + '-' + maleData.baseSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
+      const maleEndYearData = maleData.endSkills.map((el, index) => el + `/${maleData.endDenominator}` + '-' + maleData.endSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
+      const femaleDiff = calcDifference(femaleData.baseSkillsPct, femaleData.endSkillsPct)
+        .map(el => {
+          if (Math.floor(parseInt(el)) > 0) {
+            return '+' + Math.floor(parseInt(el)) + '%'
+          } else {
+            return Math.floor(parseInt(el)) + '%'
+          }
+        })
+      const maleDiff = calcDifference(maleData.baseSkillsPct, maleData.endSkillsPct)
+        .map(el => {
+          if (Math.floor(parseInt(el)) > 0) {
+            return '+' + Math.floor(parseInt(el)) + '%'
+          } else {
+            return Math.floor(parseInt(el)) + '%'
+          }
+        })  
+      console.log(maleDiff)
+
+      femaleBaseYearData.push(getStudentAvgAcrossSchools('Female', 'Base') + '%')
+      femaleEndYearData.push(getStudentAvgAcrossSchools('Female', 'End') + '%')
+      maleBaseYearData.push(getStudentAvgAcrossSchools('Male', 'Base') + '%')
+      maleEndYearData.push(getStudentAvgAcrossSchools('Male', 'End') + '%')
+
+      this.skillsTableData = { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, femaleDiff, maleDiff }
+    },
     switchViewMode () {
       switch (this.viewMode) {
         case 'Students':
           this.colorCode = 'color: #8954BA'
           this.growthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
-          // If statement 안에 넣을 영역 if(this.selectedSchool.length === 0)
           this.groupBarChartData = this.filterChartData(getGroupBarChartData(getStudentIctSchoolAvg))
-          this.tableData = getIctTableData(getStudentIctRate, getStudentAvgAcrossSchools)
-          this.summaryBoxData = this.setSummaryBoxData()
+          // If statement 안에 넣을 영역 if(this.selectedSchool.length === 0)
+          if (this.selectedSchool === null) {
+            this.tableData = getIctTableData(getStudentIctRate, getStudentAvgAcrossSchools)
+            this.summaryBoxData = this.setSummaryBoxData()
+          } else {
+            const femaleSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Female')
+            const maleSkilsData = getStudentSchoolSkillData(this.selectedSchool, 'Male')
+            this.getSkillsTableData(femaleSkillsData, maleSkilsData);
+          }
           this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
           // If statement 끝
           break
@@ -236,7 +274,6 @@ export default {
       this.switchViewMode()
     },
     selectedSchool () {
-      console.log(this.selectedSchool)
       this.switchViewMode()
     }
   }
@@ -249,12 +286,16 @@ main#ict-skills {
   flex-direction: column;
   margin: 6.2rem 0 0 6.2rem;
   padding: 8rem 4.5rem 4.5rem 8rem;
-  max-width: 1440px;
+  max-width: 144rem;
 }
 
 .back {
   align-self: start;
   padding: 1.5rem 0 1.5rem 0;
+}
+
+.page-title-container {
+  max-width: 125.5rem !important;
 }
 
 .page-title-container .title {
@@ -341,7 +382,7 @@ main#ict-skills {
 /* toggle end */
 
 /* fake checkbox decoration  */
-.summary-area label div {
+#ict-skills .summary-area label div {
   display:flex;
   width:18px;
   height:18px;
@@ -411,9 +452,6 @@ main#ict-skills {
 }
 
 /* select box area start */
-/* .container {
-  width: 131.5rem !important;
-} */
 .ict-select-area {
   max-width: 125.5rem !important;
   margin: 0;
@@ -422,29 +460,31 @@ main#ict-skills {
 
 .ict-select-area .container {
   max-width: 125.5rem !important;
+  align-items: center;
 }
 
 .ict-select-area h3 {
   font-size: 1.4rem;
   color: #858585;
+  margin: 0;
 }
 
 .ict-select-country {
   margin: 0;
+  padding: 0;
+  text-align: left;  
 }
 
 .ict-select-camp {
   text-align:right;
-  padding-left: 3rem;
   margin: 0 1rem 0 0
 }
 
 .ict-select-school {
   text-align:right;
-  padding-left: 2.8rem;
   margin:0 1rem 0 0;
 }
-/* select box end*/
+/* select box area end*/
 
 /* selectbox design customizing start */
 #ict-skills .ict-select-area .vs__dropdown-toggle {
@@ -468,8 +508,7 @@ main#ict-skills {
 }
 
 #ict-skills .year-select-box {
-  width: 100%;
-  margin: 1.5rem 4rem 1.5rem 1.5rem;
+  margin: 1.5rem;
   display: flex;
   justify-content: flex-end;
 }
@@ -479,25 +518,30 @@ main#ict-skills {
   text-align: right;
   background-color: #ffffff;
   border: none;
+  color: #686868;
 }
 
 #ict-skills .year-select-box .vs--disabled .vs__search,
 #ict-skills .year-select-box .vs--disabled .vs__dropdown-toggle {
   background-color: #ffffff;
+  color: #686868;
 }
 
 #ict-skills .vs__search {
   margin: 0;
   padding: 0;
+  color: #686868;
 }
 
 #ict-skills .vs__selected {
   margin: 0;
   padding: 0;
+  color: #686868;
 }
 /* selectbox design customizing end */
 
 .ict-chart-title-area {
+  max-width: 125.5rem !important;  
   display: flex;
   color: var(--color-purple);
   margin-top: 5rem;
@@ -505,11 +549,6 @@ main#ict-skills {
 
 .chartjs-size-monitor{
   margin: 0;
-}
-
-.chart-summary {
-  display: flex;
-  flex-direction: row;
 }
 
 .chart-area {
@@ -561,28 +600,30 @@ main#ict-skills {
   max-height: 43.8rem !important;
 }
 
-.summary-area {
+#ict-skills .summary-area {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
+  max-height: 40rem;
+  overflow-y: auto;
   border: none;
-  align-items: center;
+  align-items: left;
+  margin: 8rem 0 5rem 0;
+  padding: 0;
 }
 
-.table-area {
+#ict-skills .table-area {
   margin-bottom: 1rem;
   font-size: 1.2rem;
   color: #686868;
 }
 
-.summary-area::-webkit-scrollbar {
+#ict-skills .summary-area::-webkit-scrollbar {
   width: 4px;
   height: 355px;
   background-color: rgba(216, 216, 216, 0.4);
 }
 
-.summary-area::-webkit-scrollbar-thumb {
+#ict-skills .summary-area::-webkit-scrollbar-thumb {
   width: 4px;
   height: 60px;
   background-color: #d8d8d8;

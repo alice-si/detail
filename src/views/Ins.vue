@@ -4,20 +4,20 @@
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">INS Lessons</h1></div>
     </section>
-    <section>
-      <row :gutter="12" class="ins-select-area">
-        <column :lg="1"><h3 class="ins-select-country">Select Country</h3></column>
-        <column :lg="3" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" placeholder="Show all" :searchable="false"></v-select></column>
-        <column :lg="1.2"><h3 class="ins-select-camp">Select Camp</h3></column>
-        <column :lg="2.8" class="ins-select-box">
+    <section class="ins-select-area">
+      <row :gutter="12" >
+        <column :lg="1.5"><h3 class="ins-select-country">Select Country</h3></column>
+        <column :lg="2.5" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" placeholder="Show all" :searchable="false"></v-select></column>
+        <column :lg="1.5"><h3 class="ins-select-camp">Select Camp</h3></column>
+        <column :lg="2.5" class="ins-select-box">
           <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false" :disabled="campSelectboxDisabled">
             <span slot="no-options">
               <h3>No more available options</h3>
             </span>
           </v-select>
         </column>
-        <column :lg="1.2"><h3 class="ins-select-school">Select School</h3></column>
-        <column :lg="2.8" class="ins-select-box">
+        <column :lg="1.5"><h3 class="ins-select-school">Select School</h3></column>
+        <column :lg="2.5" class="ins-select-box">
           <v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false" :disabled="schoolSelectboxDisabled">
             <span slot="no-options">
               <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
@@ -513,35 +513,37 @@ main#ins {
 }
 
 /* select box area start */
+.ins-select-area {
+  max-width: 125.5rem !important;
+}
+
+.ins-select-area .container {
+  max-width: 125.5rem !important;
+  align-items: center;
+}
+
 .ins-select-area h3 {
   font-size: 1.4rem;
   color: #858585;
+  margin: 0;
 }
 
 .ins-select-country {
   margin: 0;
+  padding: 0;
+  text-align: left;
 }
 
 .ins-select-camp {
   text-align:right;
-  padding-left: 3rem;   
   margin: 0 1rem 0 0
 }
 
 .ins-select-school {
   text-align:right;
-  padding-left: 2.8rem; 
   margin:0 1rem 0 0;
 }
 
-.ins-select-area {
-  width: 100%;
-}
-
-.ins-select-area h3 {
-  color: var(--color-dark-grey);
-  text-align: left;
-}
 /* select box area end */
 
 /* selectbox design customizing start */
@@ -598,11 +600,13 @@ main#ins {
 #ins .vs__search {
   margin: 0;
   padding: 0;
+  color: #686868;    
 }
 
 #ins .vs__selected {
   margin: 0;
   padding: 0;
+  color: #686868;  
 }
 /* selectbox design customizing end */
 
@@ -726,22 +730,23 @@ canvas#line-chart.chartjs-render-monitor {
   margin: 2.5rem 0 1.5rem 2.5rem;
 }
 
-.summary-area {
+#ins .summary-area {
   display: flex;
   flex-direction: column;
   max-height: 40rem;
   overflow-y: auto;
   border: none;
   align-items: left;
+  margin: 8rem 0 5rem 0;
 }
 
-.summary-area::-webkit-scrollbar {
+#ins .summary-area::-webkit-scrollbar {
   width: 4px;
   height: 355px;
   background-color: rgba(216, 216, 216, 0.4);
 }
 
-.summary-area::-webkit-scrollbar-thumb {
+#ins .summary-area::-webkit-scrollbar-thumb {
   width: 4px;
   height: 60px;
   background-color: #d8d8d8;

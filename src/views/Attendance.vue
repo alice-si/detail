@@ -4,22 +4,22 @@
       <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">Students attendance</h1></div>
     </section>
-    <section id="select-area" class="container-fluid">
+    <section class="attendance-select-area">
       <row :gutter="12">
-        <!-- <column :lg="1.5"><h3>Select Country</h3></column>
-        <column :lg="2.5"><v-select :options="countries" @input="changeCountry" v-model="selectedCountry" class="select-country" placeholder="Show all" ></v-select></column>
-        <column :lg="1.5"><h3>Select Camp</h3></column>
-        <column :lg="2.5"><v-select :options="camps" @input="changeCamp" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate"></v-select></column>
-        <column :lg="1.5"><h3>Select School</h3></column>
-        <column :lg="2.5"><v-select :options="schools" @input="changeSchool" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate"></v-select></column> -->
+        <column :lg="1" class="attendance-select-country"><h3>Select Country</h3></column>
+        <column :lg="3" class="attendance-select-box"><v-select :options="countries" v-model="selectedCountry" class="select-country" placeholder="Tanzania" :searchable="false"></v-select></column>
+        <column :lg="1.2"><h3 class="attendance-select-camp">Select Camp</h3></column>
+        <column :lg="2.8" class="attendance-select-box"><v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Nyarugusu" :searchable="false"></v-select></column>
+        <column :lg="1.2"><h3 class="attendance-select-school">Select School</h3></column>
+        <column :lg="2.8" class="attendance-select-box"><v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false"></v-select></column>
       </row>
     </section>
-    <section :gutter="12" class="chart-title-area">
-      <row class="chart-title">
-        <column :lg="8" xs-6><h2>Number of students attending - accross countries</h2></column>
-        <column :lg="4" xs-6>
-          <div class="total-lessons"> <span><h1>32K</h1> <h2>students</h2></span><h3>after INS</h3></div>
-          <!-- <div> {{'+38%'}} last 12months</div> -->
+    <section :gutter="12" class="attendance-chart-title">
+      <row>
+        <column :lg="7" :xs="6"><h2 class="attendance-sub-title">Number of students attending - accross countries</h2></column>
+        <column :lg="5" :xs="6" class="chart-summary">
+          <div class="attendance-total-lessons"> <span><h1>32K</h1> <h2>students</h2></span><h3>after INS</h3></div>
+          <div class="growth-rate"> <h1>{{'+38%'}}</h1> <h3 style="font-family:'Source Sans Pro';">last 12months</h3></div>
         </column>
       </row>
     </section>
@@ -28,13 +28,30 @@
         <column :lg="7.5" class="attendance-bar-chart-area">
           <h3> No of students attending</h3>
           <group-bar-chart :chart-data="barChartData" :options="options"></group-bar-chart>
-          <!-- <column :lg="4" :xs="12" class="year-select-box" ><v-select :options="yearOptions" v-model="selectedYear" class="select-year" placeholder="Show all" ></v-select></column> -->
+          <column class="year-select-box">
+            <v-select :lg="12" :xs="12" :options="compareyears" placeholder="Before INS (Oct 2017) vs After INS (Oct 2020)" :searchable="false" :disabled="true"></v-select>
+          </column>
         </column>
         <column :lg="4" class="summary-area">
-          here comes summary
+        <row v-for="i in setNoOfRows" v-bind:key="i">
+          <column v-for="j in [0, 1]" v-bind:key="i*2+j" :lg="6" :xs="6">
+            <div v-if="i*2+j < summaryBoxData.length" class="summary-grid">
+              <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].name" v-bind:class="summaryBoxData[i*2+j].name" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
+              <label v-bind:class="summaryBoxData[i*2+j].name" v-bind:for="summaryBoxData[i*2+j].name">
+                <div v-bind:class="summaryBoxData[i*2+j].name" style="justify-content:center; align-item:center;">
+                  <span v-bind:class="summaryBoxData[i*2+j].name" style="color: #ffffff; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+                </div>
+              </label>
+              <div v-bind:class="summaryBoxData[i*2+j].name" id="checkbox-text-area">
+                <h1>{{summaryBoxData[i*2+j].difference}}</h1>
+                <h3>{{summaryBoxData[i*2+j].name}}</h3>
+              </div>
+              </div>
+          </column>
+        </row>  
         </column>
       </row>
-
+      <table-for-attendance></table-for-attendance>
       <!-- <Table :tableData="tableData" v-if="linechartShow === true"></Table>
       <table-for-topic :TopicTableData="TopicTableData" v-if="stackedChartShow === true"></table-for-topic> -->
     </section>
@@ -44,27 +61,47 @@
 
 <script>
 import GroupBarChart from '../components/GroupBarChart'
+import TableForAttendance from '../components/TableForAttendance.vue'
+import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
 export default {
   name: 'attendance',
   components: {
-    GroupBarChart
+    GroupBarChart,
+    TableForAttendance
   },
   data () {
     return {
+      selectedCountry: null,
+      selectedCamp: null,
+      selectedSchool: null,      
+      countries: [],
+      camps: [],
+      schools: [],
+      setNoOfRows: [0, 1, 2, 3],
+      summaryBoxData: [
+        { difference: '+9%', name: 'Kenya' },
+        { difference: '+33%', name: 'Tanzania' },
+        { difference: '+12%', name: 'South Sudan' },
+        { difference: '+8%', name: 'DR Congo' }
+      ],
+      checkedItems: [],
+      compareyears: ['Before INS (Oct 2017) vs After INS (Oct 2020)'],
       barChartData: {
-        labels: ['Kenya', 'Tanzania', 'Soutn Sudan', 'DR Congo'],
+        labels: ['Kenya', 'Tanzania', 'South Sudan', 'DR Congo'],
         datasets: [{
           // label: '2017',
           // fill: true,
           backgroundColor: ['rgb(232, 79, 137, 0.5)', 'rgb(47, 185, 239, 0.5)', 'rgb(103, 182, 117, 0.5)', 'rgb(247, 101, 17, 0.5)'],
           borderColor: ['rgb(232, 79, 137, 0.5)', 'rgb(47, 185, 239, 0.5)', 'rgb(103, 182, 117, 0.5)', 'rgb(247, 101, 17, 0.5)'],
-          data: ['30', '20', '10', '15']
+          data: ['30', '20', '10', '15'],
+          barThickness: 15
         }, {
           // label: '2018',
           // fill: true,
           backgroundColor: ['#EA4C89', '#2FB9EF', '#67B675', '#f76511'],
           borderColor: ['#EA4C89', '#2FB9EF', '#67B675', '#f76511'],
-          data: ['56', '41', '53', '46']
+          data: ['56', '41', '53', '46'],
+          barThickness: 15
         }]
       },
       options: {
@@ -73,24 +110,35 @@ export default {
         maintainAspectRatio: false,
         scales: {
           xAxes: [{
+            gridLines: { color: '#ffffff' },
             display: true,
             stacked: false,
             ticks: {
-              fontColor: '#EA4C89'
+              // fontColor: '#EA4C89'
             }
           }],
           yAxes: [{
             display: true,
             position: 'left',
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              callback: function (value) {
+                return value + '%'
+              }
             } }]
         }
       }
+      // tableData: {
+      //   columns: ['Amitie', 'Fraternite', 'Hodari', 'Rehema', 'Charite', 'Elimu', 'Matunda'],
+      //   total: {
+      //     difference: ['+9%', '+33%', '+12%', '+8%', '+20%', '-11%', '-14%', '+14%']
+      //   }
+      // }
     }
   },
   mounted () {
-    console.log('this.barChartData', this.barChartData)
+    this.countries = getCountries() // Set initial Country select box options    
+    console.log(this.summaryBoxData)
   }
 }
 </script>
@@ -99,10 +147,82 @@ export default {
 main#attendance {
   display: flex;
   flex-direction: column;
-  padding: 10rem 8rem 5rem 12rem;
+  margin: 6.2rem 0 0 6.2rem;
+  padding: 8rem 4.5rem 4.5rem 8rem;
+  max-width: 144rem;
 }
 
-.navbar {
+#attendance .title {
+  font-family: Helvetica;
+  font-size: 3.4rem;
+  color: var(--color-purple);
+  font-weight: 300;
+  text-align: left;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+}
+
+.attendance-sub-title {
+  font-size: 2.88rem;
+  font-family: 'Source Sans Pro';
+  font-weight: 300 !important;
+}
+
+.attendance-chart-title .chart-summary {
+  display:flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
+
+.attendance-total-lessons {
+  color: var(--color-purple);
+  margin-right: 4.3rem;
+}
+
+#attendance .growth-rate {
+  margin-right: 7rem;
+}
+
+.attendance-total-lessons h1,
+.attendance-total-lessons h2 {
+  display: inline;
+}
+
+.attendance-total-lessons h1 {
+  font-size: 3rem;
+  margin-right: 0.5rem;
+  font-weight: 500;  
+}
+
+.attendance-total-lessons h2 {
+  font-size: 2.2rem;
+  font-family: 'Source Sans Pro';
+  font-weight: 300;
+}
+
+.attendance-total-lessons h3 {
+  font-size: 1.4rem;
+  font-family: 'Source Sans Pro';
+  font-weight: 100;
+  margin: 0;
+}
+
+#attendance .growth-rate h1 {
+  margin: 0;
+  color: var(--color-purple);  
+}
+
+#attendance .growth-rate h3 {
+  margin: 0;
+  color: var(--color-purple);
+  font-size: 1.4rem;
+  font-family: 'Source Sans Pro';
+  font-weight: 100;
+  margin: 0;  
+}
+
+
+/* .navbar {
   background: white;
 }
 .back {
@@ -118,10 +238,7 @@ main#attendance {
   text-align: left;
 }
 
-#page-title {
-  display: flex;
-  flex-direction: column;
-}
+
 
 .back {
   padding-bottom: 3rem;
@@ -136,171 +253,193 @@ main#attendance {
 .title {
   padding-bottom: 2rem;
 }
+ */
 
-.container[data-v-42e9a5e0] {
-  width: 100% !important;
+/* select box area start */
+.attendance-select-area {
+  max-width: 125.5rem !important;
+  margin: 0;
+  padding: 0;
 }
 
-#select-area {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
+.attendance-select-area .container {
+  max-width: 125.5rem !important;
+  align-items: center;
 }
 
-#select-area h3 {
-  color: var(--color-dark-grey)
+.attendance-select-area h3 {
+  font-size: 1.4rem;
+  color: #858585;
+  margin: 0;
 }
 
-.colVGR {
-  padding: 0px !important;
-  align-self: center;
-  border-radius: 0px;
+.attendance-select-country {
+  margin: 0;
+  padding: 0;
+  text-align: left;
 }
+
+.attendance-select-camp {
+  text-align:right;
+  margin: 0 1rem 0 0
+}
+
+.attendance-select-school {
+  text-align:right;
+  margin:0 1rem 0 0;
+}
+/* select box area end*/
 
 /* selectbox design customizing start */
-#vs__selected {
-  font-size: 1.4rem;
-}
-
-.select-country .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-camp .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.select-school .vs__search::placeholder {
-  color: var(--color-dark-grey);
-  font-size: 1.4rem;
-}
-
-.vs__dropdown-toggle {
-  border-radius: 2px;
-  background-color: #ffffff70;
-  border-color:#ffffff70;
-  padding: 1rem;
-}
-
-.vs__dropdown-toggle:active {
+#attendance .attendance-select-area .vs__dropdown-toggle {
+  width: 24.2rem;
+  height: 3.9rem;
   background-color: #ffffff;
-  border-color: #ffffff;
+  border: none;
+  font-size: 1.68rem;
+  color: #686868;
+  padding-left: 1rem;
 }
 
-.vs__dropdown-menu {
+#attendance .attendance-select-area .vs__dropdown-menu {
+  background-color: #ffffff;
   box-shadow: none;
   border: none;
   border-radius: 2px;
-  font-size: 1.4rem;
+  font-size: 1.68rem;
+  width: 24.2rem !important;
+  color: #686868;
 }
 
+#attendance .year-select-box {
+  margin: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#attendance .year-select-box .vs__dropdown-toggle {
+  width: 25rem;
+  text-align: right;
+  background-color: #ffffff;
+  border: none;
+  color: #686868;  
+}
+
+#attendance .year-select-box .vs--disabled .vs__search,
+#attendance .year-select-box .vs--disabled .vs__dropdown-toggle {
+  background-color: #ffffff;
+  color: #686868;
+}
+
+#attendance .vs__search {
+  margin: 0;
+  padding: 0;
+  color: #686868;  
+}
+
+#attendance .vs__selected {
+  margin: 0;
+  padding: 0;
+  color: #686868;  
+}
 /* selectbox design customizing end */
-.chart-title-area {
+
+#attendance .attendance-chart-title {
+  max-width: 125.5rem !important;
   display: flex;
   color: var(--color-purple);
-  margin-top: 3rem;
+  margin-top: 5rem;
 }
 
-.chart-summary {
-  display: flex;
-  flex-direction: row;
+#attendance .attendance-chart-title .container{
+  max-width: 125.5rem !important;
 }
 
-.chart-area {
-  margin-top: 3rem;
-  padding: 3rem;
+#attendance .chartjs-size-monitor{
+  margin: 0;
+}
+
+#attendance .chart-area {
+  margin-top: 6rem;
+  padding: 0 2rem 3.5rem 2rem;
+  max-width: 125.3rem;
   display: flex;
   flex-direction: column;
   height: 45%;
   background-color: #ffffff;
 }
 
-.chart-main {
+#attendance .chart-main {
   display: flex;
-  background-color:#ffffff;
+  max-width: 125.3rem !important;
 }
 
-.chart-title {
+#attendance .attendance-chart-title {
   display: flex;
-  padding: 0 !important;
+  max-width: 144rem !important;
+  margin: 3rem 0 0 0 !important;
 }
 
-.chart-title h2 {
+#attendance .attendance-chart-title h2 {
   text-align:left;
   margin: 0;
-  color: var(--color-purple)
+  color: var(--color-purple);
+  font-size: 2.88rem;
 }
 
-.attendance-bar-chart-area {
-  padding: 3rem 0 0 3rem !important;
+#attendance .attendance-bar-chart-area {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--color-light-grey)
+  border-right: 1px solid var(--color-light-grey);
 }
 
-.attendance-bar-chart-area h3 {
-  font-family: Helvetica;
-  font-size: 12px;
+#attendance .attendance-bar-chart-area h3 {
+  font-family: Source Sans Pro;
+  font-size: 1.2rem;
   letter-spacing: -0.01px;
   text-align: left;
+  margin: 2.5rem 0 1.5rem 2.5rem;
 }
 
-.attendance-bar-chart-area canvas#bar-chart.chartjs-render-monitor {
-  width: 100% !important;
-  height: 100% !important;
+#attendance .attendance-bar-chart-area #bar-chart {
+  padding: 0 1.8rem 0 2rem;
+  margin: 0 0 0 0 !important;
+  max-width: 84rem !important;
+  max-height: 43.8rem !important;
 }
 
-.summary-area {
+#attendance .summary-area {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  max-height: 40rem;
+  overflow-y: auto;
   border: none;
-  align-items: center;
-  padding: 1rem;
+  align-items: left;
+  margin: 8rem 0 5rem 0;
+  padding: 0;
 }
 
-/* table */
-/* .table-responsive {
-  display: flex;
-  color: var(--color-dark-grey);
-  overflow: hidden;
-  width: 100%;
+#attendance .summary-area label div {
+  display:flex;
+  width:18px;
+  height:18px;
+  background:white;
+  border:1px solid var(--color-light-grey);
+  cursor:pointer;
+  border-radius: 3px;
+  margin: 0 2rem 0 2rem;
 }
 
-table#table-content tr {
-  width: 100%;
-}
-
-#country-name {
+#attendance .summary-grid h1 {
+  font-size: 2.5rem;
+  font-family: Helvetica;
   font-weight: 500;
 }
 
-.monthly-data {
-  font-weight: 200;
+#attendance .summary-grid h3 {
+  font-size: 1rem;
+  font-family:'Source Sans Pro'; 
+  font-weight:300;
 }
-
-#table-content {
-  margin: 3rem;
-  font-size: 1.2rem;
-  width: 100%;
-}
-
-#table-content thead th {
-  border-bottom: none;
-}
-
-#table-content.thead{
-  width: 100%;
-}
-
-#table-content .thead {
-  width: 100%;
-}
-
-.sort-button {
-  margin-left: 0.7rem;
-} */
 
 </style>

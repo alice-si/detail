@@ -209,4 +209,8 @@ h3 {
 .home #Home {
   background: var(--color-purple)
 }
+
+.container[data-v-42e9a5e0] {
+  width: 100% !important;
+}
 </style>

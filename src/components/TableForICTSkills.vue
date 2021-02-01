@@ -15,15 +15,15 @@
         <tr>
           <th rowspan="3" align="center" style="border-right:1px solid #D8D8D8;">Total</th>
           <td style="white-space:nowrap;">before INS</td>
-          <!-- <td v-for=" (data, index) in totalBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in totalBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            {{data}}
+          </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <!-- <td v-for=" (data, index) in totalAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in totalAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            {{data}}
+          </td>
         </tr>
         <tr>
           <td>Difference</td>
@@ -34,40 +34,40 @@
         <tr>
           <th rowspan="3" align = "center" style="border-right:1px solid #D8D8D8;">Male</th>
           <td>before INS</td>
-          <!-- <td v-for=" (data, index) in maleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in maleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            {{data}}
+          </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <!-- <td v-for=" (data, index) in maleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in maleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            {{data}}
+          </td>
         </tr>
         <tr>
           <td>Difference</td>
-          <!-- <td v-for=" (data, index) in maleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
+          <td v-for=" (data, index) in maleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
             {{data}}
-          </td> -->
+          </td>
         </tr>
         <tr>
           <th rowspan="3" align = "center" style="border-right:1px solid #D8D8D8;">Female</th>
           <td>before INS</td>
-          <!-- <td v-for=" (data, index) in femaleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in femaleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            {{data}}
+          </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <!-- <td v-for=" (data, index) in femaleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in femaleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            {{data}}
+          </td>
         </tr>
         <tr>
           <td>Difference</td>
-          <!-- <td v-for=" (data, index) in femaleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
+          <td v-for=" (data, index) in femaleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
             {{data}}
-          </td> -->
+          </td>
         </tr>
       </tbody>
     </table>
@@ -100,6 +100,15 @@ export default {
       femaleDifference: []
     }
   },
+  mounted () {
+    console.log(this.tableData.maleDifference)
+    this.maleBeforeIns = this.tableData.maleBaseYearData
+    this.maleAfterIns = this.tableData.maleEndYearData
+    this.femaleBeforeIns = this.tableData.femaleBaseYearData
+    this.femaleAfterIns = this.tableData.femaleEndYearData
+    this.maleDifference = this.tableData.maleDiff
+    this.femaleDifference = this.tableData.femaleDiff
+  },
   methods: {
     borderStyle (index) {
       const columnLength = this.column.length
@@ -109,22 +118,18 @@ export default {
     }
   },
   watch: {
-    // tableData () {
-    //   if (this.tableData.columns.length !== 0) {
-    //     this.column = this.tableData.columns
-    //     this.totalBeforeIns = this.tableData.total.beforeIns
-    //     this.totalAfterIns = this.tableData.total.afterIns
-    //     this.totalDifference = this.tableData.total.difference
-    //     this.maleBeforeIns = this.tableData.male.beforeIns
-    //     this.maleAfterIns = this.tableData.male.afterIns
-    //     this.maleDifference = this.tableData.male.difference
-    //     this.femaleBeforeIns = this.tableData.female.beforeIns
-    //     this.femaleAfterIns = this.tableData.female.afterIns
-    //     this.femaleDifference = this.tableData.female.difference
-    //   } else {
-    //     return null
-    //   }
-    // }
+    tableData () {
+      if (this.tableData.maleBaseYearData.length !== 0) {
+        this.maleBeforeIns = this.tableData.maleBaseYearData
+        this.maleAfterIns = this.tableData.maleEndYearData
+        this.femaleBeforeIns = this.tableData.femaleBaseYearData
+        this.femaleAfterIns = this.tableData.femaleEndYearData
+        this.femaleDifference = this.tableData.femaleDiff
+        this.maleDifference = this.tableData.maleDiff
+      } else {
+        return null
+      }
+    }
   }
 }
 </script>
