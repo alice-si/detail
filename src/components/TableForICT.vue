@@ -99,6 +99,18 @@ export default {
       femaleDifference: []
     }
   },
+  mounted () {
+    this.column = this.tableData.columns
+    this.totalBeforeIns = this.tableData.total.beforeIns
+    this.totalAfterIns = this.tableData.total.afterIns
+    this.totalDifference = this.tableData.total.difference
+    this.maleBeforeIns = this.tableData.male.beforeIns
+    this.maleAfterIns = this.tableData.male.afterIns
+    this.maleDifference = this.tableData.male.difference
+    this.femaleBeforeIns = this.tableData.female.beforeIns
+    this.femaleAfterIns = this.tableData.female.afterIns
+    this.femaleDifference = this.tableData.female.difference
+  },
   methods: {
     borderStyle (index) {
       const columnLength = this.column.length

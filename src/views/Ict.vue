@@ -46,13 +46,13 @@
         <row v-for="i in setNoOfRows" v-bind:key="i">
           <column v-for="j in [0, 1]" v-bind:key="i*2+j" :lg="6" :xs="6">
             <div v-if="i*2+j < summaryBoxData.length" class="summary-grid">
-              <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].name" v-bind:class="summaryBoxData[i*2+j].name" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
-              <label v-bind:class="summaryBoxData[i*2+j].name" v-bind:for="summaryBoxData[i*2+j].name">
-                <div v-bind:class="summaryBoxData[i*2+j].name" style="justify-content:center; align-item:center;">
-                  <span v-bind:class="summaryBoxData[i*2+j].name" style="color: #ffffff; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
+              <input type="checkbox" style="display:none" v-bind:id="summaryBoxData[i*2+j].cssId" v-bind:class="summaryBoxData[i*2+j].cssId" v-bind:value="summaryBoxData[i*2+j].name" v-model="checkedItems">
+              <label v-bind:class="summaryBoxData[i*2+j].cssId" v-bind:for="summaryBoxData[i*2+j].cssId" id="checkbox-label">
+                <div v-bind:class="summaryBoxData[i*2+j].cssId" style="justify-content:center; align-item:center;">
+                  <span v-bind:class="summaryBoxData[i*2+j].cssId" style="color: #ffffff; margin:2px 2px 2px 2.5px; width:10px; height:10px;">V</span>
                 </div>
               </label>
-              <div v-bind:class="summaryBoxData[i*2+j].name" id="checkbox-text-area">
+              <div v-bind:class="summaryBoxData[i*2+j].cssId" id="checkbox-text-area">
                 <h1>{{summaryBoxData[i*2+j].difference}}</h1>
                 <h3>{{summaryBoxData[i*2+j].name}}</h3>
               </div>
@@ -71,9 +71,15 @@
 import GroupBarChart from '../components/GroupBarChart'
 import TableForICT from '../components/TableForICT'
 import TableForICTSkills from '../components/TableForICTSkills'
-import { getStudentSchoolSkillData, getIctSchoolList, getStudentIctSchoolAvg, getStudentAvgAcrossSchools, getTeacherIctSchoolAvg, getTeacherAvgAcrossSchools } from '../data/data-provider'
+import { getTeacherSchoolSkillData,
+  getStudentSchoolSkillData,
+  getIctSchoolList,
+  getStudentIctSchoolAvg,
+  getStudentAvgAcrossSchools,
+  getTeacherIctSchoolAvg,
+  getTeacherAvgAcrossSchools } from '../data/data-provider'
 import { getTeacherIctRate, getStudentIctRate, calcDifference, getIctTableData, getGroupBarChartData } from '../data/data-handler'
-import { getGroupBarChartColorSheme } from '../data/colour-scheme'
+import { getGroupBarChartColorSheme, getSkillsGroupBarChartColorSheme } from '../data/colour-scheme'
 export default {
   components: {
     GroupBarChart,
@@ -121,6 +127,20 @@ export default {
                 return value + '%'
               }
             } }]
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItem, data) {
+              if (tooltipItem[0].datasetIndex === 0) {
+                return 'Before Ins'
+              } else if (tooltipItem[0].datasetIndex === 1) {
+                return 'After Ins'
+              }
+            },
+            label: function (tooltipItem, data) {
+              return parseInt(tooltipItem.value).toFixed(0) + '%'
+            }
+          }
         }
       }
     }
@@ -130,64 +150,138 @@ export default {
     this.switchViewMode()
   },
   methods: {
-    getSkillsTableData (femaleData, maleData) {
-      console.log(femaleData, maleData)
-      const femaleBaseYearData = femaleData.baseSkills.map((el, index) => el + `/${femaleData.baseDenominator}` + '-' + femaleData.baseSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
-      const femaleEndYearData = femaleData.endSkills.map((el, index) => el + `/${femaleData.endDenominator}` + '-' + femaleData.endSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
-      const maleBaseYearData = maleData.baseSkills.map((el, index) => el + `/${maleData.baseDenominator}` + '-' + maleData.baseSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
-      const maleEndYearData = maleData.endSkills.map((el, index) => el + `/${maleData.endDenominator}` + '-' + maleData.endSkillsPct[index].toFixed(0) + '%').flatMap(el => el.split('-'))
-      const femaleDiff = calcDifference(femaleData.baseSkillsPct, femaleData.endSkillsPct)
+    getSkillsTableData (femaleData, maleData, getAvgAcrossSchool) {
+      let femaleBaseYearData = []
+      let femaleEndYearData = []
+      let maleBaseYearData = []
+      let maleEndYearData = []
+      let femaleDiff = []
+      let maleDiff = []
+      
+      femaleData.Base.map((el, index) => { 
+        const skillData = { skills: el, denominator: femaleData.baseDenominator }
+        femaleBaseYearData.push(skillData)
+        femaleBaseYearData.push(femaleData.baseSkillsPct[index].toFixed(0) + '%')
+      })
+      femaleData.End.map((el, index) => {
+        const skillData = { skills: el, denominator: femaleData.endDenominator }
+        femaleEndYearData.push(skillData)
+        femaleEndYearData.push(femaleData.endSkillsPct[index].toFixed(0) + '%')
+      })
+
+      maleData.Base.map((el, index) => {
+        const skillData = { skills: el, denominator: maleData.baseDenominator }
+        maleBaseYearData.push(skillData)
+        maleBaseYearData.push(maleData.baseSkillsPct[index].toFixed(0) + '%')
+      })
+
+      maleData.End.map((el, index) => {
+        const skillData = { skills: el, denominator: maleData.endDenominator }
+        maleEndYearData.push(skillData)
+        maleEndYearData.push(maleData.endSkillsPct[index].toFixed(0) + '%')
+      })      
+      femaleBaseYearData.push(getAvgAcrossSchool('Female', 'Base') + '%')
+      femaleEndYearData.push(getAvgAcrossSchool('Female', 'End') + '%')
+      maleBaseYearData.push(getAvgAcrossSchool('Male', 'Base') + '%')
+      maleEndYearData.push(getAvgAcrossSchool('Male', 'End') + '%')
+
+
+      calcDifference(femaleData.baseSkillsPct, femaleData.endSkillsPct)
         .map(el => {
           if (Math.floor(parseInt(el)) > 0) {
-            return '+' + Math.floor(parseInt(el)) + '%'
+            femaleDiff.push('')
+            femaleDiff.push('+' + Math.floor(parseInt(el)) + '%')
           } else {
-            return Math.floor(parseInt(el)) + '%'
+            femaleDiff.push('')
+            femaleDiff.push(Math.floor(parseInt(el)) + '%')
           }
         })
-      const maleDiff = calcDifference(maleData.baseSkillsPct, maleData.endSkillsPct)
+      calcDifference(maleData.baseSkillsPct, maleData.endSkillsPct)
         .map(el => {
           if (Math.floor(parseInt(el)) > 0) {
-            return '+' + Math.floor(parseInt(el)) + '%'
+            maleDiff.push('')
+            maleDiff.push('+' + Math.floor(parseInt(el)) + '%')
           } else {
-            return Math.floor(parseInt(el)) + '%'
+            maleDiff.push('')
+            maleDiff.push(Math.floor(parseInt(el)) + '%')
           }
-        })  
-      console.log(maleDiff)
+        })
 
-      femaleBaseYearData.push(getStudentAvgAcrossSchools('Female', 'Base') + '%')
-      femaleEndYearData.push(getStudentAvgAcrossSchools('Female', 'End') + '%')
-      maleBaseYearData.push(getStudentAvgAcrossSchools('Male', 'Base') + '%')
-      maleEndYearData.push(getStudentAvgAcrossSchools('Male', 'End') + '%')
+      femaleDiff.push(calcDifference([getAvgAcrossSchool('Female', 'Base')],[getAvgAcrossSchool('Female', 'End')])[0])
+      maleDiff.push(calcDifference([getAvgAcrossSchool('Male', 'Base')],[getAvgAcrossSchool('Male', 'End')])[0])
+      return { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, femaleDiff, maleDiff }
+    },
+    setSkillsSummaryBox () {
+      const summaryBoxDataArr = []
+      const SKILLS_LIST = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4', 'Skill 5', 'Skill 6', 'Skill 7', 'Skill 8', 'Skill 9', 'Skill 10',
+        'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']      
+      const skillsData = this.skillsTableData.femaleDiff.filter(el => el !== '').slice(0, 21)
+      SKILLS_LIST.forEach((el, index) => {
+        const dictForvFor = {
+          name: el,
+          difference: skillsData[index],
+          cssId: el.replaceAll(' ', '')
+        }
+        summaryBoxDataArr.push(dictForvFor)
+      })
+      return summaryBoxDataArr
+    },
+    getSkillsGroupBarChartData (getDataFunc) {
+      const SKILLS_LIST = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4', 'Skill 5', 'Skill 6', 'Skill 7', 'Skill 8', 'Skill 9', 'Skill 10',
+        'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']
+      const baseYearData = getDataFunc(this.selectedSchool, 'Female').baseSkillsPct
+      const endYearData = getDataFunc(this.selectedSchool, 'Female').endSkillsPct
 
-      this.skillsTableData = { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, femaleDiff, maleDiff }
+      const dataset = {
+        labels: SKILLS_LIST,
+        datasets: [{ // label: 'baseYear',
+          backgroundColor: getSkillsGroupBarChartColorSheme().opacity,
+          barThickness: 10,
+          data: baseYearData
+        }, {// label: 'endYear',
+          backgroundColor: getSkillsGroupBarChartColorSheme().normal,
+          barThickness: 10,
+          data: endYearData
+        }]
+      }
+      return dataset
     },
     switchViewMode () {
       switch (this.viewMode) {
         case 'Students':
           this.colorCode = 'color: #8954BA'
           this.growthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
-          this.groupBarChartData = this.filterChartData(getGroupBarChartData(getStudentIctSchoolAvg))
-          // If statement 안에 넣을 영역 if(this.selectedSchool.length === 0)
           if (this.selectedSchool === null) {
+            this.groupBarChartData = this.filterChartData(getGroupBarChartData(getIctSchoolList(), getStudentIctSchoolAvg, 'Total'))
             this.tableData = getIctTableData(getStudentIctRate, getStudentAvgAcrossSchools)
             this.summaryBoxData = this.setSummaryBoxData()
+            this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
           } else {
+            this.groupBarChartData = this.filterChartData(this.getSkillsGroupBarChartData(getStudentSchoolSkillData, 'Female'))
             const femaleSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Female')
             const maleSkilsData = getStudentSchoolSkillData(this.selectedSchool, 'Male')
-            this.getSkillsTableData(femaleSkillsData, maleSkilsData);
+            this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkilsData, getStudentAvgAcrossSchools)
+            this.summaryBoxData = this.setSkillsSummaryBox()
+            this.updateColor(getSkillsGroupBarChartColorSheme, this.colorIndex)
           }
-          this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
-          // If statement 끝
           break
 
         case 'Teachers':
           this.colorCode = 'color: #0091FF'
           this.growthRate = calcDifference([getTeacherAvgAcrossSchools('Total', 'Base')], [getTeacherAvgAcrossSchools('Total', 'End')])[0]
-          // If statement 안에 넣을 영역
-          this.groupBarChartData = this.filterChartData(getGroupBarChartData(getTeacherIctSchoolAvg))
-          this.tableData = getIctTableData(getTeacherIctRate, getTeacherAvgAcrossSchools)
-          this.summaryBoxData = this.setSummaryBoxData()
-          this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
+          if (this.selectedSchool === null) {
+            this.groupBarChartData = this.filterChartData(getGroupBarChartData(getIctSchoolList(), getTeacherIctSchoolAvg, 'Total'))
+            this.tableData = getIctTableData(getTeacherIctRate, getTeacherAvgAcrossSchools)
+            this.summaryBoxData = this.setSummaryBoxData()
+            this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
+          } else {
+            this.groupBarChartData = this.filterChartData(this.getSkillsGroupBarChartData(getTeacherSchoolSkillData, 'Female'))
+            const femaleSkillsData = getTeacherSchoolSkillData(this.selectedSchool, 'Female')
+            const maleSkilsData = getTeacherSchoolSkillData(this.selectedSchool, 'Male')
+            this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkilsData, getTeacherAvgAcrossSchools)
+            this.summaryBoxData = this.setSkillsSummaryBox()
+            this.updateColor(getSkillsGroupBarChartColorSheme, this.colorIndex)    
+          }
           break
       }
     },
@@ -195,7 +289,7 @@ export default {
       let haveSet = 0
       colorIndex.sort((a, b) => a - b)
       for (let i = 0; i < this.summaryBoxData.length; i++) {
-        const school = this.summaryBoxData[i].name
+        const school = this.summaryBoxData[i].cssId
         const dom = document.getElementsByClassName(`${school}`)
         if (dom.length !== 0 && dom[0].checked === true) {
           const setColor = colorScheme().normal[colorIndex[haveSet]]
@@ -239,14 +333,14 @@ export default {
       for (let schoolIndex = 0; schoolIndex < this.tableData.columns.length; schoolIndex++) {
         const dictForVFor = {
           name: this.tableData.columns[schoolIndex],
-          difference: this.tableData.total.difference[schoolIndex]
+          difference: this.tableData.total.difference[schoolIndex],
+          cssId: this.tableData.columns[schoolIndex]
         }
         summaryBoxDataArr.push(dictForVFor)
       }
       return summaryBoxDataArr
     },
     viewToggle () {
-      this.uncheckCheckboxes()
       if (this.viewMode === 'Students') {
         this.viewMode = 'Teachers'
       } else {
@@ -254,10 +348,11 @@ export default {
       }
     },
     uncheckCheckboxes () {
-      for (let i = 0; i < this.checkedItems.length; i++) {
-        const dom = document.getElementsByClassName(this.checkedItems[i])
-        dom[0].checked = false
-      }
+      // for (let i = 0; i < this.checkedItems.length; i++) {
+      const dom = document.querySelector('label#checkbox-label')
+      console.log(dom)
+      dom.checked = false
+      // }
       this.checkedItems = []
     }
   },
@@ -268,12 +363,15 @@ export default {
   },
   watch: {
     viewMode () {
+      this.uncheckCheckboxes()
       this.switchViewMode()
     },
     checkedItems () {
       this.switchViewMode()
     },
     selectedSchool () {
+      console.log('here')
+      this.uncheckCheckboxes()
       this.switchViewMode()
     }
   }

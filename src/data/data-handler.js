@@ -232,16 +232,18 @@ export function getIctTableData (getRateDataFunc, getAcrossAvgDataFunc) {
   return tableProp
 }
 
-export function getGroupBarChartData (getInfoFunc) {
-  const labelArr = getIctSchoolList()
+export function getGroupBarChartData (label, getInfoFunc, type) {
+
+  const labelArr = label
+  
   const baseYearData = {}
   const endYearData = {}
 
   labelArr.forEach(el => {
-    baseYearData[el] = getInfoFunc(`${el}`, 'Total', 'Base')
+    baseYearData[el] = getInfoFunc(`${el}`, type, 'Base')
   })
   labelArr.forEach(el => {
-    endYearData[el] = getInfoFunc(`${el}`, 'Total', 'End')
+    endYearData[el] = getInfoFunc(`${el}`, type, 'End')
   })
 
   const dataset = {
@@ -256,5 +258,6 @@ export function getGroupBarChartData (getInfoFunc) {
       data: Object.values(endYearData)
     }]
   }
+
   return dataset
 }

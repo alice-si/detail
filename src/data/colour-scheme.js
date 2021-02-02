@@ -105,3 +105,60 @@ export function getGroupBarChartColorSheme () {
 
   return colorSchemeObj
 }
+
+export function getSkillsGroupBarChartColorSheme () {
+  const COLOR_SCHEME = [
+    '#EA4C89',
+    '#2FB9EF',
+    '#67B675',
+    '#f76511',
+    '#1CB8C4',
+    '#F7B500',
+    '#4908d4',
+    '#EF6D73',
+    '#9355DE',
+    '#ffa600',
+    '#ff7c43',
+    '#f95d6a',
+    '#d45087',
+    '#a05195',
+    '#665191',
+    '#2f4b7c',
+    '#003f5c',
+    '#488f31',
+    '#de6069',
+    '#f0b8b8',
+    '#184d47'
+  ]
+
+  const OPACITY_COLOR_SCHEME = [
+    'rgb(232, 79, 137, 0.5)',
+    'rgb(47, 185, 239, 0.5)',
+    'rgb(103, 182, 117, 0.5)',
+    'rgb(247, 101, 17, 0.5)',
+    'rgb(28, 184, 196, 0.5)',
+    'rgb(247, 181, 0, 0.5',
+    'rgb(73, 8, 212, 0.5)',
+    'rgb(239, 109, 115, 0.5)',
+    'rgb(147, 85, 222, 0.5)',
+    'rgb(255, 166, 0, 0.5)',
+    'rgb(255, 124, 67, 0.5)',
+    'rgb(249, 93, 106, 0.5)',
+    'rgb(212, 80, 135, 0.5)',
+    'rgb(160, 81, 149, 0.5)',
+    'rgb(102, 81, 145, 0.5)',
+    'rgb(47, 75, 124, 0.5)',
+    'rgb(0, 63, 92, 0.5)',
+    'rgb(72, 143, 49, 0.5)',
+    'rgb(222, 96, 105, 0.5)',
+    'rgb(240, 184, 184, 0.5)',
+    'rgb(24, 77, 71, 0.5)'
+  ]
+
+  const colorSchemeObj = {
+    normal: COLOR_SCHEME,
+    opacity: OPACITY_COLOR_SCHEME
+  }
+
+  return colorSchemeObj
+}
