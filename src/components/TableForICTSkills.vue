@@ -120,7 +120,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.tableData)
     this.maleBeforeIns = this.tableData.maleBaseYearData
     this.maleAfterIns = this.tableData.maleEndYearData
     this.femaleBeforeIns = this.tableData.femaleBaseYearData
@@ -130,6 +129,7 @@ export default {
     this.totalBeforeIns = this.tableData.totalBaseYearData
     this.totalAfterIns = this.tableData.totalEndYearData
     this.totalDifference = this.tableData.totalDiff
+    this.tableName = this.tableData.tableName
   },
   methods: {
     borderStyle (index) {
@@ -153,6 +153,7 @@ export default {
         this.totalBeforeIns = this.tableData.totalBaseYearData
         this.totalAfterIns = this.tableData.totalEndYearData
         this.totalDifference = this.tableData.totalDiff
+        this.tableName = this.tableData.tableName
       } else {
         return null
       }

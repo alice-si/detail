@@ -148,6 +148,7 @@ export default {
   mounted () {
     this.schools = getIctSchoolList()
     this.switchViewMode()
+    this.uncheckCheckboxes()
   },
   methods: {
     getSkillsTableData (femaleData, maleData, totalData, getAvgAcrossSchool) {
@@ -238,7 +239,8 @@ export default {
       femaleDiff.push(calcDifference([getAvgAcrossSchool('Female', 'Base')], [getAvgAcrossSchool('Female', 'End')])[0])
       maleDiff.push(calcDifference([getAvgAcrossSchool('Male', 'Base')], [getAvgAcrossSchool('Male', 'End')])[0])
       totalDiff.push(calcDifference([getAvgAcrossSchool('Total', 'Base')], [getAvgAcrossSchool('Total', 'End')])[0])
-      return { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, totalBaseYearData, totalEndYearData, femaleDiff, maleDiff, totalDiff }
+      const tableName = this.selectedSchool
+      return { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, totalBaseYearData, totalEndYearData, femaleDiff, maleDiff, totalDiff, tableName }
     },
     setSkillsSummaryBox () {
       const summaryBoxDataArr = []
@@ -379,11 +381,11 @@ export default {
       }
     },
     uncheckCheckboxes () {
-      // for (let i = 0; i < this.checkedItems.length; i++) {
-      const dom = document.querySelector('label#checkbox-label')
-      console.log(dom)
-      dom.checked = false
-      // }
+      for (let i = 0; i < this.checkedItems.length; i++) {
+        const dom = document.getElementsByClassName(this.checkedItems[i].replaceAll(' ', ''))
+        console.log(dom)
+        dom.checked = false
+      }
       this.checkedItems = []
     }
   },
@@ -401,7 +403,6 @@ export default {
       this.switchViewMode()
     },
     selectedSchool () {
-      console.log('here')
       this.uncheckCheckboxes()
       this.switchViewMode()
     }

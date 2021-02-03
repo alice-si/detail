@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Attendance from './views/Attendance.vue'
 import Ict from './views/Ict.vue'
+import Login from './views/Login.vue'
+import UploadPage from './views/UploadPage.vue'
 
 Vue.use(Router)
 
@@ -29,7 +31,17 @@ export default new Router({
     {
       path: '/ict',
       name: 'ict',
-      component: Ict
+      component: () => import('./views/Ict.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: UploadPage
     }
   ]
 })
