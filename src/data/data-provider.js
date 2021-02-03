@@ -238,6 +238,15 @@ export function getStudentSchoolSkillData (school, gender) {
       baseSkillsPct = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Male_pct)
       endSkillsPct = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Male_pct)
       break
+    case 'Total':
+      Base = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Total_raw)
+      End = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Total_raw)
+      // baseDenominator = ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].base_count // Replace to this code when total raw data update
+      // endDenominator = ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].end_count // Replace to this code when total raw data update
+      baseDenominator = '-'
+      endDenominator = '-'
+      baseSkillsPct = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Total_raw)
+      endSkillsPct = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Total_raw)
   } 
   return { Base, End, baseDenominator, endDenominator, baseSkillsPct, endSkillsPct }
 }
@@ -269,6 +278,16 @@ export function getTeacherSchoolSkillData (school, gender) {
       endDenominator = ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].end_count
       baseSkillsPct = SKILLS_LIST.map(el => ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Male_pct)
       endSkillsPct = SKILLS_LIST.map(el => ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Male_pct)
+      break
+    case 'Total':
+      Base = SKILLS_LIST.map(el => ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Total_raw)
+      End = SKILLS_LIST.map(el => ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Total_raw)
+      // baseDenominator = ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].base_count // Replace to this code when total raw data update
+      // endDenominator = ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].end_count // Replace to this code when total raw data update
+      baseDenominator = '-'
+      endDenominator = '-'
+      baseSkillsPct = SKILLS_LIST.map(el => ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Total_raw)
+      endSkillsPct = SKILLS_LIST.map(el => ICT_TEACHER_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Total_raw)
       break
   }
   return { Base, End, baseDenominator, endDenominator, baseSkillsPct, endSkillsPct }

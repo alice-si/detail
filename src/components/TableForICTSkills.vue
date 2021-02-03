@@ -4,7 +4,7 @@
       <thead class="thead">
         <tr>
           <th style="border-right:1px solid #D8D8D8;" scope="col">Students</th>
-          <th scope="col" style="border-right:1px solid #D8D8D8;">Skills</th>
+          <th scope="col" >Skills</th>
           <th v-for="(school, index) in column" v-bind:key="index" v-bind:class="school" v-bind:style="borderStyle(index)">
             {{school}}
           </th>
@@ -16,20 +16,26 @@
           <th rowspan="3" align="center" v-bind:style="borderStyle(index)">Total</th>
           <td style="white-space:nowrap;">before INS</td>
           <td v-for=" (data, index) in totalBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}
+            <div v-if="index === 42">{{data}}</div>
+            <div v-if="index % 2 === 0 && index !== 42" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
           </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <td v-for=" (data, index) in totalAfterIns" v-bind:key="index">
-            {{data}}
+          <td v-for=" (data, index) in totalAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index === 42">{{data}}</div>
+            <div v-if="index % 2 === 0 && index !== 42" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
           </td>
         </tr>
         <tr>
           <td>Difference</td>
-          <!-- <td v-for=" (data, index) in totalDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}
-          </td> -->
+          <td v-for=" (data, index) in totalDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0" ></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 42">{{data}}</div>    
+          </td>
         </tr>
         <tr>
           <th rowspan="3" align = "center" v-bind:style="borderStyle(index)">Male</th>
@@ -114,12 +120,16 @@ export default {
     }
   },
   mounted () {
+    console.log(this.tableData)
     this.maleBeforeIns = this.tableData.maleBaseYearData
     this.maleAfterIns = this.tableData.maleEndYearData
     this.femaleBeforeIns = this.tableData.femaleBaseYearData
     this.femaleAfterIns = this.tableData.femaleEndYearData
     this.maleDifference = this.tableData.maleDiff
     this.femaleDifference = this.tableData.femaleDiff
+    this.totalBeforeIns = this.tableData.totalBaseYearData
+    this.totalAfterIns = this.tableData.totalEndYearData
+    this.totalDifference = this.tableData.totalDiff
   },
   methods: {
     borderStyle (index) {
@@ -140,6 +150,9 @@ export default {
         this.femaleAfterIns = this.tableData.femaleEndYearData
         this.femaleDifference = this.tableData.femaleDiff
         this.maleDifference = this.tableData.maleDiff
+        this.totalBeforeIns = this.tableData.totalBaseYearData
+        this.totalAfterIns = this.tableData.totalEndYearData
+        this.totalDifference = this.tableData.totalDiff
       } else {
         return null
       }

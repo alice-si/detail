@@ -150,13 +150,16 @@ export default {
     this.switchViewMode()
   },
   methods: {
-    getSkillsTableData (femaleData, maleData, getAvgAcrossSchool) {
+    getSkillsTableData (femaleData, maleData, totalData, getAvgAcrossSchool) {
       let femaleBaseYearData = []
       let femaleEndYearData = []
       let maleBaseYearData = []
       let maleEndYearData = []
+      let totalBaseYearData = []
+      let totalEndYearData = []
       let femaleDiff = []
       let maleDiff = []
+      let totalDiff = []
       
       femaleData.Base.map((el, index) => { 
         const skillData = { skills: el, denominator: femaleData.baseDenominator }
@@ -179,11 +182,26 @@ export default {
         const skillData = { skills: el, denominator: maleData.endDenominator }
         maleEndYearData.push(skillData)
         maleEndYearData.push(maleData.endSkillsPct[index].toFixed(0) + '%')
-      })      
+      })
+
+      totalData.Base.map((el, index) => {
+        const skillData = { skills: el, denominator: totalData.baseDenominator }
+        totalBaseYearData.push(skillData)
+        totalBaseYearData.push(totalData.baseSkillsPct[index].toFixed(0) + '%')
+      })
+
+      totalData.End.map((el, index) => {
+        const skillData = { skills: el, denominator: totalData.endDenominator }
+        totalEndYearData.push(skillData)
+        totalEndYearData.push(totalData.endSkillsPct[index].toFixed(0) + '%')
+      })
+      
       femaleBaseYearData.push(getAvgAcrossSchool('Female', 'Base') + '%')
       femaleEndYearData.push(getAvgAcrossSchool('Female', 'End') + '%')
       maleBaseYearData.push(getAvgAcrossSchool('Male', 'Base') + '%')
       maleEndYearData.push(getAvgAcrossSchool('Male', 'End') + '%')
+      totalBaseYearData.push(getAvgAcrossSchool('Total', 'Base') + '%')
+      totalEndYearData.push(getAvgAcrossSchool('Total', 'End') + '%')
 
 
       calcDifference(femaleData.baseSkillsPct, femaleData.endSkillsPct)
@@ -206,16 +224,27 @@ export default {
             maleDiff.push(Math.floor(parseInt(el)) + '%')
           }
         })
+      calcDifference(totalData.baseSkillsPct, totalData.endSkillsPct)
+        .map(el => {
+          if (Math.floor(parseInt(el)) > 0) {
+            totalDiff.push('')
+            totalDiff.push('+' + Math.floor(parseInt(el)) + '%')
+          } else {
+            totalDiff.push('')
+            totalDiff.push(Math.floor(parseInt(el)) + '%')
+          }
+        })        
 
-      femaleDiff.push(calcDifference([getAvgAcrossSchool('Female', 'Base')],[getAvgAcrossSchool('Female', 'End')])[0])
-      maleDiff.push(calcDifference([getAvgAcrossSchool('Male', 'Base')],[getAvgAcrossSchool('Male', 'End')])[0])
-      return { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, femaleDiff, maleDiff }
+      femaleDiff.push(calcDifference([getAvgAcrossSchool('Female', 'Base')], [getAvgAcrossSchool('Female', 'End')])[0])
+      maleDiff.push(calcDifference([getAvgAcrossSchool('Male', 'Base')], [getAvgAcrossSchool('Male', 'End')])[0])
+      totalDiff.push(calcDifference([getAvgAcrossSchool('Total', 'Base')], [getAvgAcrossSchool('Total', 'End')])[0])
+      return { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, totalBaseYearData, totalEndYearData, femaleDiff, maleDiff, totalDiff }
     },
     setSkillsSummaryBox () {
       const summaryBoxDataArr = []
       const SKILLS_LIST = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4', 'Skill 5', 'Skill 6', 'Skill 7', 'Skill 8', 'Skill 9', 'Skill 10',
-        'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']      
-      const skillsData = this.skillsTableData.femaleDiff.filter(el => el !== '').slice(0, 21)
+        'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']  
+      const skillsData = this.skillsTableData.totalDiff.filter(el => el !== '').slice(0, 21)
       SKILLS_LIST.forEach((el, index) => {
         const dictForvFor = {
           name: el,
@@ -229,8 +258,8 @@ export default {
     getSkillsGroupBarChartData (getDataFunc) {
       const SKILLS_LIST = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4', 'Skill 5', 'Skill 6', 'Skill 7', 'Skill 8', 'Skill 9', 'Skill 10',
         'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']
-      const baseYearData = getDataFunc(this.selectedSchool, 'Female').baseSkillsPct
-      const endYearData = getDataFunc(this.selectedSchool, 'Female').endSkillsPct
+      const baseYearData = getDataFunc(this.selectedSchool, 'Total').baseSkillsPct
+      const endYearData = getDataFunc(this.selectedSchool, 'Total').endSkillsPct
 
       const dataset = {
         labels: SKILLS_LIST,
@@ -257,10 +286,11 @@ export default {
             this.summaryBoxData = this.setSummaryBoxData()
             this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
           } else {
-            this.groupBarChartData = this.filterChartData(this.getSkillsGroupBarChartData(getStudentSchoolSkillData, 'Female'))
+            this.groupBarChartData = this.filterChartData(this.getSkillsGroupBarChartData(getStudentSchoolSkillData, 'Total')) // replace 'Female -> Total' when total data update
             const femaleSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Female')
-            const maleSkilsData = getStudentSchoolSkillData(this.selectedSchool, 'Male')
-            this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkilsData, getStudentAvgAcrossSchools)
+            const maleSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Male')
+            const totalSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Total')
+            this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkillsData, totalSkillsData, getStudentAvgAcrossSchools)
             this.summaryBoxData = this.setSkillsSummaryBox()
             this.updateColor(getSkillsGroupBarChartColorSheme, this.colorIndex)
           }
@@ -275,12 +305,13 @@ export default {
             this.summaryBoxData = this.setSummaryBoxData()
             this.updateColor(getGroupBarChartColorSheme, this.colorIndex)
           } else {
-            this.groupBarChartData = this.filterChartData(this.getSkillsGroupBarChartData(getTeacherSchoolSkillData, 'Female'))
+            this.groupBarChartData = this.filterChartData(this.getSkillsGroupBarChartData(getTeacherSchoolSkillData, 'Total'))
             const femaleSkillsData = getTeacherSchoolSkillData(this.selectedSchool, 'Female')
-            const maleSkilsData = getTeacherSchoolSkillData(this.selectedSchool, 'Male')
-            this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkilsData, getTeacherAvgAcrossSchools)
+            const maleSkillsData = getTeacherSchoolSkillData(this.selectedSchool, 'Male')
+            const totalSkillsData = getTeacherSchoolSkillData(this.selectedSchool, 'Total')
+            this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkillsData, totalSkillsData, getTeacherAvgAcrossSchools)
             this.summaryBoxData = this.setSkillsSummaryBox()
-            this.updateColor(getSkillsGroupBarChartColorSheme, this.colorIndex)    
+            this.updateColor(getSkillsGroupBarChartColorSheme, this.colorIndex)
           }
           break
       }

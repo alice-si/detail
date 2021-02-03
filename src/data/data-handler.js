@@ -177,7 +177,8 @@ export function getTeacherIctRate (school, type, year) {
 export function calcDifference (base, end) {
   const difference = end.map((end, index) => {
     if (end - base[index] < 0) {
-      return '-' + end - base[index] + '%'
+      const res = end - base[index]
+      return res + '%'
     } else if (end - base[index] > 0) {
       const plus = '+'
       return plus.concat('', end - base[index]) + '%'
