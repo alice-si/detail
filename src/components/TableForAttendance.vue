@@ -5,69 +5,88 @@
         <tr>
           <th style="border-right:1px solid #D8D8D8;" scope="col">Students</th>
           <th scope="col">Skills</th>
-          <th v-for="(school, index) in column" v-bind:key="index" v-bind:class="school">
+          <th v-for="(school, index) in column" v-bind:key="index" v-bind:class="school.replaceAll(' ', '')">
             {{school}}
           </th>
-          <th style="white-space:nowrap;" scope="col">% of students attending across countries</th>
+          <th style="white-space:nowrap; border-left:1px solid #D8D8D8;" scope="col">% of students attending across countries</th>
         </tr>
       </thead>
       <tbody style="border-bottom:1px solid #D8D8D8;">
         <tr>
           <th rowspan="3" align="center" style="border-right:1px solid #D8D8D8;">Total</th>
           <td style="white-space:nowrap;">before INS</td>
-          <!-- <td v-for=" (data, index) in totalBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in totalBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index === 8">{{data}}</div>
+            <div v-if="index % 2 === 0 && index !== 8" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+          </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <!-- <td v-for=" (data, index) in totalAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in totalAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index === 8">{{data}}</div>
+            <div v-if="index % 2 === 0 && index !== 8" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+          </td>
         </tr>
         <tr>
           <td>Difference</td>
-          <!-- <td v-for=" (data, index) in totalDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}
-          </td> -->
+          <td v-for=" (data, index) in totalDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0" ></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 8">{{data}}</div>    
+          </td>
         </tr>
         <tr>
           <th rowspan="3" align = "center" style="border-right:1px solid #D8D8D8;">Male</th>
           <td>before INS</td>
-          <!-- <td v-for=" (data, index) in maleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in maleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index === 8">{{data}}</div>
+            <div v-if="index % 2 === 0 && index !== 8" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+          </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <!-- <td v-for=" (data, index) in maleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in maleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0 && index !== 8" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 8">{{data}}</div>
+          </td>
+        </tr>
         </tr>
         <tr>
           <td>Difference</td>
-          <!-- <td v-for=" (data, index) in maleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}
-          </td> -->
+          <td v-for=" (data, index) in maleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0" ></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 8">{{data}}</div>    
+          </td>
         </tr>
         <tr>
           <th rowspan="3" align = "center" style="border-right:1px solid #D8D8D8;">Female</th>
           <td>before INS</td>
-          <!-- <td v-for=" (data, index) in femaleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in femaleBeforeIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0 && index !== 8"><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 8">{{data}}</div>     
+          </td>
         </tr>
         <tr>
           <td>after INS</td>
-          <!-- <td v-for=" (data, index) in femaleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}%
-          </td> -->
+          <td v-for=" (data, index) in femaleAfterIns" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0 && index !== 8" ><h3 style="font-size: 1.2em; display:inline;">{{data.skills}}</h3>/<h4 style="font-size: 0.6rem !important; display:inline;">{{data.denominator}}</h4></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 8">{{data}}</div>            
+          </td>
         </tr>
         <tr>
           <td>Difference</td>
-          <!-- <td v-for=" (data, index) in femaleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
-            {{data}}
-          </td> -->
+          <td v-for=" (data, index) in femaleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
+            <div v-if="index % 2 === 0" ></div>
+            <div v-if="index % 2 !== 0">{{data}}</div>
+            <div v-if="index === 8">{{data}}</div>    
+          </td>
         </tr>
       </tbody>
     </table>
@@ -86,7 +105,7 @@ export default {
       sortedByLessons: false,
       sortedByDifference: false,
       tableName: 'Students',
-      column: ['Kenya', '%', 'Tanzania', '%', 'South Soudan', '%', 'DR Congo', '%'],
+      column: ['Kenya', '%', 'Tanzania', '%', 'South Sudan', '%', 'DR Congo', '%'],
       totalBeforeIns: [],
       totalAfterIns: [],
       totalDifference: [],
@@ -98,6 +117,18 @@ export default {
       femaleDifference: []
     }
   },
+  mounted () {
+    console.log(this.tableData)
+    this.totalBeforeIns = this.tableData.totalBaseYearData
+    this.totalAfterIns = this.tableData.totalEndYearData
+    this.totalDifference = this.tableData.totalDiff
+    this.maleBeforeIns = this.tableData.maleBaseYearData
+    this.maleAfterIns = this.tableData.maleEndYearData
+    this.maleDifference = this.tableData.maleDiff
+    this.femaleBeforeIns = this.tableData.femaleBaseYearData
+    this.femaleAfterIns = this.tableData.femaleEndYearData
+    this.femaleDifference = this.tableData.femaleDiff
+  },
   methods: {
     borderStyle (index) {
       const columnLength = this.column.length
@@ -107,22 +138,21 @@ export default {
     }
   },
   watch: {
-    // tableData () {
-    //   if (this.tableData.columns.length !== 0) {
-    //     this.column = this.tableData.columns
-    //     this.totalBeforeIns = this.tableData.total.beforeIns
-    //     this.totalAfterIns = this.tableData.total.afterIns
-    //     this.totalDifference = this.tableData.total.difference
-    //     this.maleBeforeIns = this.tableData.male.beforeIns
-    //     this.maleAfterIns = this.tableData.male.afterIns
-    //     this.maleDifference = this.tableData.male.difference
-    //     this.femaleBeforeIns = this.tableData.female.beforeIns
-    //     this.femaleAfterIns = this.tableData.female.afterIns
-    //     this.femaleDifference = this.tableData.female.difference
-    //   } else {
-    //     return null
-    //   }
-    // }
+    tableData () {
+      if (this.tableData.length !== 0) {
+        this.totalBeforeIns = this.tableData.totalBaseYearData
+        this.totalAfterIns = this.tableData.totalEndYearData
+        this.totalDifference = this.tableData.totalDiff
+        this.maleBeforeIns = this.tableData.maleBaseYearData
+        this.maleAfterIns = this.tableData.maleEndYearData
+        this.maleDifference = this.tableData.maleDiff
+        this.femaleBeforeIns = this.tableData.femaleBaseYearData
+        this.femaleAfterIns = this.tableData.femaleEndYearData
+        this.femaleDifference = this.tableData.femaleDiff
+      } else {
+        return null
+      }
+    }
   }
 }
 </script>

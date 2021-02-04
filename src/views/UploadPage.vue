@@ -42,7 +42,6 @@
 import firebase from 'firebase'
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-let uuid = require('uuid')
 
 export default {
   name: 'upload',
@@ -71,7 +70,6 @@ export default {
       navbar.style.display = 'none'
     },
     async afterComplete (upload) {
-      const imageName = uuid.v1()
       this.isLoading = true
       try {
         // save image
@@ -165,8 +163,6 @@ input[id='terms-checkbox']:checked + label {
 
 .terms-checkbox-v {
   position: relative;
-  /* background-color: yellow;
-  margin: 1em 0 0 0; */
 }
 
 .upload-drop-area {
