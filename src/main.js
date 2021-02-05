@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { Row, Column } from 'vue-grid-responsive'
 import firebase from 'firebase'
+require('dotenv').config()
 
 Vue.component('v-select', vSelect)
 Vue.use(BootstartpVue)
@@ -18,13 +19,13 @@ Vue.config.productionTip = false
 
 // Replace this area with Alice config data
 var firebaseConfig = {
-  apiKey: 'AIzaSyClWtMV50HsCpghxr3UupyTKJsr_PHOfLQ',
-  authDomain: 'alice-vodafone-test.firebaseapp.com',
-  projectId: 'alice-vodafone-test',
-  storageBucket: 'alice-vodafone-test.appspot.com',
-  messagingSenderId: '1005741895404',
-  appId: '1:1005741895404:web:ab917813d9211ece4bffc9',
-  measurementId: 'G-3ZZB6E56MQ'
+  apiKey: process.env.VUE_APP_apiKey,
+  authDomain: process.env.VUE_APP_authDomain,
+  projectId: process.env.VUE_APP_projectId,
+  storageBucket: process.env.VUE_APP_storageBucket,
+  messagingSenderId: process.env.VUE_APP_messagingSenderId,
+  appId: process.env.VUE_APP_appId,
+  measurementId: process.env.VUE_APP_measurementId
 }
 // config area end
 

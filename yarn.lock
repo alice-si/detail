@@ -3432,15 +3432,34 @@
   dependencies:
     "is-obj" "^2.0.0"
 
+"dotenv-defaults@^2.0.1":
+  "integrity" "sha512-ugFCyBF7ILuwpmznduHPQZBMucHHJ8T4OBManTEVjemxCm2+nqifSuW2lD2SNKdiKSH1E324kZSdJ8M04b4I/A=="
+  "resolved" "https://registry.npmjs.org/dotenv-defaults/-/dotenv-defaults-2.0.1.tgz"
+  "version" "2.0.1"
+  dependencies:
+    "dotenv" "^8.2.0"
+
 "dotenv-expand@^5.1.0":
   "integrity" "sha1-P7rwIL/XlIhAcuomsel5HUWmKfA="
   "resolved" "https://registry.npm.taobao.org/dotenv-expand/download/dotenv-expand-5.1.0.tgz"
   "version" "5.1.0"
 
+"dotenv-webpack@^6.0.0":
+  "integrity" "sha512-u/ycyUq7+x407HNTTqJDJelX64Pjmtm96IskgV4ZPPqTdE5d7+p8GzK7OW4sOoPxnwiLQ3iM6zjauYqFU8KdNg=="
+  "resolved" "https://registry.npmjs.org/dotenv-webpack/-/dotenv-webpack-6.0.0.tgz"
+  "version" "6.0.0"
+  dependencies:
+    "dotenv-defaults" "^2.0.1"
+
 "dotenv@^7.0.0":
   "integrity" "sha1-or481Sc2ZzIG6KhftSEO6ilijnw="
   "resolved" "https://registry.npm.taobao.org/dotenv/download/dotenv-7.0.0.tgz"
   "version" "7.0.0"
+
+"dotenv@^8.2.0":
+  "integrity" "sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw=="
+  "resolved" "https://registry.npmjs.org/dotenv/-/dotenv-8.2.0.tgz"
+  "version" "8.2.0"
 
 "dropzone@^5.5.1":
   "integrity" "sha512-m217bJHtf0J1IiKn4Tv6mnu1h5QvQNBnKZ39gma7hzGQhIZMxYq1vYEHs4AVd4ThFwmALys+52NAOD4zdLTG4w=="
@@ -5722,11 +5741,6 @@
   "integrity" "sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA="
   "resolved" "https://registry.npm.taobao.org/lines-and-columns/download/lines-and-columns-1.1.6.tgz"
   "version" "1.1.6"
-
-"link-prevue@^1.2.0":
-  "integrity" "sha512-SzzwVt+2oNkPPolTgALPRqfXX4bNqR3O+1Rj7OT1k2zqk8GltBGYwVylMLUM+b0i4SmHJ26atR2ROLPdpeQZ8Q=="
-  "resolved" "https://registry.npmjs.org/link-prevue/-/link-prevue-1.2.0.tgz"
-  "version" "1.2.0"
 
 "load-json-file@^2.0.0":
   "integrity" "sha1-eUfkIUmvgNaWy/eXvKq8/h/inKg="
@@ -9255,7 +9269,7 @@
     "source-list-map" "^2.0.0"
     "source-map" "~0.6.1"
 
-"webpack@^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^3.0.0 || ^4.0.0", "webpack@^3.0.0 || ^4.1.0 || ^5.0.0-0", "webpack@^4.0.0", "webpack@^4.0.0 || ^5.0.0", "webpack@^4.4.0", "webpack@>=2", "webpack@>=2.0.0 <5.0.0", "webpack@>=4.0.0":
+"webpack@^1 || ^2 || ^3 || ^4 || ^5", "webpack@^1.0.0 || ^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^2.0.0 || ^3.0.0 || ^4.0.0", "webpack@^3.0.0 || ^4.0.0", "webpack@^3.0.0 || ^4.1.0 || ^5.0.0-0", "webpack@^4.0.0", "webpack@^4.0.0 || ^5.0.0", "webpack@^4.4.0", "webpack@>=2", "webpack@>=2.0.0 <5.0.0", "webpack@>=4.0.0":
   "integrity" "sha1-a/4rCvBVyLLR6Q7SzZNj+EEma3I="
   "resolved" "https://registry.npm.taobao.org/webpack/download/webpack-4.44.2.tgz?cache=0&sync_timestamp=1608060656472&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fwebpack%2Fdownload%2Fwebpack-4.44.2.tgz"
   "version" "4.44.2"

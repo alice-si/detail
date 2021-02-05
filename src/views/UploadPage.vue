@@ -4,18 +4,18 @@
       <section class='upload-form-area'>
         <img src='../assets/alice_logo.png' width='91rem'/>
         <h1 class='upload-title'>Upload your impact data files</h1>
-        <h3 class='upload-sub-title'>File should be excel or csv</h3>
-        <!-- <img src='../assets/UploadIcon.svg' /> -->
+        <h3 class='upload-sub-title'>File should be excel(.xlsx) or csv</h3>
         <div class='upload-drop-area'>
           <vue-dropzone
             ref="imgDropZone"
             id="customdropzone"
             :options="dropzoneOptions"
             @vdropzone-complete="afterComplete"
+            @vdropzone-mounted="getFileList"
           ></vue-dropzone>
-          <div v-if="images.length > 0" class="image-div">
-            <div v-for="image in images" :key="image.src">
-              <img :src="image.src" class="image" />
+          <div v-if="uploading.length > 0" class="image-div">
+            <div v-for="(file, index) in uploading" :key="index" class="filename-list">
+              <img :src="setImgSrc(index)" class="upload-check"/><p>{{file}}</p><img src="../assets/Trash.svg" class="image" @click="deleteFile(index)"/>
             </div>
           </div>          
         </div>
@@ -50,6 +50,7 @@ export default {
   },
   data () {
     return {
+      // imgSrc: require('../assets/UploadCheckIcon_0.svg'),
       dropzoneOptions: {
         url: 'https://httpbin.org/post',
         thumbnailWidth: 150,
@@ -58,7 +59,8 @@ export default {
         acceptedFiles: '.csv, .xlsx',
         dictDefaultMessage: `<p class="drag-drop-text">Drag & Drop Files Here</p>`
       },
-      images: []
+      uploading: [],
+      savedFileList: []
     }
   },
   mounted () {
@@ -69,24 +71,57 @@ export default {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'none'
     },
+    getFileList () {
+      const storageRef = firebase.storage().ref()
+      const fileOriginRef = storageRef.child(`files/`)
+      fileOriginRef.listAll()
+        .then((res) => res._delegate.items
+          .forEach((el) => { this.savedFileList.push(el.name) })
+        )
+    },
     async afterComplete (upload) {
-      this.isLoading = true
-      try {
-        // save image
-        let file = upload
-        console.log(file)
-        const metadata = {
-          contentType: file.type
+      if (this.savedFileList.includes(upload.name)) {
+        alert(`[ ${upload.name} ] has already been added in system`)
+        const detailBox = document.getElementsByClassName('dz-preview')
+        for (let i = 0; i < detailBox.length; i++) {
+          detailBox[i].style.display = 'none'
         }
-        const storageRef = firebase.storage().ref()
-        const imageRef = storageRef.child(`files/${file.upload.filename}`)
-        await imageRef.put(file, metadata)
-        var downloadURL = await imageRef.getDownloadURL()
-        this.images.push({ src: downloadURL })
-        this.$refs.imgDropZone.removeFile(upload)
-      } catch (error) {
-        console.log(error)
+      } else {
+        this.isLoading = true
+        try {
+          let file = upload
+          const metadata = {
+            contentType: file.type
+          }
+          const storageRef = firebase.storage().ref()
+          const fileRef = storageRef.child(`files/${file.upload.filename}`)
+          await fileRef.put(file, metadata)
+          this.uploading.push(file.upload.filename)
+          this.$refs.imgDropZone.removeFile(upload)
+        } catch (error) {
+          alert(error)
+        } finally {
+          this.savedFileList = []
+          this.getFileList()
+        }
       }
+    },
+    deleteFile (index) {
+      console.log(this.uploading)
+      const storageRef = firebase.storage().ref()
+      const fileRef = storageRef.child(`files/${this.uploading[index]}`)
+      fileRef.delete()
+        .then(() => {
+          alert(`[ ${this.uploading[index]} ] deleted`)
+          this.uploading.splice(index, 1)
+        }).catch((e) => {
+          alert(e)
+        })
+    },
+    setImgSrc (index) {
+      const imgIndx = index % 3
+      const src = require(`../assets/UploadCheckIcon_${imgIndx}.svg`)
+      return src
     }
   }
 }
@@ -169,14 +204,33 @@ input[id='terms-checkbox']:checked + label {
   display: flex;
   justify-content: center;
   margin-top: 2rem;
+  flex-direction: column;
+  align-items: center;
 }
 
 .drag-drop-text {
-  align-self: flex-end;
+  margin: 0;
+  padding-top: 8rem;
 }
 
 .image-div {
-  display: none;
+  width: 30rem;
+  margin-top: 1rem;
+}
+
+.filename-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 0.5px solid rgb(44, 62, 80, 0.4);
+}
+
+.filename-list p {
+  margin: 0;
+  font-size: 1.6rem;
+  font-family: Helvetica;
+  color: #34495E;
 }
 
 #customdropzone {
@@ -186,18 +240,51 @@ input[id='terms-checkbox']:checked + label {
   background-image: url('../assets/UploadIcon.svg');
   background-position: center;
   background-repeat: no-repeat;
-  padding: 1rem;
+  /* padding: 1rem; */
   font-family: Helvetica;
   font-size: 12px;
   color: #686868;
   width: 300px;
-  padding: 20% 0 0 0 ;
+  padding: 0 ;
+}
+
+.dz-complete {
+  /* width: 30rem; */
+  height: 10rem;
+}
+
+.dz-progress {
+  height: 10rem;  
+}
+
+.dz-details{
+  background-color: yellow;
 }
 
 .upload-logo-area {
   display: flex;
   justify-content: space-evenly;
   margin: 2rem 0 0 0;
+}
+
+.upload-check {
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
+  transform: scale(1);
+  animation: pulse 2s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+  }
+
+  70% {
+  transform: scale(1);
+  }
+
+  100% {
+  transform: scale(0.95);
+  }
 }
 
 </style>
