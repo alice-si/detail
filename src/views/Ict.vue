@@ -293,7 +293,6 @@ export default {
             const maleSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Male')
             const totalSkillsData = getStudentSchoolSkillData(this.selectedSchool, 'Total')
             this.skillsTableData = this.getSkillsTableData(femaleSkillsData, maleSkillsData, totalSkillsData, getStudentAvgAcrossSchools)
-            console.log(this.skillsTableData)
             this.summaryBoxData = this.setSkillsSummaryBox()
             this.updateColor(getSkillsGroupBarChartColorSheme, this.colorIndex)
           }
@@ -384,7 +383,6 @@ export default {
     uncheckCheckboxes () {
       for (let i = 0; i < this.checkedItems.length; i++) {
         const dom = document.getElementsByClassName(this.checkedItems[i].replaceAll(' ', ''))
-        console.log(dom)
         dom.checked = false
       }
       this.checkedItems = []

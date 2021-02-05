@@ -5,6 +5,7 @@ import Attendance from './views/Attendance.vue'
 import Ict from './views/Ict.vue'
 import Login from './views/Login.vue'
 import UploadPage from './views/UploadPage.vue'
+import Framework from './views/Framework.vue'
 
 Vue.use(Router)
 
@@ -42,6 +43,11 @@ export default new Router({
       path: '/upload',
       name: 'upload',
       component: UploadPage
-    }
+    },
+    {
+      path: '/framework',
+      name: 'framework',
+      component: Framework
+    }    
   ]
 })

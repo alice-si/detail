@@ -107,7 +107,6 @@ export default {
       }
     },
     deleteFile (index) {
-      console.log(this.uploading)
       const storageRef = firebase.storage().ref()
       const fileRef = storageRef.child(`files/${this.uploading[index]}`)
       fileRef.delete()
@@ -240,7 +239,6 @@ input[id='terms-checkbox']:checked + label {
   background-image: url('../assets/UploadIcon.svg');
   background-position: center;
   background-repeat: no-repeat;
-  /* padding: 1rem; */
   font-family: Helvetica;
   font-size: 12px;
   color: #686868;
@@ -249,16 +247,11 @@ input[id='terms-checkbox']:checked + label {
 }
 
 .dz-complete {
-  /* width: 30rem; */
   height: 10rem;
 }
 
 .dz-progress {
-  height: 10rem;  
-}
-
-.dz-details{
-  background-color: yellow;
+  height: 10rem;
 }
 
 .upload-logo-area {
@@ -266,12 +259,6 @@ input[id='terms-checkbox']:checked + label {
   justify-content: space-evenly;
   margin: 2rem 0 0 0;
 }
-
-/* .upload-check {
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 1);
-  transform: scale(1);
-  animation: pulse 2s;
-} */
 
 .upload-check {
   -webkit-animation-name: bounceIn;
