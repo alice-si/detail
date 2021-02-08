@@ -181,7 +181,7 @@ input[id='terms-checkbox'] + label {
   margin: 0 1rem 0 0 ;
 }
 
-input[id='terms-checkbox']:checked + label { 
+input[id='terms-checkbox']:checked + label {
   color: #2FB9EF;
   width:20px;
   height:20px;

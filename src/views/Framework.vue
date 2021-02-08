@@ -64,7 +64,7 @@ export default {
       toggleBtn.textContent = this.selectedOption
       toggleBtn.style.color = '#3f4150'
 
-      const SHOW_CONDITION = ['Ohter', 'Add your own', 'No impact measurement framework']
+      const SHOW_CONDITION = ['Other', 'Add your own', 'No impact measurement framework']
       SHOW_CONDITION.includes(this.selectedOption) ? this.textInputShow = true : this.textInputShow = false
       this.toggleDropdown()
     }
@@ -209,7 +209,6 @@ export default {
 #framework .dropdown-menu {
   position: absolute;
   z-index: 2;
-  /* top: calc(100% + 4px); */
   left: 0;
   width: 100%;
   max-height: 0;
@@ -287,7 +286,7 @@ export default {
   -webkit-animation-name: fadeIn;
   animation-name: fadeIn;
   -webkit-animation-duration: 1s;
-  animation-duration: 1s;  
+  animation-duration: 1s;
 }
 
 @-webkit-keyframes fadeIn {
