@@ -212,7 +212,7 @@ export function getTeacherAvgAcrossSchools (type, year) {
 
 export function getStudentSchoolSkillData (school, gender) {
   const SKILLS_LIST = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4', 'Skill 5', 'Skill 6', 'Skill 7', 'Skill 8', 'Skill 9', 'Skill 10',
-  'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']
+    'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']
 
   let Base = []
   let End = []
@@ -241,12 +241,11 @@ export function getStudentSchoolSkillData (school, gender) {
     case 'Total':
       Base = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Total_raw)
       End = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Total_raw)
-      // baseDenominator = ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].base_count // Replace to this code when total raw data update
-      // endDenominator = ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[gender].end_count // Replace to this code when total raw data update
       baseDenominator = '-'
       endDenominator = '-'
       baseSkillsPct = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].base.Total_raw)
       endSkillsPct = SKILLS_LIST.map(el => ICT_STUDENT_DATA.children.Tanzania.children.Nyarugusu.children[school].values[el].end.Total_raw)
+      break
   } 
   return { Base, End, baseDenominator, endDenominator, baseSkillsPct, endSkillsPct }
 }

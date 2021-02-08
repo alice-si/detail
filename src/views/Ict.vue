@@ -162,7 +162,7 @@ export default {
       let maleDiff = []
       let totalDiff = []
       
-      femaleData.Base.map((el, index) => { 
+      femaleData.Base.map((el, index) => {
         const skillData = { skills: el, denominator: femaleData.baseDenominator }
         femaleBaseYearData.push(skillData)
         femaleBaseYearData.push(femaleData.baseSkillsPct[index].toFixed(0) + '%')
@@ -186,13 +186,13 @@ export default {
       })
 
       totalData.Base.map((el, index) => {
-        const skillData = { skills: el, denominator: totalData.baseDenominator }
+        const skillData = { skills: el, denominator: femaleBaseYearData[0].denominator + maleBaseYearData[0].denominator }
         totalBaseYearData.push(skillData)
         totalBaseYearData.push(totalData.baseSkillsPct[index].toFixed(0) + '%')
       })
 
       totalData.End.map((el, index) => {
-        const skillData = { skills: el, denominator: totalData.endDenominator }
+        const skillData = { skills: el, denominator: femaleEndYearData[0].denominator + maleEndYearData[0].denominator }
         totalEndYearData.push(skillData)
         totalEndYearData.push(totalData.endSkillsPct[index].toFixed(0) + '%')
       })
@@ -203,7 +203,6 @@ export default {
       maleEndYearData.push(getAvgAcrossSchool('Male', 'End') + '%')
       totalBaseYearData.push(getAvgAcrossSchool('Total', 'Base') + '%')
       totalEndYearData.push(getAvgAcrossSchool('Total', 'End') + '%')
-
 
       calcDifference(femaleData.baseSkillsPct, femaleData.endSkillsPct)
         .map(el => {
@@ -234,18 +233,29 @@ export default {
             totalDiff.push('')
             totalDiff.push(Math.floor(parseInt(el)) + '%')
           }
-        })        
+        })
 
       femaleDiff.push(calcDifference([getAvgAcrossSchool('Female', 'Base')], [getAvgAcrossSchool('Female', 'End')])[0])
       maleDiff.push(calcDifference([getAvgAcrossSchool('Male', 'Base')], [getAvgAcrossSchool('Male', 'End')])[0])
       totalDiff.push(calcDifference([getAvgAcrossSchool('Total', 'Base')], [getAvgAcrossSchool('Total', 'End')])[0])
       const tableName = this.selectedSchool
-      return { femaleBaseYearData, femaleEndYearData, maleBaseYearData, maleEndYearData, totalBaseYearData, totalEndYearData, femaleDiff, maleDiff, totalDiff, tableName }
+
+      return {
+        femaleBaseYearData,
+        femaleEndYearData,
+        maleBaseYearData,
+        maleEndYearData,
+        totalBaseYearData,
+        totalEndYearData,
+        femaleDiff,
+        maleDiff,
+        totalDiff,
+        tableName }
     },
     setSkillsSummaryBox () {
       const summaryBoxDataArr = []
       const SKILLS_LIST = ['Skill 1', 'Skill 2', 'Skill 3', 'Skill 4', 'Skill 5', 'Skill 6', 'Skill 7', 'Skill 8', 'Skill 9', 'Skill 10',
-        'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']  
+        'Skill 11', 'Skill 12', 'Skill 13', 'Skill 14', 'Skill 15', 'Skill 16', 'Skill 17', 'Skill 18', 'Skill 19', 'Skill 20', 'Skill 21']
       const skillsData = this.skillsTableData.totalDiff.filter(el => el !== '').slice(0, 21)
       SKILLS_LIST.forEach((el, index) => {
         const dictForvFor = {

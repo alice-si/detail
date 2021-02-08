@@ -39,7 +39,7 @@ export default {
         'ESG - Environmental, Social, Governance',
         'IRIS - Impact Reporting & Investment Standards',
         'GIIRS - Global Impact Investing Rating System',
-        'Ohter',
+        'Other',
         'Add your own',
         'No impact measurement framework'],
       textInputShow: false,
