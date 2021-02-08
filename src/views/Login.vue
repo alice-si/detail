@@ -89,7 +89,6 @@ export default {
 .login-email,
 .login-text {
   width: 50.7rem;
-  height: 7rem;
   border-radius: 0.2rem;
   font-size: 1.68rem;
   padding: 2.6rem;
