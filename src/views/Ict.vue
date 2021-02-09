@@ -411,7 +411,7 @@ export default {
     checkedItems () {
       this.switchViewMode()
     },
-    selectedSchool () {
+    selectedSchool (newVal, oldVal) {
       this.uncheckCheckboxes()
       this.switchViewMode()
     }
