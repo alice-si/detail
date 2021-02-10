@@ -239,7 +239,7 @@ input[id='rememberme-checkbox']:checked + label {
 
 .sign-in-with-google {
   width: 50.7rem;
-  height: 5.5rem;
+  height: 2rem;
   background-color : white;
   border: none;
   font-size: 1.68rem;
