@@ -2,7 +2,7 @@
   <div class="home">
     <main id="home">
       <section id="filtering-area" >
-        <row :gutter="12">
+        <row :gutter="12" class="select-programm-area">
           <column :lg="2.5" :xs="2"><h3>Select programme</h3></column>
           <column :lg="3" :xs="2">
             <v-select class="dashboard-select" placeholder="Instant Network Schools" :searchable="false">
@@ -106,6 +106,10 @@ main#home {
   margin: 6.2rem 0 0 6.2rem;
   padding: 6.5rem 4.5rem 4.5rem 9rem;
   max-width: 1440px;
+}
+
+.select-programm-area {
+  align-items: center;
 }
 
 .container {

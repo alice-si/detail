@@ -7,7 +7,7 @@
         <form>
           <input type="email" class="login-email" placeholder="Your email address">
           <input type="text" class="fullname-text" placeholder="Your full name">
-          <input type="text" class="login-text" placeholder="Your password">
+          <input type="password" class="login-text" placeholder="Your password">
           <input type="button" class="sign-up" value="Sign up"></input>
         </form>
         <h3 class="signing-up-text"> By signing up yo agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></h3>

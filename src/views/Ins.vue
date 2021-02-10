@@ -1,8 +1,20 @@
 <template>
   <main id="ins">
     <section id="page-title">
-      <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
-      <div><h1 class="title">INS Lessons</h1></div>
+      <row>
+        <column :lg="8" class="page-title">
+          <div align="left" class="back">
+            <router-link to="/">
+              <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back 
+            </router-link>
+          </div>
+          <h1 class="title">INS Lessons</h1>
+        </column>
+        <column :lg="4" class="progress-summary">
+          <doughnut :doughnutChartData="doughnutChartData1"></doughnut>
+          <doughnut :doughnutChartData="doughnutChartData2"></doughnut>
+        </column>
+      </row>
     </section>
     <section class="ins-select-area">
       <row :gutter="12" >
@@ -95,6 +107,7 @@ import BarChart from '../components/BarChart.js'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
+import Doughnut from '../components/DoughnutChart.vue'
 import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
 import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
@@ -105,7 +118,8 @@ export default {
     BarChart,
     Table,
     TableForTopic,
-    StackedBarChart
+    StackedBarChart,
+    Doughnut
   },
   data () {
     return {
@@ -121,6 +135,20 @@ export default {
       schoolSelectboxDisabled: true,
       barChartData: [],
       stackedBarChartData: {},
+      doughnutChartData1: {
+        title: 'Aim',
+        subtitle: '800 lessons using INS',
+        percentage: '87',
+        insideText: 'complete',
+        color: '#8954BA'
+      },
+      doughnutChartData2: {
+        title: 'Time',
+        subtitle: 'in 3 years',
+        percentage: '1',
+        insideText: 'more year',
+        color: '#0091FF'
+      },
       tableData: [],
       TopicTableData: [],
       summaryBoxData: [],
@@ -238,7 +266,31 @@ export default {
             }
           }
         }        
-      }
+      },
+      doughnutChartOption: {
+        animation: {
+          duration: 0
+        },
+        scales: {
+          xAxes: [{
+            display: false
+          }],
+          yAxes: [{
+            display: false
+          }]
+        },
+        legend: {
+          display: false
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItem, data) {
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']          
+              return months[tooltipItem[0].index]
+            }
+          }
+        }
+      },      
     }
   },
   mounted () {
@@ -247,6 +299,9 @@ export default {
     this.updateData()
   },
   methods: {
+    setSummary () {
+
+    },
     updateData () {
       this.updateConditionalRendering()
       let lessons = {}
@@ -480,8 +535,8 @@ main#ins {
 .navbar {
   background: white;
 }
+
 .back {
-  align-self: start;
   padding: 1.5rem 0 1.5rem 0;
 }
 
@@ -496,6 +551,16 @@ main#ins {
 #page-title {
   display: flex;
   flex-direction: column;
+  align-self: left;
+}
+
+/* .page-title {
+  background-color: yellow;
+} */
+
+.progress-summary{
+  display: flex;
+  flex-direction: row;
 }
 
 .back {
