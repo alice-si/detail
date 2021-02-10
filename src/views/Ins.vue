@@ -5,14 +5,14 @@
         <column :lg="8" class="page-title">
           <div align="left" class="back">
             <router-link to="/">
-              <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back 
+              <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back
             </router-link>
           </div>
           <h1 class="title">INS Lessons</h1>
         </column>
         <column :lg="4" class="progress-summary">
-          <doughnut :doughnutChartData="doughnutChartData1"></doughnut>
-          <doughnut :doughnutChartData="doughnutChartData2"></doughnut>
+          <div class="doughnut"><aim-doughnut-chart :doughnutChartData="doughnutChartData1"></aim-doughnut-chart></div>
+          <div class="doughnut"><time-doughnut-chart :doughnutChartData="doughnutChartData2"></time-doughnut-chart></div>
         </column>
       </row>
     </section>
@@ -107,7 +107,8 @@ import BarChart from '../components/BarChart.js'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
-import Doughnut from '../components/DoughnutChart.vue'
+import AimDoughnutChart from '../components/AimDoughnutChart.vue'
+import TimeDoughnutChart from '../components/TimeDoughnutChart.vue'
 import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
 import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
@@ -119,7 +120,8 @@ export default {
     Table,
     TableForTopic,
     StackedBarChart,
-    Doughnut
+    AimDoughnutChart,
+    TimeDoughnutChart
   },
   data () {
     return {
@@ -136,15 +138,19 @@ export default {
       barChartData: [],
       stackedBarChartData: {},
       doughnutChartData1: {
+        box: 'box1',
         title: 'Aim',
-        subtitle: '800 lessons using INS',
+        subtitle1: '800 lessons',
+        subtitle2: 'using INS',
         percentage: '87',
         insideText: 'complete',
         color: '#8954BA'
       },
       doughnutChartData2: {
+        box: 'box2',
         title: 'Time',
-        subtitle: 'in 3 years',
+        subtitle1: 'in 3 years',
+        subtitle2: '',
         percentage: '1',
         insideText: 'more year',
         color: '#0091FF'
@@ -558,9 +564,14 @@ main#ins {
   background-color: yellow;
 } */
 
+.doughnut {
+  padding: 0 1rem;
+}
+
 .progress-summary{
   display: flex;
   flex-direction: row;
+  justify-content: center;
 }
 
 .back {
