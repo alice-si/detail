@@ -5,7 +5,7 @@
         <tr>
           <th style="border-right:1px solid #D8D8D8;" scope="col">Students</th>
           <th scope="col" >Skills</th>
-          <th v-for="(school, index) in column" v-bind:key="index" v-bind:class="school" v-bind:style="borderStyle(index)">
+          <th v-for="(school, index) in setSkillList" v-bind:key="index" v-bind:class="school" v-bind:style="borderStyle(index)">
             {{school}}
           </th>
           <th style="white-space:nowrap;" scope="col">Avg No of ICT skills/student in {{tableName}}</th>
@@ -84,7 +84,7 @@
           <td v-for=" (data, index) in femaleDifference" v-bind:key="index" v-bind:style="borderStyle(index)">
             <div v-if="index % 2 === 0" ></div>
             <div v-if="index % 2 !== 0">{{data}}</div>
-            <div v-if="index === 42">{{data}}</div>    
+            <div v-if="index === columnLength">{{data}}</div>    
           </td>
         </tr>
       </tbody>
@@ -105,9 +105,6 @@ export default {
       sortedByLessons: false,
       sortedByDifference: false,
       tableName: 'Name',
-      column: ['Skill1', '%', 'Skill2', '%', 'Skill3', '%', 'Skill4', '%', 'Skill5', '%', 'Skill6', '%', 'Skill7', '%',
-        'Skill8', '%', 'Skill9', '%', 'Skill10', '%', 'Skill11', '%', 'Skill12', '%', 'Skill13', '%', 'Skill14', '%',
-        'Skill15', '%', 'Skill16', '%', 'Skill17', '%', 'Skill18', '%', 'Skill19', '%', 'Skill20', '%', 'Skill21', '%'],
       totalBeforeIns: [],
       totalAfterIns: [],
       totalDifference: [],
@@ -116,7 +113,9 @@ export default {
       maleDifference: [],
       femaleBeforeIns: [],
       femaleAfterIns: [],
-      femaleDifference: []
+      femaleDifference: [],
+      columnLength: '',
+      beforeIns: ''
     }
   },
   mounted () {
@@ -133,7 +132,7 @@ export default {
   },
   methods: {
     borderStyle (index) {
-      const columnLength = this.column.length
+      const columnLength = this.setSkillList.length
       if (index === columnLength) {
         return 'border-right:1px solid #fffff;'
       } else {
@@ -157,6 +156,16 @@ export default {
       } else {
         return null
       }
+    }
+  },
+  computed: {
+    setSkillList () {
+      const skillList = []
+      for (let i = 1; i <= 21; i++) {
+        skillList.push('Skill' + i)
+        skillList.push('%')
+      }
+      return skillList
     }
   }
 }

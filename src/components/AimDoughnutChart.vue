@@ -39,24 +39,25 @@ export default {
     drawCircle (endpoint) {
       const canvas = document.getElementById('box')
       const centerX = canvas.width / 1.65
-      const centerY = canvas.height / 1.8
+      const centerY = canvas.height / 1.6
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       // Chart text
       ctx.font = '16.2px Helvetica'
       ctx.fillStyle = `${this.doughnutChartData.color}`
       ctx.fillText(this.doughnutChartData.title, 0, 15)
-      ctx.font = '12px Helvetica'
+      ctx.font = '300 12px Helvetica'
       ctx.fillStyle = '#686868'
-      ctx.fillText(this.doughnutChartData.subtitle1, 0, 30, 60)
+      ctx.fillText(this.doughnutChartData.subtitle1, 0, 36.2, 60)
+      ctx.font = '300 10px Helvetica'      
       ctx.fillStyle = '#686868'
-      ctx.fillText(this.doughnutChartData.subtitle2, 0, 45, 60)
-      ctx.font = '18px Helvetica'
+      ctx.fillText(this.doughnutChartData.subtitle2, 0, 49.2, 60)
+      ctx.font = '20px Helvetica'
       ctx.fillStyle = '#686868'
-      ctx.fillText(`${this.doughnutChartData.percentage}%`, 50, 63, 60)
-      ctx.font = '12px Helvetica'
+      ctx.fillText(`${this.doughnutChartData.percentage}%`, 50, 68, 60)
+      ctx.font = '300 12px Helvetica'
       ctx.fillStyle = '#686868'
-      ctx.fillText(this.doughnutChartData.insideText, 45, 80, 60)
+      ctx.fillText(this.doughnutChartData.insideText, 45, 88, 60)
       // background
       ctx.beginPath()
       ctx.lineWidth = 8

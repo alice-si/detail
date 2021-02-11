@@ -5,7 +5,7 @@
         <tr>
           <th style="border-right:1px solid #D8D8D8;" scope="col">Students</th>
           <th scope="col">Skills</th>
-          <th v-for="(school, index) in column" v-bind:key="index" v-bind:class="school.replaceAll(' ', '')">
+          <th v-for="(school, index) in setCountryColumn" v-bind:key="index" v-bind:class="school.replaceAll(' ', '')">
             {{school}}
           </th>
           <th style="white-space:nowrap; border-left:1px solid #D8D8D8;" scope="col">% of students attending across countries</th>
@@ -94,6 +94,8 @@
 </template>
 
 <script>
+import { getCountries } from '../data/data-provider'
+
 export default {
   props: {
     tableData: {
@@ -105,7 +107,7 @@ export default {
       sortedByLessons: false,
       sortedByDifference: false,
       tableName: 'Students',
-      column: ['Kenya', '%', 'Tanzania', '%', 'South Sudan', '%', 'DR Congo', '%'],
+      // column: ['Kenya', '%', 'Tanzania', '%', 'South Sudan', '%', 'DR Congo', '%'],
       totalBeforeIns: [],
       totalAfterIns: [],
       totalDifference: [],
@@ -118,7 +120,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.tableData)
     this.totalBeforeIns = this.tableData.totalBaseYearData
     this.totalAfterIns = this.tableData.totalEndYearData
     this.totalDifference = this.tableData.totalDiff
@@ -131,7 +132,7 @@ export default {
   },
   methods: {
     borderStyle (index) {
-      const columnLength = this.column.length
+      const columnLength = this.setCountryColumn.length
       if (index === columnLength - 1) {
         return 'border-right:1px solid #D8D8D8;'
       }
@@ -152,6 +153,17 @@ export default {
       } else {
         return null
       }
+    }
+  },
+  computed: {
+    setCountryColumn () {
+      const countries = getCountries()
+      const countryList = []
+      countries.forEach(country => {
+        countryList.push(country)
+        countryList.push('%')
+      })
+      return countryList
     }
   }
 }

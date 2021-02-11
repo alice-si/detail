@@ -11,8 +11,8 @@
           <h1 class="title">INS Lessons</h1>
         </column>
         <column :lg="4" class="progress-summary">
-          <div class="doughnut"><aim-doughnut-chart :doughnutChartData="doughnutChartData1"></aim-doughnut-chart></div>
-          <div class="doughnut"><time-doughnut-chart :doughnutChartData="doughnutChartData2"></time-doughnut-chart></div>
+          <div class="doughnut-1"><aim-doughnut-chart :doughnutChartData="doughnutChartData1"></aim-doughnut-chart></div>
+          <div class="doughnut-2"><time-doughnut-chart :doughnutChartData="doughnutChartData2"></time-doughnut-chart></div>
         </column>
       </row>
     </section>
@@ -562,17 +562,21 @@ main#ins {
 
 #page-title .container {
   max-width: 125.5rem !important;
+  padding-right: 1.2rem !important;
 }
 
+.doughnut-1 {
+  padding-right: 4.2825rem;
+}
 
-.doughnut {
-  padding: 0 1rem;
+.doughnut-2 {
+  padding-left: 4.2825rem;
 }
 
 .progress-summary{
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .back {
