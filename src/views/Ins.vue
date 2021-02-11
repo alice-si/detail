@@ -560,9 +560,10 @@ main#ins {
   align-self: left;
 }
 
-/* .page-title {
-  background-color: yellow;
-} */
+#page-title .container {
+  max-width: 125.5rem !important;
+}
+
 
 .doughnut {
   padding: 0 1rem;
@@ -757,7 +758,7 @@ main#ins {
 }
 
 .container {
-  max-width: 144rem;
+  max-width: 125.5rem !important;
   padding: 0 !important;
   margin: 0 !important;
 }
