@@ -6,6 +6,7 @@ import Ict from './views/Ict.vue'
 import Login from './views/Login.vue'
 import UploadPage from './views/UploadPage.vue'
 import Framework from './views/Framework.vue'
+import Createproject from './views/CreateProject.vue'
 
 Vue.use(Router)
 
@@ -32,7 +33,7 @@ export default new Router({
     {
       path: '/ict',
       name: 'ict',
-      component: () => import('./views/Ict.vue')
+      component: Ict
     },
     {
       path: '/login',
@@ -48,6 +49,11 @@ export default new Router({
       path: '/framework',
       name: 'framework',
       component: Framework
-    }    
+    },
+    {
+      path: '/createproject',
+      name: 'createproject',
+      component: Createproject
+    },
   ]
 })

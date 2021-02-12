@@ -4,20 +4,8 @@
       <thead style="width:100%">
         <tr style="width:100%">
           <th style="width:7%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th style="width:3.77%" scope="col">Jan</th>
-          <th style="width:3.77%" scope="col">Feb</th>
-          <th style="width:3.77%" scope="col">Mar</th>
-          <th style="width:3.77%" scope="col">Apr</th>
-          <th style="width:3.77%" scope="col">May</th>
-          <th style="width:3.77%" scope="col">Jun</th>
-          <th style="width:3.77%" scope="col">Jul</th>
-          <th style="width:3.77%" scope="col">Aug</th>
-          <th style="width:3.77%" scope="col">Sep</th>
-          <th style="width:3.77%" scope="col">Oct</th>
-          <th style="width:3.77%" scope="col">Nov</th>
-          <th style="width:3.77%; border-right:1px solid #D8D8D8;" scope="col">Dec</th>
-          <th style="width:10%" scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
-          <!-- TODO:% of total usage?? -->
+          <th style="width:3.77%" scope="col" v-for="month in monthlyColumn" :key="month">{{month}}</th>
+          <th style="width:10%; border-left:1px solid #D8D8D8;" scope="col">Total times <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
           <th style="width:14.5%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
       </thead>
@@ -36,17 +24,19 @@
 </template>
 
 <script>
+import { getMonthlyColumn } from '../data/data-handler'
 export default {
   props: {
     TopicTableData: {
       type: Array
-    } },
+    }},
   data () {
     return {
       sortedByName: false,
       sortedByLessons: false,
       sortedByDifference: false,
-      tableName: 'Topic'
+      tableName: 'Topic',
+      monthlyColumn: getMonthlyColumn()
     }
   },
   methods: {

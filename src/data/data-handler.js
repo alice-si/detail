@@ -163,7 +163,6 @@ export function getStackedBarChartData (lessons, colorScheme) {
 }
 
 // For ICT page
-
 export function getStudentIctRate (school, type, year) {
   const avgSchoolIctSkill = getStudentIctSchoolAvg(`${school}`, `${type}`, `${year}`)
   return avgSchoolIctSkill
@@ -261,4 +260,10 @@ export function getGroupBarChartData (label, getInfoFunc, type) {
   }
 
   return dataset
+}
+
+// For INS table
+export function getMonthlyColumn () {
+  const MONTH = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+  return MONTH
 }

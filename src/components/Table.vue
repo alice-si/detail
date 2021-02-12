@@ -3,20 +3,9 @@
     <table id="table-content" class="table">
       <thead style="width:100%" class="thead">
         <tr style="width:100%">
-          <th style="width:7.6%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyName" class="sort-button"/></th>
-          <th style="width:3.77%" scope="col">Jan</th>
-          <th style="width:3.77%" scope="col">Feb</th>
-          <th style="width:3.77%" scope="col">Mar</th>
-          <th style="width:3.77%" scope="col">Apr</th>
-          <th style="width:3.77%" scope="col">May</th>
-          <th style="width:3.77%" scope="col">Jun</th>
-          <th style="width:3.77%" scope="col">Jul</th>
-          <th style="width:3.77%" scope="col">Aug</th>
-          <th style="width:3.77%" scope="col">Sep</th>
-          <th style="width:3.77%" scope="col">Oct</th>
-          <th style="width:3.77%" scope="col">Nov</th>
-          <th style="width:3.77%; border-right:1px solid #D8D8D8;" scope="col">Dec</th>
-          <th style="width:10.415%;" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyLessons" class="sort-button"/></th>
+          <th style="width:7.6%; border-right:1px solid #D8D8D8;" scope="col">{{tableName}}<img src="../../src/assets/Sorting.svg" v-on:click="sortTable(name)" class="sort-button"/></th>
+          <th style="width:3.77%" scope="col" v-for="month in monthlyColumn" :key="month">{{month}}</th>
+          <th style="width:10.415%; border-left:1px solid #D8D8D8;" scope="col">Total lessons <img src="../../src/assets/Sorting.svg" v-on:click="sortTable(totalLessons)" class="sort-button"/></th>
           <th style="width:14%" scope="col">Difference in 12 Months <img src="../../src/assets/Sorting.svg" v-on:click="sortTableDatabyDifference" class="sort-button"/></th>
         </tr>
       </thead>
@@ -36,51 +25,43 @@
 </template>
 
 <script>
+import { getMonthlyColumn } from '../data/data-handler'
 export default {
   props: {
     tableData: {
       type: Array
-    } },
+    }},
   data () {
     return {
-      sortedByName: false,
-      sortedByLessons: false,
       sortedByDifference: false,
-      tableName: 'Name'
+      sorted: false,
+      tableName: 'Name',
+      monthlyColumn: getMonthlyColumn(),
+      name: '',
+      totalLessons: ''
     }
   },
   methods: {
-    sortTableDatabyName () {
-      if (this.sortedByName === false) {
+    sortTable (columnName) {
+      if (this.sorted === false) {
         const unsorted = this.tableData
-        unsorted.sort((a, b) => (a.name > b.name) ? 1 : -1)
-        this.sortedByName = true
-      } else if (this.sortedByName === true) {
+        unsorted.sort((a, b) => (a.columnName > b.columnName) ? 1 : -1)
+        this.sorted = true
+      } else if (this.sorted === true) {
         const sorted = this.tableData
-        sorted.sort((a, b) => (a.name < b.name) ? 1 : -1)
-        this.sortedByName = false
-      }
-    },
-    sortTableDatabyLessons () {
-      if (this.sortedByLessons === false) {
-        const unsorted = this.tableData
-        unsorted.sort((a, b) => (a.totalLessons > b.totalLessons) ? 1 : -1)
-        this.sortedByLessons = true
-      } else if (this.sortedByLessons === true) {
-        const sorted = this.tableData
-        sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
-        this.sortedByLessons = false
+        sorted.sort((a, b) => (a.columnName < b.columnName) ? 1 : -1)
+        this.sorted = false
       }
     },
     sortTableDatabyDifference () {
       if (this.sortedByDifference === false) {
         const unsorted = this.tableData
-        unsorted.sort((a, b) => (a.difference > b.difference) ? 1 : -1)
-        this.sortedByLessons = true
+        unsorted.sort((a, b) => (parseInt(a.monthlyData.lessons[13].slice(0, -1), 10) > parseInt(b.monthlyData.lessons[13].slice(0, -1), 10)) ? 1 : -1)
+        this.sortedByDifference = true
       } else if (this.sortedByDifference === true) {
         const sorted = this.tableData
-        sorted.sort((a, b) => (a.totalLessons < b.totalLessons) ? 1 : -1)
-        this.sortedByLessons = false
+        sorted.sort((a, b) => (parseInt(a.monthlyData.lessons[13].slice(0, -1), 10) < parseInt(b.monthlyData.lessons[13].slice(0, -1), 10)) ? 1 : -1)
+        this.sortedByDifference = false
       }
     },
     borderStyle (index) {
