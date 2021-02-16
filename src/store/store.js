@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state: {
     loggedIn: false,
-    loginUid: ''
+    loginUserId: '',
+    loginUserFullName: ''
   },
   mutations: {
     setLogin (state) {

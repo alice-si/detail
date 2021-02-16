@@ -71,8 +71,23 @@ export default {
       this.loading = true
       this.$firebase.auth().signInWithPopup(this.$google)
         .then((result) => {
-          alert('login success!')
           store.state.loggedIn = true
+          const loginUserInfo = {
+            userName: result.user.displayName,
+            userId: result.user.uid,
+            userEmail: result.user.email
+          }
+          this.$database.ref(`${result.user.uid}`).set({
+            loginUserInfo
+          })
+          this.$database.ref(`${result.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
+              const userid = snapshot.key
+              store.state.loginUserId = userid
+              store.state.loginUserFullName = username
+              alert(`Hello ${store.state.loginUserFullName}, login success!`)
+            })
           router.push('/createproject')
         })
         .catch((error) => {
@@ -83,9 +98,25 @@ export default {
     },
     submitSignUp () {
       this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-        .then(() => {
-          alert('login success!')
+        .then((result) => {
+          console.log(result)
           store.state.loggedIn = true
+          const loginUserInfo = {
+            userName: this.fullname,
+            userId: result.user.uid,
+            userEmail: result.user.email
+          }
+          this.$database.ref(`${result.user.uid}`).set({
+            loginUserInfo
+          })
+          this.$database.ref(`${result.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
+              const userid = snapshot.key
+              store.state.loginUserId = userid
+              store.state.loginUserFullName = username
+              alert(`Hello ${store.state.loginUserFullName}, login success!`)
+            })
           router.push('/createproject')
         })
         .catch((error) => {
@@ -96,6 +127,7 @@ export default {
       console.log('email login')
       this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         .then((user) => {
+          console.log(user)
           alert('Login completed!')
           store.state.loggedIn = true
           router.push('/home')
@@ -107,7 +139,8 @@ export default {
     googleLogin () {
       console.log('google login')
       this.$firebase.auth().signInWithPopup(this.$google)
-        .then((result) => {
+        .then((user) => {
+          console.log(user)
           alert('login success!')
           store.state.loggedIn = true
           router.push('/home')
