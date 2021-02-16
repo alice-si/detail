@@ -1,21 +1,30 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import Attendance from './views/Attendance.vue'
-import Ict from './views/Ict.vue'
-import Login from './views/Login.vue'
-import UploadPage from './views/UploadPage.vue'
-import Framework from './views/Framework.vue'
-import Createproject from './views/CreateProject.vue'
+// *Pages
+// import Attendance from './views/Attendance.vue'
+// import Ict from './views/Ict.vue'
+// import Login from './views/Login.vue'
+// import UploadPage from './views/UploadPage.vue'
+// import Framework from './views/Framework.vue'
+// import Createproject from './views/CreateProject.vue'
+
+// import firebase from 'firebase'
+import { store } from './store/store'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
-      component: Home
+      component: () => import('./views/Home.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('./views/Login.vue')
     },
     {
       path: '/ins',
@@ -28,32 +37,46 @@ export default new Router({
     {
       path: '/attendance',
       name: 'attendance',
-      component: Attendance
+      component: () => import('./views/Attendance.vue')
     },
     {
       path: '/ict',
       name: 'ict',
-      component: Ict
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
+      // component: Ict
+      component: () => import('./views/Ict.vue')      
     },
     {
       path: '/upload',
       name: 'upload',
-      component: UploadPage
+      component: () => import('./views/UploadPage.vue')      
     },
     {
       path: '/framework',
       name: 'framework',
-      component: Framework
+      component: () => import('./views/Framework.vue')      
     },
     {
       path: '/createproject',
       name: 'createproject',
-      component: Createproject
+      component: () => import('./views/CreateProject.vue')
     },
+    {
+      path: '/404',
+      name: 'four-o-four',
+      component: () => import('./views/404.vue')
+    }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (store.state.loggedIn === false && to.name !== 'login') {
+    alert('Please login before access this page')
+    next('/login')
+  } else if (store.state.loggedIn === true && to.name === 'login') {
+    alert('You alread logged in')
+    next('/home')
+  }
+  next()
+})
+
+export default router

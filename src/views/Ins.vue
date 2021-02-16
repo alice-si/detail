@@ -4,7 +4,7 @@
       <row>
         <column :lg="8" class="page-title">
           <div align="left" class="back">
-            <router-link to="/">
+            <router-link to="/home">
               <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back
             </router-link>
           </div>
@@ -300,13 +300,15 @@ export default {
     }
   },
   mounted () {
+    this.showNavBar()
     this.countries = getCountries() // Set initial Country select box options
     this.yearOptions = setYearSelectBox() // Set initial Year select box options
     this.updateData()
   },
   methods: {
-    setSummary () {
-
+    showNavBar () {
+      const navbar = document.getElementById('nav')
+      navbar.style.display = 'inline'
     },
     updateData () {
       this.updateConditionalRendering()

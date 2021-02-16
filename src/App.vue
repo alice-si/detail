@@ -4,6 +4,7 @@
     <div id="nav">
       <header class="horizontal-nav" :gutter="12">
       <nav class="navbar navbar-light bg-white justify-content-end fixed-top border-bottom">
+        <button @click="logOut" class="logout-button">Logout</button>
         <img src="../src/assets/alice_logo.png" width="42" height="42" class="company_logo" alt="company_logo">
           <img class="search-icon" src="../src/assets/Search.svg" alt="search-icon">
         <form class="form-inline">
@@ -16,14 +17,13 @@
       </header>
       <aside class="vertical-nav">
         <nav class="navbar navbar-light bg-white flex-column justify-content-start">
-            <router-link to="/"><img :src="homeImgSrc" id="home-icon" class="home" alt="home"></router-link>
+            <router-link to="/home"><img :src="homeImgSrc" id="home-icon" class="home" alt="home"></router-link>
             <img :src="dashboardImgSrc" id="dashboard" class="dashboard" alt="dashboard">
             <!-- FIXME: change link directory -->
             <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
             <!-- FIXME: change link directory -->
             <router-link to="/"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link>
         </nav>
-
       </aside>
     </div>
     <router-view/>
@@ -31,11 +31,33 @@
 </template>
 
 <script>
+import router from './router'
+import { store } from './store/store'
+
 export default {
   data () {
     return {
       homeImgSrc: require('../src/assets/Home-selected.svg'),
       dashboardImgSrc: require('../src/assets/Dashboard.svg')
+    }
+  },
+  mounted () {
+    console.log(this.$firebase)
+  },
+  methods: {
+    logOut () {
+      this.$firebase.auth().signOut().then(() => {
+        // Sign-out successful.
+        this.$firebase.auth().onAuthStateChanged((user) => {
+          if (!user) {
+            alert('You have successfully logged out!')
+            store.commit('setLogOut')
+            router.push('/login')
+          }
+        })
+      }).catch((error) => {
+        alert(error)
+      });
     }
   },
   watch: {
@@ -212,5 +234,23 @@ h3 {
 
 .container[data-v-42e9a5e0] {
   width: 100% !important;
+}
+
+.logout-button {
+  margin-right: 2rem;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 0.2rem;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  margin-right: 2rem;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 0.2rem;
+  background-color: var(--color-purple);
+  color: #ffffff;
+  font-size: 1.2rem;
 }
 </style>

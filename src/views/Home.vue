@@ -86,6 +86,7 @@ export default {
   },
   mounted () {
     this.getInsGrowthRate()
+    this.showNavBar()
   },
   methods: {
     getInsGrowthRate () {
@@ -93,6 +94,10 @@ export default {
       const currYear = getLessons([], [], [], '2019')
       this.insGrowthRate = compareDataByYear(Object.values(prevYear.lessons[0]), Object.values(currYear.lessons[0]))
       this.ictGrowthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
+    },
+    showNavBar () {
+      const navbar = document.getElementById('nav')
+      navbar.style.display = 'inline'
     }
   }
 }

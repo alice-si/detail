@@ -1,7 +1,11 @@
 <template>
   <main id="ict-skills">
     <section id="page-title" class="container-fluid">
-      <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
+      <div class="back">
+        <router-link to="/home">
+          <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back 
+        </router-link>
+      </div>
       <row :gutter="12" class="page-title-container">
         <column :lg="7" :xs="6"><h1 class="title" v-bind:style="colorCode">ICT Skills - {{viewMode}}</h1></column>
         <column :lg="5" :xs="6" class="toggle-area">
@@ -146,11 +150,16 @@ export default {
     }
   },
   mounted () {
+    this.showNavBar()
     this.schools = getIctSchoolList()
     this.switchViewMode()
     this.uncheckCheckboxes()
   },
   methods: {
+    showNavBar () {
+      const navbar = document.getElementById('nav')
+      navbar.style.display = 'inline'
+    },
     getSkillsTableData (femaleData, maleData, totalData, getAvgAcrossSchool) {
       let femaleBaseYearData = []
       let femaleEndYearData = []

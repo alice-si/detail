@@ -17,13 +17,15 @@
     "csv-parser": "^3.0.0",
     "dotenv": "^7.0.0",
     "firebase": "^8.2.5",
+    "firebaseui": "^4.7.3",
     "require-from-string": "^2.0.2",
     "vue": "^2.6.10",
     "vue-chartjs": "^3.5.1",
     "vue-grid-responsive": "^0.2.0",
     "vue-router": "^3.0.3",
     "vue-select": "^3.10.8",
-    "vue2-dropzone": "^3.6.0"
+    "vue2-dropzone": "^3.6.0",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.12.0",

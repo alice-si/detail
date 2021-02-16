@@ -21,11 +21,16 @@
           </span>
         </div>
       </section>
+      <button @click="logOut">Logout</button>
     </main>
   </div>
 </template>
 
 <script>
+// import firebase from 'firebase'
+import router from '../router'
+import { store } from '../store/store'
+
 export default {
   name: 'creat-project',
   // components: {
@@ -43,6 +48,20 @@ export default {
     hideNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'none'
+    },
+    logOut () {
+      this.$firebase.auth().signOut().then(() => {
+        // Sign-out successful.
+        this.$firebase.auth().onAuthStateChanged((user) => {
+          if (!user) {
+            alert('You have successfully logged out!')
+            store.commit('setLogOut')
+            router.push('/login')
+          }
+        })
+      }).catch((error) => {
+        alert(error)
+      });
     }
   }
 }

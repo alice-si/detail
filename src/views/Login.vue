@@ -4,40 +4,61 @@
       <section class="login-form-area">
         <img src="../assets/alice_logo.png" width="91rem"/>
         <h1 class="login-title">Connect to turn your data to knowledge</h1>
-        <form>
-          <input type="email" class="login-email" placeholder="Your email address">
-          <input type="text" class="fullname-text" placeholder="Your full name">
-          <input type="password" class="login-text" placeholder="Your password">
-          <input type="button" class="sign-up" value="Sign up"></input>
+        <form @submit="submitLogin">
+          <input type="email" class="login-email" placeholder="Your email address" v-model="email">
+          <input v-show="login === false" type="text" class="fullname-text" placeholder="Your full name" v-model="fullname">
+          <input type="password" class="login-text" placeholder="Your password" v-model="password">
+          <input @click="submitSignUp" v-show="login === false" type="button" class="sign-up" value="Sign up"></input>
+          <input @click="submitLogin" v-show="login === true" type="button" class="login-button" value="Login"></input>
         </form>
-        <h3 class="signing-up-text"> By signing up yo agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></h3>
+        <h3 class="signing-up-text" v-show="login === false" > By signing up yo agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></h3>
+        <h3 class="find-password-text" v-show="login === true" > Forgot password? Find it from <a href="#" @click="openPasswordModal">Here</a></h3>
         <p class="line">or</p>
-        <button type="button" class="sign-in-with-google" value="Sign in with Google">
-          <p>Sign in with Google</p>
+        <button v-show="login === false" type="button" class="sign-in-with-google" value="Sign in with Google" @click="googleSignUp">
+          <p>Sign up with Google</p>
+          <img src="../assets/1004px-Google__G__Logo.svg.png" width="24px" height="24px">
+        </button>
+        <button v-show="login === true" type="button" class="sign-in-with-google" value="Sign in with Google" @click="googleLogin">
+          <p>Login with Google</p>
           <img src="../assets/1004px-Google__G__Logo.svg.png" width="24px" height="24px">
         </button>
         <div class="rememberme-area">
-          <span class="remember-me">
+          <span v-show="login === false" class="remember-me">
               <h3>Already have an account?</h3>
-              <a href="#">Sign in</a>
+              <a href="#" @click="setLoginView">Login</a>
+          </span>
+          <span v-show="login === true" class="remember-me">
+              <h3>Do you want to create new account?</h3>
+              <a href="#" @click="setSigninView">Sign up</a>
           </span>
         </div>
+        <b-modal id="modal-1" title="Insert your email" @ok="findPassword">
+          <input type="email" class="find-password-email" placeholder="ex) alice@mailprovider.com" v-model="findPasswordId">
+        </b-modal>
       </section>
     </main>
   </div>
 </template>
 
 <script>
+import router from '../router'
+import { store } from '../store/store'
+
 export default {
   name: 'login',
   // components: {
 
   // },
-  // data () {
-  //   return {
-
-  //   }
-  // },
+  data () {
+    return {
+      email: null,
+      fullname: null,
+      password: null,
+      loading: false,
+      login: false,
+      findPasswordId: ''
+    }
+  },
   mounted () {
     this.hideNavBar()
   },
@@ -45,9 +66,78 @@ export default {
     hideNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'none'
+    },
+    googleSignUp () {
+      this.loading = true
+      this.$firebase.auth().signInWithPopup(this.$google)
+        .then((result) => {
+          alert('login success!')
+          store.state.loggedIn = true
+          router.push('/createproject')
+        })
+        .catch((error) => {
+          alert(error.message)
+        })
+      store.state.loggedIn = true
+      this.loading = false
+    },
+    submitSignUp () {
+      this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        .then(() => {
+          alert('login success!')
+          store.state.loggedIn = true
+          router.push('/createproject')
+        })
+        .catch((error) => {
+          alert(error)
+        })
+    },
+    submitLogin () {
+      console.log('email login')
+      this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then((user) => {
+          alert('Login completed!')
+          store.state.loggedIn = true
+          router.push('/home')
+        })
+        .catch((error) => {
+          alert(error.message)
+        })
+    },
+    googleLogin () {
+      console.log('google login')
+      this.$firebase.auth().signInWithPopup(this.$google)
+        .then((result) => {
+          alert('login success!')
+          store.state.loggedIn = true
+          router.push('/home')
+        })
+        .catch((error) => {
+          alert(error.message)
+        })
+    },
+    setLoginView () {
+      this.login = true
+    },
+    setSigninView () {
+      this.login = false
+    },
+    openPasswordModal () {
+      this.$bvModal.show('modal-1')
+    },
+    findPassword () {
+      const auth = this.$firebase.auth()
+      auth.sendPasswordResetEmail(this.findPasswordId)
+        .then(() => {
+          alert(`Email sent to ${this.findPasswordId}`)
+        })
+        .catch((error) => {
+          alert(error)
+        })
     }
   }
-}
+}      
+
 </script>
 
 <style>
@@ -125,7 +215,23 @@ button:focus {
   height: 5.5rem;
   width: 12rem;
   position: absolute;
-  top: 49.5%;
+  top: 51.5%;
+  left: 89%;
+  border: none;
+  font-family: .SFNS-Regular;
+  font-size: 1.68rem;
+}
+
+#login .login-button {
+  float: inline-end;
+  background: #5D38DB;
+  box-shadow: 0 14px 42px 0 rgba(52,77,178,0.34);
+  border-radius: 2.4px;
+  color: #ffffff;
+  height: 5.5rem;
+  width: 12rem;
+  position: absolute;
+  top: 45%;
   left: 89%;
   border: none;
   font-family: .SFNS-Regular;
@@ -161,13 +267,15 @@ button:focus {
   width: 44%;
 }
 
-.signing-up-text {
+.signing-up-text,
+.find-password-text {
   font-size: 1.68rem;
   color: #8954BA;
   margin: 2rem;
 }
 
-.signing-up-text a {
+.signing-up-text a, 
+.find-password-text a {
   display: inline;
   text-decoration: underline;
   font-family: Helvetica;
@@ -227,6 +335,7 @@ input[id='rememberme-checkbox']:checked + label {
 }
 
 .remember-me {
+  width: 100%;
   padding: 0;
   margin: 0;
 }
@@ -249,6 +358,13 @@ input[id='rememberme-checkbox']:checked + label {
   display: flex;
   justify-content: space-between;
   box-shadow: 0 0.5rem 3rem 0 rgba(52,77,178,0.34);
+}
+
+.find-password-email {
+  width: 20rem;
+  border: 0.1rem solid var(--color-light-grey);
+  padding: 0.5rem;
+  border-radius: 0.2rem;
 }
 
 </style>
