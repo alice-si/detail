@@ -46,17 +46,16 @@ export default {
   methods: {
     logOut () {
       this.$firebase.auth().signOut().then(() => {
-        // Sign-out successful.
         this.$firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
-            alert('You have successfully logged out!')
             store.commit('setLogOut')
+            alert('You have logged out')
             router.push('/login')
           }
         })
       }).catch((error) => {
         alert(error)
-      });
+      })
     }
   },
   watch: {

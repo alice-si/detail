@@ -69,24 +69,26 @@ export default {
     },
     googleSignUp () {
       this.loading = true
-      this.$firebase.auth().signInWithPopup(this.$google)
+      this.$firebase.auth().signInWithPopup(this.$google) // Sign-up with Firebase Auth
         .then((result) => {
-          store.state.loggedIn = true
           const loginUserInfo = {
             userName: result.user.displayName,
             userId: result.user.uid,
             userEmail: result.user.email
           }
-          this.$database.ref(`${result.user.uid}`).set({
+          this.$database.ref(`${result.user.uid}`).set({ // Save signed-up user's info in database
             loginUserInfo
           })
-          this.$database.ref(`${result.user.uid}`).once('value')
+          this.$database.ref(`${result.user.uid}`).once('value') // Double check whether user info successfully saved in db or not
             .then((snapshot) => {
               const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
               const userid = snapshot.key
-              store.state.loginUserId = userid
-              store.state.loginUserFullName = username
-              alert(`Hello ${store.state.loginUserFullName}, login success!`)
+              store.commit('setLogin', { // Send logged-in user info to Vuex store
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
+              })
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully registered and logged in!`)
             })
           router.push('/createproject')
         })
@@ -100,7 +102,6 @@ export default {
       this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
         .then((result) => {
           console.log(result)
-          store.state.loggedIn = true
           const loginUserInfo = {
             userName: this.fullname,
             userId: result.user.uid,
@@ -113,11 +114,14 @@ export default {
             .then((snapshot) => {
               const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
               const userid = snapshot.key
-              store.state.loginUserId = userid
-              store.state.loginUserFullName = username
-              alert(`Hello ${store.state.loginUserFullName}, login success!`)
+              store.commit('setLogin', {
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
+              })
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully registered and logged in!`)
+              router.push('/createproject')
             })
-          router.push('/createproject')
         })
         .catch((error) => {
           alert(error)
@@ -127,10 +131,19 @@ export default {
       console.log('email login')
       this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         .then((user) => {
-          console.log(user)
-          alert('Login completed!')
-          store.state.loggedIn = true
-          router.push('/home')
+          this.$database.ref(`${user.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
+              const userid = snapshot.key
+              store.commit('setLogin', {
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
+              })
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
+              router.push('/home')
+            })
+          // store.state.loggedIn = true
         })
         .catch((error) => {
           alert(error.message)
@@ -140,10 +153,18 @@ export default {
       console.log('google login')
       this.$firebase.auth().signInWithPopup(this.$google)
         .then((user) => {
-          console.log(user)
-          alert('login success!')
-          store.state.loggedIn = true
-          router.push('/home')
+          this.$database.ref(`${user.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
+              const userid = snapshot.key
+              store.commit('setLogin', {
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
+              })
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
+              router.push('/home')
+            })
         })
         .catch((error) => {
           alert(error.message)
@@ -162,7 +183,7 @@ export default {
       const auth = this.$firebase.auth()
       auth.sendPasswordResetEmail(this.findPasswordId)
         .then(() => {
-          alert(`Email sent to ${this.findPasswordId}`)
+          alert(`An email has been sent to [${this.findPasswordId}] address`)
         })
         .catch((error) => {
           alert(error)

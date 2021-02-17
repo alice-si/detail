@@ -18,6 +18,7 @@ var firebaseConfig = {
 // config area end
 firebase.initializeApp(firebaseConfig)
 
+// Add firebase modules globally
 Vue.prototype.$firebase = firebase
 Vue.prototype.$google = new firebase.auth.GoogleAuthProvider()
 Vue.prototype.$database = firebase.database()
