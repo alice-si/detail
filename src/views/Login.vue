@@ -6,30 +6,30 @@
         <h1 class="login-title">Connect to turn your data to knowledge</h1>
         <form @submit="submitLogin">
           <input type="email" class="login-email" placeholder="Your email address" v-model="email">
-          <input v-show="login === false" type="text" class="fullname-text" placeholder="Your full name" v-model="fullname">
+          <input v-if="login === false" type="text" class="fullname-text" placeholder="Your full name" v-model="fullname">
           <input type="password" class="login-text" placeholder="Your password" v-model="password">
-          <input @click="submitSignUp" v-show="login === false" type="button" class="sign-up" value="Sign up"></input>
-          <input @click="submitLogin" v-show="login === true" type="button" class="login-button" value="Login"></input>
+          <input @click="submitSignUp" v-if="login === false" type="button" class="sign-up" value="Sign up"></input>
+          <input @click="submitLogin" v-if="login === true" type="button" class="login-button" value="Login"></input>
         </form>
-        <h3 class="signing-up-text" v-show="login === false" > By signing up yo agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></h3>
-        <h3 class="find-password-text" v-show="login === true" > Forgot password? Find it from <a href="#" @click="openPasswordModal">Here</a></h3>
+        <h3 class="signing-up-text" v-if="login === false" > By signing up yo agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></h3>
+        <h3 class="find-password-text" v-if="login === true" > Forgot password? Find it from <a href="#" @click="openPasswordModal">Here</a></h3>
         <p class="line">or</p>
-        <button v-show="login === false" type="button" class="sign-in-with-google" value="Sign in with Google" @click="googleSignUp">
+        <button v-if="login === false" type="button" class="sign-in-with-google" value="Sign in with Google" @click="googleSignUp">
           <p>Sign up with Google</p>
           <img src="../assets/1004px-Google__G__Logo.svg.png" width="24px" height="24px">
         </button>
-        <button v-show="login === true" type="button" class="sign-in-with-google" value="Sign in with Google" @click="googleLogin">
+        <button v-if="login === true" type="button" class="sign-in-with-google" value="Sign in with Google" @click="googleLogin">
           <p>Login with Google</p>
           <img src="../assets/1004px-Google__G__Logo.svg.png" width="24px" height="24px">
         </button>
         <div class="rememberme-area">
-          <span v-show="login === false" class="remember-me">
+          <span v-if="login === false" class="remember-me">
               <h3>Already have an account?</h3>
-              <a href="#" @click="setLoginView">Login</a>
+              <button class="login-view-togglebtn" @click="setLoginView">Login</button>
           </span>
-          <span v-show="login === true" class="remember-me">
+          <span v-if="login === true" class="remember-me">
               <h3>Do you want to create new account?</h3>
-              <a href="#" @click="setSigninView">Sign up</a>
+              <button class="login-view-togglebtn" @click="setSigninView">Sign up</button>
           </span>
         </div>
         <b-modal id="modal-1" title="Insert your email" @ok="findPassword">
@@ -124,11 +124,10 @@ export default {
             })
         })
         .catch((error) => {
-          alert(error)
+          alert(error.message)
         })
     },
     submitLogin () {
-      console.log('email login')
       this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         .then((user) => {
           this.$database.ref(`${user.user.uid}`).once('value')
@@ -419,6 +418,14 @@ input[id='rememberme-checkbox']:checked + label {
   border: 0.1rem solid var(--color-light-grey);
   padding: 0.5rem;
   border-radius: 0.2rem;
+}
+
+.login-view-togglebtn {
+  text-decoration: underline;
+  margin-left: 0.5rem;
+  color: #8954BA;
+  background-color: rgba(0,0,0,0);
+  border: none;
 }
 
 </style>

@@ -13,21 +13,13 @@
           <input type="text" class="objective-text" placeholder="eg How many lessons use INS">
           <input type="button" value="+" class="add-button"></input>
         </form>
-        <h3 class="signing-up-text"> By signing up yo agree to our <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a></h3>
-        <div class="rememberme-area">
-          <span class="remember-me">
-              <h3>Already have an account?</h3>
-              <a href="#">Sign in</a>
-          </span>
-        </div>
       </section>
-      <button @click="logOut">Logout</button>
     </main>
+    <button @click="logOut">Logout</button>
   </div>
 </template>
 
 <script>
-// import firebase from 'firebase'
 import router from '../router'
 import { store } from '../store/store'
 
@@ -63,8 +55,7 @@ export default {
         alert(error)
       })
     }
-    }
-  
+  }
 }
 </script>
 
@@ -80,7 +71,6 @@ button:focus {
   flex-direction: column;
   width: 100vw;
   height: 100vh;
-  /* background-image: url('../assets/creat-projectbackground.svg'); */
   background-position: center bottom;
   background-repeat: no-repeat;
   background-size: 90vw 30vh;
@@ -117,28 +107,19 @@ button:focus {
   flex-direction: column;
   background: rgba(255,255,255,0.00);
   margin-top: 3.5rem;
-  justify-content: center;
-}
-
-.creat-project-email,
-.creat-project-text,
-.fullname-text {
-  width: 50.7rem;
-  border-radius: 0.2rem;
+  align-items: center;
+  width: 100%;
+  font-family: Helvetica;
   font-size: 1.68rem;
-  padding: 1.8rem 2.6rem;
-  border: none;
+  color: rgba(104,104,104,0.70);
+  line-height: 2.4rem;
 }
 
-.creat-project-email {
-  border-bottom: 0.1rem solid #DCE2F0;
-  border-top: 0;
-  border-right: 0;
-  border-left: 0;
-}
-
-.fullname-text{
-  border-bottom: 0.1rem solid #DCE2F0;
+#creat-project form h1{
+  font-family: Helvetica;
+  font-size: 2.6rem;
+  color: #8954BA;
+  line-height: 2.4rem;
 }
 
 .creat-project-text{
