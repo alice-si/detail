@@ -37,6 +37,7 @@
 import firebase from 'firebase'
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import { store } from '../store/store'
 
 export default {
   name: 'uploadmodule',
@@ -60,6 +61,9 @@ export default {
   },
   mounted () {
     this.hideNavBar()
+    console.log(store.state.loginUserId)
+    firebase.storage().ref().child(`files/`).listAll()
+      .then((res) => console.log(res))
   },
   methods: {
     hideNavBar () {
@@ -91,6 +95,7 @@ export default {
           const storageRef = firebase.storage().ref()
           const fileRef = storageRef.child(`files/${file.upload.filename}`)
           await fileRef.put(file, metadata)
+            .then((snapshot) => console.log(snapshot))
           this.uploading.push(file.upload.filename)
           this.$refs.imgDropZone.removeFile(upload)
         } catch (error) {
@@ -267,10 +272,10 @@ input[id='terms-checkbox']:checked + label {
   background-position: center;
   background-repeat: no-repeat;
   font-family: Helvetica;
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #686868;
-  width: 300px;
-  padding: 0 ;
+  width: 34rem;
+  align-self: center;
 }
 
 .dz-complete {

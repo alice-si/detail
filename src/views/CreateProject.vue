@@ -5,24 +5,28 @@
       <h1 class="creat-project-title">Create your project</h1>
       <form>
         <h1>Your company's name</h1>
-        <input type="text" class="companyname-text" placeholder="eg Vodafone Foundation">
+        <input v-model="companyName" type="text" class="companyname-text" placeholder="eg Vodafone Foundation">
         <h1>Your project's name</h1>
-        <input type="text" class="projectname-text" placeholder="eg Instant Network Schools - INS">
-        <h1>Your project’s impact objective(s)</h1>
-        <div class="project-objective-input">
-          <input type="text" class="objective-text" placeholder="eg How many lessons use INS">
-          <input type="button" value="+" class="add-button-1"/>
-        </div>
-        <div class="project-objective-input">
-          <input type="text" class="objective-text" placeholder="eg How many students have ICT skills ">
-          <input type="button" value="+" class="add-button-2"/>
-        </div>
+        <input v-model="projectName" type="text" class="projectname-text" placeholder="eg Instant Network Schools - INS">
+        <h1 class="objective-form-title">Your project’s impact objective(s)</h1>
+          <div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*100" class="objective-vfor-wrapper">
+            <objective-input-div
+              @add-objectives="addObjectives"
+              @remove-objectives="removeObjectives"
+              :objectives="objectives"
+              :addedText="addedObj"
+              :removeText="removedItem"
+              :index="i"
+              v-bind:class="i">
+            </objective-input-div>
+          </div>
+        <!-- </div>   -->
       </form>
-    <button class="project-create-button">Create</button>
+    <button @click="projectCreate" class="project-create-button">Create</button>
     <button @click="logOut" class="logout-button">Logout</button>
     </section>
-    <upload-module></upload-module>
-    <button class="file-upload-button">Upload</button>
+    <upload-module v-if="uploadAreaShow === true"></upload-module>
+    <button v-if="uploadAreaShow === true" class="file-upload-button">Upload</button>
   </main>
 </template>
 
@@ -30,17 +34,24 @@
 import router from '../router'
 import { store } from '../store/store'
 import UploadModule from '../components/UploadModule.vue'
+import ObjectiveInputDiv from '../components/ObjectiveInputDiv.vue'
 
 export default {
   name: 'creat-project',
   components: {
-    UploadModule
+    UploadModule,
+    ObjectiveInputDiv
   },
-  // data () {
-  //   return {
-
-  //   }
-  // },
+  data () {
+    return {
+      companyName: '',
+      projectName: '',
+      objectives: [''],
+      removedItem: '',
+      addedObj: null,
+      uploadAreaShow: false
+    }
+  },
   mounted () {
     this.hideNavBar()
   },
@@ -62,9 +73,73 @@ export default {
       }).catch((error) => {
         alert(error)
       })
+    },
+    addObjectives (addedObj) {
+      store.commit('setObjectives', {
+        addedObj
+      })
+      this.objectives = store.state.objectives
+      this.$forceUpdate()
+    },
+    removeObjectives (removeIndex) {
+      this.objectives.splice(removeIndex - 1, 1)
+    },
+    projectCreate () {
+      const userId = store.state.loginUserId
+      const objectives = store.state.objectives.slice(0, -1)
+      // console.log(this.companyName, this.projectName)
+      const objectiveObj = objectives.map((el, index) => {
+        return { objective: el }
+      })
+
+      const projectData = {
+        projectName: this.projectName,
+        projectObjectives: objectiveObj
+      }
+
+      const projectInfo = {
+        companyName: this.companyName,
+        projectName: this.projectName,
+        projectObjectives: objectives
+      }
+      const update = {}
+      update[`/${userId}/projectInfo/${this.companyName}/`] = projectInfo
+
+      this.$database.ref().update(update)
+        .then(() => {
+          this.uploadAreaShow = true
+          // vuex 스토어 비우기
+          store.commit('setObjectives', {
+            addedObj: ['']
+          })
+          alert('Project detail saved!')
+        })
+
+      this.$database.ref(`/${userId}/`).once('value')
+        .then((snapshot) => console.log(snapshot))
+    }
+  },
+  computed: {
+    noOfObjectiveInputForm () {
+      return store.state.objectives.length
     }
   }
 }
+
+// TODO: +버튼 클릭될때마다 새 인풋박스 추가 / - 버튼도 만들기
+// TODO: form 데이터 바인딩, 오브젝트로 만들기
+// TODO: ADD 버튼이 클릭되면 => 클릭된 횟수만큼 인풋폼 추가, 인풋에 입력된 텍스트는 addedObjectives arr에 저장
+// TODO: Remove 버튼이 클릭되면 => Objective input component에서 삭제된 텍스트 어레이에서 splice, 텍스트박스 해당 텍스트박스 제거 (index를 기억해둬야 함?)
+// -> const companyName = { projectname: , proejctObjectives: []}
+// TODO: create 버튼이 클릭되면 company name, project name, addedObjectives 파이어베이스 디비에 저장
+// Save signed-up user's info in database
+// this.$database.ref(`${result.user.uid}`).set({ 
+// companyName obj
+// })
+// TODO: 프로젝트 정보 저장되고 나면 파일 업로드 영역 나타나기, 
+// TODO: upload 된 파일 하나라도 나타나면 upload 버튼 활성화
+// TODO: upload 버튼 클릭되면 dashboard setting 페이지로 리다이렉트
+
 </script>
 
 <style>
@@ -102,7 +177,7 @@ button:focus {
   border: none;
   height: 4.6rem;
   width: 39.8rem;
-  padding: 1.8rem 2.3rem;
+  padding: 0rem 2.3rem;
 }
 
 .creat-project-title {
@@ -138,18 +213,32 @@ button:focus {
   border: none;
 }
 
-#creat-project .add-button-1,
-#creat-project .add-button-2 {
+#creat-project .add-button {
   background-color: #ffffff;
   border: none;
-  border-radius: 60px;
+  border-radius: 50%;
   font-size: 3.5rem;
-  width: 5.4rem;
-  height: 5.4rem;
+  width: 5rem;
+  height: 5rem;
   color: #8954BA;
   box-shadow: 0 7px 20px 0 rgba(159,168,214,0.59);
   position: relative;
   right: -3rem;
+  padding: 0;
+  background-image: url('../assets/ObjectAddBtn.svg');
+  background-position: 48% 38%;
+  background-size: 10rem 10rem;
+}
+
+.objective-form-title {
+  margin-bottom: 2rem;
+}
+
+.objective-vfor-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* margin-top: 2rem; */
 }
 
 .project-objective-input {
@@ -158,24 +247,26 @@ button:focus {
   margin-top: 2rem;
 }
 
+.project-objective-add {
+  display: flex;
+  flex-direction: column;
+}
+
 .objective-text {
   border: none;
   height: 4.6rem;
   width: 39.8rem;
-  padding: 1.8rem 2.3rem;
+  padding: 0 2.3rem;
+  margin-bottom: 2rem;
 }
 
 .creat-project-form-area .logout-button {
-  /* margin-right: 2rem; */
   border: none;
-  padding: 1rem 1.5rem;
+  padding: 0 1.5rem;
   margin: 0 0.5rem;
   border-radius: 0.2rem;
   transition: all 0.3s ease;
   font-size: 1.68rem;
-  /* position: absolute;
-  top: 5rem;
-  right:2rem; */
 }
 
 .project-create-button {
@@ -215,7 +306,7 @@ button:focus {
 
 .creat-project-form-area .logout-button {
   position: relative;
-  left: -3rem;
+  left: -5rem;
 }
 
 .project-create-button {
@@ -227,7 +318,7 @@ button:focus {
 
 .file-upload-button {
   border: none;
-  padding: 1rem 1.5rem;
+  padding: 0 1.5rem;
   margin: 0 0.5rem;
   border-radius: 0.2rem;
   transition: all 0.3s ease;
