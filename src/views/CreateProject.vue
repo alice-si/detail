@@ -20,13 +20,12 @@
               v-bind:class="i">
             </objective-input-div>
           </div>
-        <!-- </div>   -->
       </form>
     <button @click="projectCreate" class="project-create-button">Create</button>
     <button @click="logOut" class="logout-button">Logout</button>
     </section>
-    <upload-module v-if="uploadAreaShow === true"></upload-module>
-    <button v-if="uploadAreaShow === true" class="file-upload-button">Upload</button>
+    <upload-module v-if="uploadAreaShow === true" @upload-status-change="uploadStatusChange"></upload-module>
+    <button v-if="uploadButtonShow === true" class="file-upload-button" @click="saveFileList">Upload</button>
   </main>
 </template>
 
@@ -49,7 +48,8 @@ export default {
       objectives: [''],
       removedItem: '',
       addedObj: null,
-      uploadAreaShow: false
+      uploadAreaShow: false,
+      uploadButtonShow: false
     }
   },
   mounted () {
@@ -61,7 +61,6 @@ export default {
       navbar.style.display = 'none'
     },
     logOut () {
-      console.log(store.state.loggedIn)
       this.$firebase.auth().signOut().then(() => {
         this.$firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
@@ -87,36 +86,46 @@ export default {
     projectCreate () {
       const userId = store.state.loginUserId
       const objectives = store.state.objectives.slice(0, -1)
-      // console.log(this.companyName, this.projectName)
-      const objectiveObj = objectives.map((el, index) => {
-        return { objective: el }
-      })
 
-      const projectData = {
-        projectName: this.projectName,
-        projectObjectives: objectiveObj
-      }
+      if (userId && objectives && this.companyName && this.projectName) {
+        const projectInfo = {
+          companyName: this.companyName,
+          projectName: this.projectName,
+          projectObjectives: objectives
+        }
 
-      const projectInfo = {
-        companyName: this.companyName,
-        projectName: this.projectName,
-        projectObjectives: objectives
+        const update = {}
+        update[`/${userId}/projectInfo/${this.companyName}/`] = projectInfo
+        this.$database.ref().update(update)
+          .then(() => {
+            store.commit('setProjectInfo', {
+              companyName: this.companyName,
+              projectName: this.projectName
+            })
+            store.commit('clearObjectives')
+            alert('Project detail saved!')
+            this.uploadAreaShow = true
+          })
+        // this.$database.ref(`/${userId}/`).once('value')
+        //   .then((snapshot) => console.log(snapshot))
+      } else {
+        alert('Company name & Proejct name are mandatory')
       }
+    },
+    saveFileList () {
+      const fileList = store.state.filelist
       const update = {}
-      update[`/${userId}/projectInfo/${this.companyName}/`] = projectInfo
-
+      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projectFiles/`] = fileList
       this.$database.ref().update(update)
         .then(() => {
-          this.uploadAreaShow = true
-          // vuex 스토어 비우기
-          store.commit('setObjectives', {
-            addedObj: ['']
-          })
-          alert('Project detail saved!')
+          store.commit('clearFileList')
+          alert('Data has been saved in system!')
+          router.push('/home')
         })
-
-      this.$database.ref(`/${userId}/`).once('value')
-        .then((snapshot) => console.log(snapshot))
+        .catch((error) => { alert(error) })
+    },
+    uploadStatusChange () {
+      this.uploadButtonShow = true
     }
   },
   computed: {
@@ -126,17 +135,6 @@ export default {
   }
 }
 
-// TODO: +버튼 클릭될때마다 새 인풋박스 추가 / - 버튼도 만들기
-// TODO: form 데이터 바인딩, 오브젝트로 만들기
-// TODO: ADD 버튼이 클릭되면 => 클릭된 횟수만큼 인풋폼 추가, 인풋에 입력된 텍스트는 addedObjectives arr에 저장
-// TODO: Remove 버튼이 클릭되면 => Objective input component에서 삭제된 텍스트 어레이에서 splice, 텍스트박스 해당 텍스트박스 제거 (index를 기억해둬야 함?)
-// -> const companyName = { projectname: , proejctObjectives: []}
-// TODO: create 버튼이 클릭되면 company name, project name, addedObjectives 파이어베이스 디비에 저장
-// Save signed-up user's info in database
-// this.$database.ref(`${result.user.uid}`).set({ 
-// companyName obj
-// })
-// TODO: 프로젝트 정보 저장되고 나면 파일 업로드 영역 나타나기, 
 // TODO: upload 된 파일 하나라도 나타나면 upload 버튼 활성화
 // TODO: upload 버튼 클릭되면 dashboard setting 페이지로 리다이렉트
 

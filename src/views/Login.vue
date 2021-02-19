@@ -152,10 +152,12 @@ export default {
       console.log('google login')
       this.$firebase.auth().signInWithPopup(this.$google)
         .then((user) => {
+          console.log(this.$database.ref(`${user.user.uid}`))
           this.$database.ref(`${user.user.uid}`).once('value')
             .then((snapshot) => {
+              console.log()
               const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
-              const userid = snapshot.key
+              const userid = snapshot.ref_.key
               store.commit('setLogin', {
                 loggedIn: true,
                 loginUserId: userid,
@@ -163,6 +165,9 @@ export default {
               })
               alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
               router.push('/home')
+            })
+            .catch((error) => {
+              alert(error)
             })
         })
         .catch((error) => {

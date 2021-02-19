@@ -16,7 +16,7 @@
         </div>
       </div>  
       <div class='terms-checkbox-area'>
-        <input type='checkbox' id='terms-checkbox' >
+        <input type='checkbox' id='terms-checkbox' @click="checkTermsAndCondition">
           <label class='terms-checkbox' for='terms-checkbox'>
             <div class='terms-checkbox-div' for='terms-checkbox'>
               <span class='terms-checkbox-v' for='terms-checkbox'>V</span>
@@ -56,12 +56,13 @@ export default {
         dictDefaultMessage: `<p class="drag-drop-text">Drag & Drop Files Here</p>`
       },
       uploading: [],
-      savedFileList: []
+      savedFileList: [],
+      termsAndConditionCheck: false
     }
   },
   mounted () {
     this.hideNavBar()
-    console.log(store.state.loginUserId)
+    this.termsAndConditionCheck = false
     firebase.storage().ref().child(`files/`).listAll()
       .then((res) => console.log(res))
   },
@@ -72,14 +73,20 @@ export default {
     },
     getFileList () {
       const storageRef = firebase.storage().ref()
-      const fileOriginRef = storageRef.child(`files/`)
+      const fileOriginRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/`)
       fileOriginRef.listAll()
         .then((res) => res._delegate.items
           .forEach((el) => { this.savedFileList.push(el.name) })
         )
     },
     async afterComplete (upload) {
-      if (this.savedFileList.includes(upload.name)) {
+      if (this.termsAndConditionCheck === false) {
+        alert("Please check term's and condition")
+        const detailBox = document.getElementsByClassName('dz-preview')
+        for (let i = 0; i < detailBox.length; i++) {
+          detailBox[i].style.display = 'none'
+        }    
+      } else if (this.savedFileList.includes(upload.name)) {
         alert(`[ ${upload.name} ] has already been added in system`)
         const detailBox = document.getElementsByClassName('dz-preview')
         for (let i = 0; i < detailBox.length; i++) {
@@ -89,15 +96,25 @@ export default {
         this.isLoading = true
         try {
           let file = upload
-          const metadata = {
-            contentType: file.type
-          }
+          const metadata = { contentType: file.type }
           const storageRef = firebase.storage().ref()
-          const fileRef = storageRef.child(`files/${file.upload.filename}`)
+          const fileRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/${file.upload.filename}`)
           await fileRef.put(file, metadata)
-            .then((snapshot) => console.log(snapshot))
+            .then((snapshot) => {
+              if (snapshot.state === 'success') {
+                store.commit('setFileList', {
+                  fileList: snapshot.metadata.name
+                })
+              } else {
+                throw Error
+              }
+            })
+            .catch((error) => {
+              alert(error)
+            })
           this.uploading.push(file.upload.filename)
           this.$refs.imgDropZone.removeFile(upload)
+          this.fileUploadStatusChange()
         } catch (error) {
           alert(error)
         } finally {
@@ -108,7 +125,7 @@ export default {
     },
     deleteFile (index) {
       const storageRef = firebase.storage().ref()
-      const fileRef = storageRef.child(`files/${this.uploading[index]}`)
+      const fileRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/${this.uploading[index]}`)
       fileRef.delete()
         .then(() => {
           alert(`[ ${this.uploading[index]} ] deleted`)
@@ -121,6 +138,12 @@ export default {
       const imgIndx = index % 3
       const src = require(`../assets/UploadCheckIcon_${imgIndx}.svg`)
       return src
+    },
+    checkTermsAndCondition () {
+      this.termsAndConditionCheck = true
+    },
+    fileUploadStatusChange () {
+      this.$emit('upload-status-change')
     }
   }
 }
