@@ -178,7 +178,7 @@ main#home {
 
 /* selectbox design customizing end */
 
-.thumbnail-tile a {
+#thumbnails a {
   text-decoration: none;
 }
 

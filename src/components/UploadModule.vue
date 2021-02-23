@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import firebase from 'firebase'
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import { store } from '../store/store'
@@ -70,7 +69,7 @@ export default {
       navbar.style.display = 'none'
     },
     getFileList () {
-      const storageRef = firebase.storage().ref()
+      const storageRef = this.$fileupload.ref()
       const fileOriginRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/`)
       fileOriginRef.listAll()
         .then((res) => res._delegate.items
@@ -95,7 +94,7 @@ export default {
         try {
           let file = upload
           const metadata = { contentType: file.type }
-          const storageRef = firebase.storage().ref()
+          const storageRef = this.$fileupload.ref()
           const fileRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/${file.upload.filename}`)
           await fileRef.put(file, metadata)
             .then((snapshot) => {
@@ -122,7 +121,7 @@ export default {
       }
     },
     deleteFile (index) {
-      const storageRef = firebase.storage().ref()
+      const storageRef = this.$fileupload.ref()
       const fileRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/${this.uploading[index]}`)
       fileRef.delete()
         .then(() => {

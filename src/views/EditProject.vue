@@ -8,41 +8,62 @@
     <section class="your-project">
       <h1 class="edit-project-title">Your projects</h1>
       <h3 class="edit-project-subtitle">Your company's name</h3>
-      <div class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
-        <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*99"
-          @add-objectives="addObjectives"
-          @remove-objectives="removeObjectives"
-          :objectives="objectives"
-          :addedText="addedObj"
-          :removeText="removedItem"
-          :index="i"
-          v-bind:class="i"
-        ></object-input-div>
-      </div>
+        <article class="editproject-dropdown" v-if="showSelectBox===true">
+          <select-box
+            :cssId="companyCssId"
+            :selectboxOption="companyNames">
+          </select-box>        
+        </article>
+        <article class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
+          <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*99"
+            @add-objectives="addObjectives"
+            @remove-objectives="removeObjectives"
+            :objectives="objectives"
+            :addedText="addedObj"
+            :removeText="removedItem"
+            :index="i"
+            :placeholderText="companyPlaceholder"
+            v-bind:class="i"
+          ></object-input-div>
+        </article>
       <h3 class="edit-project-subtitle">Your project’s name</h3>
-      <div class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
-        <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*98"
-          @add-objectives="addObjectives"
-          @remove-objectives="removeObjectives"
-          :objectives="objectives"
-          :addedText="addedObj"
-          :removeText="removedItem"
-          :index="i"
-          v-bind:class="i"
-        ></object-input-div>
-      </div>
+        <article class="editproject-dropdown">
+          <select-box
+            :cssId="projectCssId"
+            :selectboxOption="projectNames">
+          </select-box>
+        </article>
+        <article class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
+          <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*98"
+            @add-objectives="addObjectives"
+            @remove-objectives="removeObjectives"
+            :objectives="objectives"
+            :addedText="addedObj"
+            :removeText="removedItem"
+            :index="i"
+            :placeholderText="projectPlaceholder"
+            v-bind:class="i"
+          ></object-input-div>
+        </article>
       <h3 class="edit-project-subtitle">Your project’s impact objective(s)</h3>
-      <div class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
-        <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*97"
-          @add-objectives="addObjectives"
-          @remove-objectives="removeObjectives"
-          :objectives="objectives"
-          :addedText="addedObj"
-          :removeText="removedItem"
-          :index="i"
-          v-bind:class="i"
-        ></object-input-div>
-      </div>
+        <article class="editproject-dropdown">
+          <select-box
+            :cssId="objectiveCssId"
+            :selectboxOption="objectives">
+          </select-box>
+        </article>      
+        <article class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
+          <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*97"
+            @add-objectives="addObjectives"
+            @remove-objectives="removeObjectives"
+            :objectives="objectives"
+            :addedText="addedObj"
+            :removeText="removedItem"
+            :index="i"
+            :placeholderText="objectivePlaceholder"
+            v-bind:class="i"
+          ></object-input-div>
+        </article>
       <button @click="projectUpdate" class="project-update-button">Update</button>
     </section>
     <section class="upload-module-area">
@@ -52,9 +73,9 @@
     <section class="framework-area">
       <h3 class="framework-area-title">Your project's dashboards</h3>
         <row :gutter="12" class="framework-thumbnails-wrapper">
-          <column class="framework-thumbnail-tile" :lg="3" :xs="12">
+          <column class="framework-thumbnail-tile" :lg="3" :md="2" :xs="5">
             <router-link to="/ins">
-            <div @mouseover="mouseHover" @mouseout="mouseOut">
+            <div @mouseover="mouseHover(1)" @mouseout="mouseOut(1)">
               <div class="framework-link-title">
                 <h1>INS Lessons</h1>
                 <h1 style="color:#8954BA;">{{insGrowthRate}}</h1>
@@ -63,15 +84,15 @@
               <img src="../../src/assets/dummy1.svg"/>
               </div>
             </router-link>
-            <div class="framework-thumbnail-hover" v-if="editHoverboxShow === true">
+            <div class="framework-thumbnail-hover" v-if="editHoverboxShow1 === true">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
             </div>
           </column>
-          <column class="framework-thumbnail-tile-2" :lg="3" :xs="12">
+          <column class="framework-thumbnail-tile-2" :lg="3" :md="2" :xs="5">
             <router-link to="/attendance">
-            <div @mouseover="mouseHover" @mouseout="mouseOut">
+            <div @mouseover="mouseHover(2)" @mouseout="mouseOut(2)">
               <div class="framework-link-title">
                 <h1>Students attendance</h1>
               </div>
@@ -80,15 +101,15 @@
               <img src="../../src/assets/dummy2.svg"/>
             </div>  
             </router-link>
-            <div class="framework-thumbnail-hover-2" v-if="editHoverboxShow === true">
+            <div class="framework-thumbnail-hover-2" v-if="editHoverboxShow2 === true">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
             </div>
           </column>
-          <column class="framework-thumbnail-tile-3" :lg="3" :xs="12">
+          <column class="framework-thumbnail-tile-3" :lg="3" :md="2" :xs="5">
             <router-link to="/ict">
-            <div @mouseover="mouseHover" @mouseout="mouseOut">
+            <div @mouseover="mouseHover(3)" @mouseout="mouseOut(3)">
               <div class="framework-link-title">
                 <h1>ICT skills acquired</h1>
                 <h1 style="color:#8954BA;">{{ictGrowthRate}}</h1>
@@ -97,7 +118,7 @@
               <img src="../../src/assets/dummy3.svg"/>
             </div>
             </router-link>
-            <div class="framework-thumbnail-hover-3" v-if="editHoverboxShow === true">
+            <div class="framework-thumbnail-hover-3" v-if="editHoverboxShow3 === true">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -114,8 +135,8 @@
 <script>
 // TODO:
 // 1. 회사 이름 렌더링하기
-// 1-1.저장된 회사 이름이 있다면 -> 해당 회사 이름을 가지고 셀렉트 박스를 만든다 / 
-// 1-2. 저장된 회사 이름이 없다면 회사 이름을 추가하는 박스를 렌더링
+// 1-1.저장된 회사 이름이 있다면 -> 해당 회사 이름을 가지고 셀렉트 박스를 만든다 / ok!
+// 1-2. 저장된 회사 이름이 없다면 셀렉트박스를 숨기고 회사 이름을 추가하는 박스만 렌더링
 // 2. 프로젝트 이름 렌더링하기
 // 2-1. 회사 이름이 있다면 : 회사 이름을 선택할 수 있도록 셀렉트박스 렌더링 -> 해당 회사 명 아래에 추가되어있는 project impact objective를 보여준다 
 // 2-2. 회사 이름이 없다면 생성할 수 있는 인풋박스를 렌더링
@@ -129,36 +150,76 @@ import { store } from '../store/store'
 import UploadModule from '../components/UploadModule.vue'
 import ObjectInputDiv from '../components/ObjectiveInputDiv.vue'
 import FrameworkSelectBox from '../components/Framework.vue'
+import SelectBox from '../components/Selectbox.vue'
 
 export default {
   components: {
     ObjectInputDiv,
     UploadModule,
-    FrameworkSelectBox
+    FrameworkSelectBox,
+    SelectBox
   },
   data () {
     return {
-      companyName: '',
-      projectName: '',
-      objectives: [''],
+      companyCssId: 'company-selectbox',
+      companyNames: [],
+      selectedCompany: null,
+      companyPlaceholder: ['eg Vodafon foundation'],
+      projectCssId: 'project-selectbox',
+      projectNames: ['Project Kakao', 'Project Naver', 'Project Hello'],
+      projectPlaceholder: ['eg INS project'],
+      objectiveCssId: 'objective-selectbox',
+      objectives: ['objective 1', 'objective 2', 'objective 3'],
+      objectivePlaceholder: ['eg How many lessons use INS', 'eg How many students have ICT skills', 'How many students have ICT skills'],
       removedItem: '',
       addedObj: null,
       dashboardName: 'INS Lessons',
       lastUpdate: '31/12/2019',
       insGrowthRate: '',
       ictGrowthRate: '',
-      editHoverboxShow: false
+      editHoverboxShow1: false,
+      editHoverboxShow2: false,
+      editHoverboxShow3: false,
+      showSelectBox: false
     }
   },
   mounted () {
     this.showNavBar()
     this.getInsGrowthRate()
     this.showNavBar()
+
+    const database = this.$database.ref('otVF6ZdcXFhnXY1MeeveGhfDGGl1') // naver login
+    // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+    database.on('value', (snapshot) => {
+      try {
+        const createdCompanies = Object.keys(snapshot.val().projectInfo)
+        console.log(createdCompanies)
+        // create selectbox
+        this.companyNames = createdCompanies
+        this.showSelectBox = true
+      } catch (error) {
+        console.log('No company name')
+        // show add module
+      }
+    })
   },
   methods: {
     showNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'inline'
+    },
+    toggleDropdown (cssSelectorId) {
+      const menu = document.getElementById(`${cssSelectorId}`)
+      menu.classList.toggle('show')
+    },
+    getText (selectedOption, selectboxType) {
+      console.log(selectedOption)
+      console.log(selectboxType)
+      this.selectedCompany = selectedOption
+      switch (selectboxType) {
+        case 'company':
+          this.toggleDropdown('company-selectbox')
+      }
     },
     addObjectives (addedObj) {
       store.commit('setObjectives', {
@@ -179,13 +240,31 @@ export default {
     projectUpdate () {
       console.log('project created')
     },
-    mouseHover () {
-      console.log('hover')
-      this.editHoverboxShow = true
+    mouseHover (number) {
+      switch (number) {
+        case 1:
+          this.editHoverboxShow1 = true
+          break
+        case 2:
+          this.editHoverboxShow2 = true
+          break
+        case 3:
+          this.editHoverboxShow3 = true
+          break
+      }
     },
-    mouseOut () {
-      console.log('out')
-      this.editHoverboxShow = false
+    mouseOut (number) {
+      switch (number) {
+        case 1:
+          this.editHoverboxShow1 = false
+          break
+        case 2:
+          this.editHoverboxShow2 = false
+          break
+        case 3:
+          this.editHoverboxShow3 = false
+          break
+      }
     }
   },
   computed: {
@@ -238,6 +317,89 @@ export default {
   text-align: left;
 }
 
+/* .editproject-dropdown {
+  position: relative;
+  z-index: 1;
+}
+
+.editproject-dropbox-form ul,
+.editproject-dropbox-form li {
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.editproject-dropbox-form button {
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #3f4150;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.editproject-dropbox-form button:focus,
+.editproject-dropbox-form button:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.editproject-dropbox-form .editproject-dropbox {
+  background-color: #fff;
+  margin-top: 2rem;
+  width: 39.8rem;
+}
+
+.editproject-dropbox-form .editproject-dropdown-item {
+  padding: 0 1.6rem 0 1.6rem;
+  margin: 0;
+  border-top: 1px solid #DCE2F0;
+}
+
+.editproject-dropdown-toggle {
+  width: 100%;
+  height: 5rem;
+  color: rgba(133, 136, 150, 0.5);
+  text-align: left;
+  transition: border-color 100ms ease-in;
+  padding: 0 1.6rem 0 1.6rem;
+  background-image: url('../assets/Dropdown.svg');
+  background-position: right;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  border-bottom: 1px solid #DCE2F0;
+}
+
+.editproject-dropdown-menu {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  width: 39.8rem;
+  max-height: 0;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid transparent;
+  transition: border-color 200ms ease-in, padding 200ms ease-in,
+    max-height 200ms ease-in, box-shadow 200ms ease-in;
+}
+
+.editproject-dropdown-menu.show {
+  max-height: 38.2rem;
+}
+
+.editproejct-dropdown-option {
+  width: 100%;
+  height: 4.6rem;
+  padding: 0;
+  line-height: 2.88rem;
+  text-align: left;
+  font-size: 1.68rem;
+  font-family: Helvetica;
+  color: #686868;
+  margin: 0;
+} */
+
 #edit-proejct > section.framework-area > div.container {
   display: flex;
   max-width: 144rem;
@@ -251,8 +413,12 @@ export default {
   text-decoration: none;
 }
 
+.edit-project-subtitle {
+  margin-bottom: 1rem;
+}
+
 .edit-project-subtitle-2 {
-  margin-top: 8.3rem; 
+  margin-top: 8.3rem;
 }
 
 .edit-project-subtitle-3 {
@@ -279,7 +445,8 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 2.7rem;
+  margin: 0 0 2rem 0;
+  /* margin-bottom: 2.7rem; */
 }
 
 .upload-module-area {
@@ -324,20 +491,17 @@ export default {
 .framework-thumbnail-tile-3 {
   background-color: #ffffff;
   min-width: 32.4rem !important;
+  max-width: 32.4rem !important;
   height: 21.8rem;
   box-shadow: -13px 11px 25px 0 #adb6d92b;
   padding: 3rem 1.8rem !important;
   /* margin-bottom: 2rem; */
 }
 
-.framework-thumbnail-tile-3, 
+.framework-thumbnail-tile-3,
 .framework-thumbnail-tile {
   margin: 0 7rem 2rem 0;
 }
-
-/* .framework-thumbnail-tile-3 {
-  margin: 0 0 2rem 0;
-} */
 
 .framework-thumbnail-hover-3,
 .framework-thumbnail-hover {
@@ -360,11 +524,10 @@ export default {
 
 .framework-thumbnail-tile-2 {
   background-color: #ffffff;
-  min-width: 32.4rem;
+  min-width: 32.4rem !important;
+  max-width: 32.4rem !important;
   height: 21.8rem;
   margin: 0 7rem 2rem 0;
-  /* margin-left: 7rem;
-  margin-right: 7rem; */
   padding: 3rem 2.4rem !important;
 }
 
@@ -379,13 +542,11 @@ export default {
   color: #ffffff;
 }
 
-
 .framework-thumbnail-hover-2 span {
   color: #ffffff;
   font-family: Helvetica;
   font-size: 1.8rem;
 }
-
 
 .framework-thumbnail-tile a {
    text-decoration: none;

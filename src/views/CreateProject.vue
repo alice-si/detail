@@ -17,6 +17,7 @@
               :addedText="addedObj"
               :removeText="removedItem"
               :index="i"
+              :placeholderText="placeholders"
               v-bind:class="i"
             ></objective-input-div>
           </div>
@@ -51,7 +52,8 @@ export default {
       removedItem: '',
       addedObj: null,
       uploadAreaShow: false,
-      uploadButtonShow: false
+      uploadButtonShow: false,
+      placeholders: ['eg How many lessons use INS', 'eg How many students have ICT skills', 'How many students have ICT skills']
     }
   },
   mounted () {
@@ -84,12 +86,13 @@ export default {
       this.objectives = store.state.objectives
       this.$forceUpdate()
     },
-    removeObjectives (removeIndex) {
-      this.objectives.splice(removeIndex - 1, 1)
+    removeObjectives (removeObj) {
+      this.objectives.splice(removeObj.noOfIndex - 1, 1)
     },
     projectCreate () {
       const userId = store.state.loginUserId
-      const objectives = store.state.objectives.slice(0, -1)
+      // eslint-disable-next-line quotes
+      const objectives = store.state.objectives.filter(el => el !== "")
 
       if (userId && objectives && this.companyName && this.projectName) {
         const projectInfo = {
@@ -102,12 +105,16 @@ export default {
         update[`/${userId}/projectInfo/${this.companyName}/`] = projectInfo
         this.$database.ref().update(update)
           .then(() => {
-            store.commit('setProjectInfo', {
-              companyName: this.companyName,
-              projectName: this.projectName
+            const database = this.$database.ref(`${userId}`)
+            database.on('value', (snapshot) => {
+              const projectInfo = snapshot.val().projectInfo
+              const savedObjectives = projectInfo[this.companyName].projectObjectives
+              console.log(savedObjectives)
+              // this.objectives = savedObjectives
+              // this.$forceUpdate()
             })
-            store.commit('clearObjectives')
             alert('Project detail saved!')
+
             this.uploadAreaShow = true
           })
       } else {
@@ -124,7 +131,7 @@ export default {
           store.commit('clearFileList')
           alert('Data has been saved in system!')
           // TODO: upload 버튼 클릭되면 dashboard setting 페이지로 리다이렉트
-          router.push('/home')
+          router.push('/editproject')
         })
         .catch((error) => { alert(error) })
     },
@@ -138,7 +145,6 @@ export default {
     }
   }
 }
-
 
 </script>
 
