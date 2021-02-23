@@ -17,14 +17,16 @@
               :addedText="addedObj"
               :removeText="removedItem"
               :index="i"
-              v-bind:class="i">
-            </objective-input-div>
+              v-bind:class="i"
+            ></objective-input-div>
           </div>
       </form>
     <button @click="projectCreate" class="project-create-button">Create</button>
     <button @click="logOut" class="logout-button">Logout</button>
     </section>
-    <upload-module v-if="uploadAreaShow === true" @upload-status-change="uploadStatusChange"></upload-module>
+      <section class="upload-area">
+        <upload-module v-if="uploadAreaShow === true" @upload-status-change="uploadStatusChange"></upload-module>
+      </section>
     <button v-if="uploadButtonShow === true" class="file-upload-button" @click="saveFileList">Upload</button>
   </main>
 </template>
@@ -64,6 +66,8 @@ export default {
       this.$firebase.auth().signOut().then(() => {
         this.$firebase.auth().onAuthStateChanged((user) => {
           if (!user) {
+            store.commit('clearObjectives')
+            store.commit('clearFileList')
             store.commit('setLogOut')
             alert('You have logged out')
             router.push('/login')
@@ -106,8 +110,6 @@ export default {
             alert('Project detail saved!')
             this.uploadAreaShow = true
           })
-        // this.$database.ref(`/${userId}/`).once('value')
-        //   .then((snapshot) => console.log(snapshot))
       } else {
         alert('Company name & Proejct name are mandatory')
       }
@@ -118,8 +120,10 @@ export default {
       update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projectFiles/`] = fileList
       this.$database.ref().update(update)
         .then(() => {
+          store.commit('clearObjectives')
           store.commit('clearFileList')
           alert('Data has been saved in system!')
+          // TODO: upload 버튼 클릭되면 dashboard setting 페이지로 리다이렉트
           router.push('/home')
         })
         .catch((error) => { alert(error) })
@@ -135,8 +139,6 @@ export default {
   }
 }
 
-// TODO: upload 된 파일 하나라도 나타나면 upload 버튼 활성화
-// TODO: upload 버튼 클릭되면 dashboard setting 페이지로 리다이렉트
 
 </script>
 
@@ -276,6 +278,9 @@ button:focus {
   background-color: #5D38DB;
   color: #ffffff;
   font-size: 1.68rem;
+  position: relative;
+  right: -22rem;
+  width: 12rem;
 }
 
 .creat-project-form-area .logout-button:hover {
@@ -307,13 +312,6 @@ button:focus {
   left: -5rem;
 }
 
-.project-create-button {
-  position: relative;
-  right: -22rem;
-  /* height: 5.5rem; */
-  width: 12rem;
-}
-
 .file-upload-button {
   border: none;
   padding: 0 1.5rem;
@@ -334,5 +332,9 @@ button:focus {
   background-color: #5D38DB;
   color: #ffffff;
   font-size: 1.88rem;
+}
+
+.upload-area {
+  margin-left: 20rem;
 }
 </style>

@@ -1,31 +1,24 @@
 <template>
-  <div class="framework">
-    <main id="framework">
-      <section class="framework-form-area">
-        <img src="../assets/alice_logo.png" width="91rem"/>
-        <h1 class="framework-title">Select your impact measurement framework</h1>
-        <h3 class='framework-sub-title'>Select one, add one, or indicate your own</h3>
-        <form class="dropdown-form">
-          <div class="dropdown">
-            <button type="button" class="dropdown-toggle" @click="toggleDropdown">
-              Select option
+  <div class="framework-form-area">
+    <form class="dropdown-form">
+      <div class="dropdown">
+        <button type="button" class="dropdown-toggle" @click="toggleDropdown">
+          Select option
+        </button>
+        <ul class="dropdown-menu">
+          <li class="dropdown-item" v-for="(option, index) in selectList" v-bind:key="index">
+            <button type="button" :value="option" class="dropdown-option" @click="getText">
+              {{option}} <a v-if="index === 0 || index === 1 || index === 2 || index === 3 || index === 4" href="#"> - link</a>
             </button>
-            <ul class="dropdown-menu">
-              <li class="dropdown-item" v-for="(option, index) in selectList" v-bind:key="index">
-                <button type="button" :value="option" class="dropdown-option" @click="getText">
-                  {{option}} <a v-if="index === 0 || index === 1 || index === 2 || index === 3 || index === 4" href="#"> - link</a>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </form>
-        <form class="add-link-form" v-if="textInputShow === true">
-          <h3 class='framework-sub-title'>Add a link to the framework you’re using</h3>
-          <input class='text-form' type='text' placeholder="https://www.sopact.com/social-impact-measurement-framework">
-          <button class='text-submit'>Add</button>
-        </form>
-      </section>
-    </main>
+          </li>
+        </ul>
+      </div>
+    </form>
+    <form class="add-link-form" v-if="textInputShow === true">
+      <h3 class='framework-sub-title'>Add a link to the framework you’re using</h3>
+      <input class='text-form' type='text' placeholder="https://www.sopact.com/social-impact-measurement-framework">
+      <button class='text-submit'>Add</button>
+    </form>
   </div>
 </template>
 
@@ -47,15 +40,13 @@ export default {
     }
   },
   mounted () {
-    this.hideNavBar()
+
   },
   methods: {
-    hideNavBar () {
-      const navbar = document.getElementById('nav')
-      navbar.style.display = 'none'
-    },
     toggleDropdown () {
       const menu = document.querySelector('.dropdown-menu')
+      console.log('menu', menu);
+      
       menu.classList.toggle('show')
     },
     getText (e) {
@@ -78,62 +69,14 @@ export default {
 </script>
 
 <style>
-#framework {
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('../assets/Loginbackground.svg');
-  background-position: center bottom;
-  background-repeat: no-repeat;
-  background-size: 90vw 30vh;
-  align-items: center;
-  vertical-align: center;
-}
-
-.framework-form-area {
-  position: absolute;
-  top: 12%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.framework-title { 
-  font-family: Helvetica;
-  font-size: 2.88rem;
-  color: #8954BA;
-  margin-top : 2rem;  
-  }
-
-.framework-sub-title {
-  font-family: Helvetica;
-  font-size: 1.6rem;
-  color: #686868;
-  text-align: center;
-  margin: 0.2rem 0 0 0;
-}
-
-#framework#main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-  padding-bottom: 30px;
-  color: #3f4150;
-  background-color: #f4f7fa;
-}
-
-#framework ul,
-#framework li {
+.framework-form-area ul,
+.framework-form-area li {
   list-style-type: none;
   padding-left: 0;
   margin-left: 0;
 }
 
-#framework button {
+.framework-form-area button {
   font-size: 15px;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -143,29 +86,29 @@ export default {
   cursor: pointer;
 }
 
-#framework button:focus,
-#framework button:active {
+.framework-form-area button:focus,
+.framework-form-area button:active {
   outline: none;
   box-shadow: none;
 }
 
-#framework .title {
+.framework-form-area .title {
   width: 20rem;
   margin-bottom: 1.6rem;
 }
 
-#framework .title img {
+.framework-form-area .title img {
   width: 100%;
   height: auto;
 }
 
-#framework .dropdown-form {
+.framework-form-area .dropdown-form {
   background-color: #fff;
   margin-top: 2rem;
   width: 45rem;
 }
 
-#framework form h1 {
+.framework-form-area form h1 {
   margin-bottom: 0.8rem;
   font-size: 1.6rem;
   font-weight: 500;
@@ -173,18 +116,18 @@ export default {
   color: #3f4150;
 }
 
-#framework .dropdown {
+.framework-form-area .dropdown {
   position: relative;
   z-index: 1;
 }
 
-#framework .dropdown-item {
+.framework-form-area .dropdown-item {
   padding: 0 1.6rem 0 1.6rem;
   margin: 0;
   border-bottom: 1px solid #DCE2F0;
 }
 
-#framework .dropdown-toggle {
+.framework-form-area .dropdown-toggle {
   width: 100%;
   height: 5rem;
   color: rgba(133, 136, 150, 0.5);
@@ -197,16 +140,16 @@ export default {
   background-origin: content-box;
 }
 
-#framework .dropdown-toggle.selected {
+.framework-form-area .dropdown-toggle.selected {
   color: #3f4150;
   border-color: rgba(224, 226, 231, 1);
 }
 
-#framework .dropdown-toggle:active {
+.framework-form-area .dropdown-toggle:active {
   border-color: rgba(224, 226, 231, 1);
 }
 
-#framework .dropdown-menu {
+.framework-form-area .dropdown-menu {
   position: absolute;
   z-index: 2;
   left: 0;
@@ -219,11 +162,11 @@ export default {
     max-height 200ms ease-in, box-shadow 200ms ease-in;
 }
 
-#framework .dropdown-menu.show {
+.framework-form-area .dropdown-menu.show {
   max-height: 38.2rem;
 }
 
-#framework .dropdown-option {
+.framework-form-area .dropdown-option {
   width: 100%;
   height: 4.6rem;
   padding: 0;
@@ -235,21 +178,21 @@ export default {
   margin: 0;
 }
 
-#framework .dropdown-option:hover {
+.framework-form-area .dropdown-option:hover {
   background-color: #f8f9fa;
 }
 
-#framework .add-link-form {
+.framework-form-area .add-link-form {
   margin-top: 4rem;
   display: flex;
   flex-direction: column;
 }
 
-#framework .add-link-form h3 {
+.framework-form-area .add-link-form h3 {
   margin-bottom: 4rem;
 }
 
-#framework .text-form {
+.framework-form-area .text-form {
   width: 50.7rem;
   height:  7.3rem;
   border-style: none;
@@ -258,14 +201,14 @@ export default {
   outline: none;
 }
 
-#framework .text-form::placeholder {
+.framework-form-area .text-form::placeholder {
   font-family: Helvetica;
   font-size: 1.68rem;
   color: rgba(0,0,0,0.25);
   text-align: center;
 }
 
-#framework .text-submit {
+.framework-form-area .text-submit {
   float: inline-end;
   background: #5D38DB;
   box-shadow: 0 14px 42px 0 rgba(52,77,178,0.34);
@@ -278,7 +221,7 @@ export default {
   left: 80%;
 }
 
-#framework button::after {
+.framework-form-area button::after {
   display: none;
 }
 

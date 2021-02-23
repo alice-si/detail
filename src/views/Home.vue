@@ -22,39 +22,33 @@
         <row :gutter="12" id="thumbnails">
           <router-link to="/ins">
             <column class="thumbnail-tile" :lg="4">
-              <div class="thumbnail-wrapper">
-                <div class="link-title">
-                  <h1>INS Lessons</h1>
-                  <h1 style="color:#8954BA;">{{insGrowthRate}}</h1>
-                  </div>
-                  <img src="../../src/assets/dummy1.svg"/>
-                  <h3>Showing data till {{lastUpdate}}</h3>
+              <div class="link-title">
+                <h1>INS Lessons</h1>
+                <h1 style="color:#8954BA;">{{insGrowthRate}}</h1>
               </div>
+              <img src="../../src/assets/dummy1.svg"/>
+              <h3>Showing data till {{lastUpdate}}</h3>
             </column>
           </router-link>
           <router-link to="/attendance">
             <column class="thumbnail-tile" :lg="4">
-              <div class="thumbnail-wrapper">
-                <div class="link-title"> 
+              <div class="link-title">
                 <h1>Students attendance</h1>
                 <!-- update growth rate later -->
                 <h1 style="color:#8954BA;"></h1>
-                </div>
-                <img src="../../src/assets/dummy2.svg"/>
-                <h3>Showing data till {{lastUpdate}}</h3>
               </div>
+              <img src="../../src/assets/dummy2.svg"/>
+              <h3>Showing data till {{lastUpdate}}</h3>
             </column>
           </router-link>
           <router-link to="/ict">
             <column class="thumbnail-tile" :lg="4">
-              <div class="thumbnail-wrapper">
-                <div class="link-title">  
+              <div class="link-title">
                 <h1>ICT skills acquired</h1>
                 <h1 style="color:#8954BA;">{{ictGrowthRate}}</h1>
-                </div>
-                <img src="../../src/assets/dummy3.svg"/>
-                <h3>Showing data till {{lastUpdate}}</h3>
               </div>
+              <img src="../../src/assets/dummy3.svg"/>
+              <h3>Showing data till {{lastUpdate}}</h3>
             </column>
           </router-link>
         </row>
@@ -184,9 +178,13 @@ main#home {
 
 /* selectbox design customizing end */
 
- #thumbnails a {
-   text-decoration: none;
- }
+.thumbnail-tile a {
+  text-decoration: none;
+}
+
+#thumbnails .container {
+  padding: 0rem !important;
+}
 
 .thumbnail-tile {
   background-color: #ffffff;
@@ -194,19 +192,11 @@ main#home {
   height: 32.8rem;
   margin-top: 4.5rem;
   margin-right: 4.2rem;
+  padding: 2.9rem 1.9rem 1.4rem 1.9rem !important;
   box-shadow: -13px 11px 25px 0 #adb6d92b;
 }
 
-.thumbnail-wrapper {
-  padding: 3.5rem 2.5rem 2rem 2.5rem;
-  width: 32.4rem;
-  height: 31.2rem;
-  text-align: left;
-  display:flex;
-  flex-direction: column;
-}
-
-.thumbnail-wrapper img {
+.thumbnail-tile img {
   margin-top: 3rem;
   margin-bottom: 1.6rem;
   width: 27.9rem;
@@ -214,18 +204,19 @@ main#home {
   border: 1px solid  var(--color-light-grey);
 }
 
-.thumbnail-wrapper h1 {
+.thumbnail-tile h1 {
   display: inline;
   font-family: Helvetica;
   font-size: 2.16rem;
   color: var(--color-dark-grey);
 }
 
-.thumbnail-wrapper h3 {
+.thumbnail-tile h3 {
   font-family: Helvetica;
   font-size: 1.68rem;
   margin: 0;
   color: #A6A7A8;
+  text-align: left;
 }
 
 .link-title {

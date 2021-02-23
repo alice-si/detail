@@ -63,8 +63,6 @@ export default {
   mounted () {
     this.hideNavBar()
     this.termsAndConditionCheck = false
-    firebase.storage().ref().child(`files/`).listAll()
-      .then((res) => console.log(res))
   },
   methods: {
     hideNavBar () {
@@ -106,7 +104,7 @@ export default {
                   fileList: snapshot.metadata.name
                 })
               } else {
-                throw Error
+                throw new Error('file upload failed')
               }
             })
             .catch((error) => {
@@ -151,24 +149,10 @@ export default {
 </script>
 
 <style>
-#upload {
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('../assets/Loginbackground.svg');
-  background-position: center bottom;
-  background-repeat: no-repeat;
-  background-size: 90vw 30vh;
-  align-items: center;
-  padding-top: 12vh;
-}
-
 .project-data-area {
   display: flex;
   width: 64.4rem;
   position: relative;
-  left: 10rem;
 }
 
 .file-upload-area {

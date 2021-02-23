@@ -1,12 +1,14 @@
 <template>
   <div class="project-objective-add">
     <input type="text" v-model="userInputSubComp" class="objective-text" placeholder="eg How many students have ICT skills">
-    <input v-if="noOfIndex === inputLength" type="button" class="add-button-1" @click="addObjectives"/>
+    <input v-if="noOfIndex === inputLength" type="button" class="add-objective-button" @click="addObjectives"/>
     <input v-if="noOfIndex > 1 && noOfIndex === inputLength" type="button" class="remove-button" @click="removeObjectives(noOfIndex)"/>
   </div>
 </template>
 
 <script>
+// TODO: 목표를 추가하는 버튼 처음엔 SAVE -> 클릭되고나면 + 버튼으로 바뀜, + 버튼으로 바뀌었을때 눌리면 새로운 폼 추가
+
 import { store } from '../store/store'
 export default {
   name: 'objective-input',
@@ -57,7 +59,16 @@ export default {
   width: 100%;
 }
 
-#creat-project .add-button-1 {
+.objective-text {
+  background-color: #ffffff;
+  width: 39.8rem;
+  height: 4.6rem;
+  padding: 0 2.3rem;
+  border: none;
+  border-radius: 0.2rem;
+}
+
+.project-objective-add .add-objective-button {
   background-color: #ffffff;
   border: none;
   border-radius: 50%;

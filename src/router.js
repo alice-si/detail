@@ -43,22 +43,27 @@ const router = new Router({
       path: '/ict',
       name: 'ict',
       // component: Ict
-      component: () => import('./views/Ict.vue')      
+      component: () => import('./views/Ict.vue')
     },
     {
       path: '/upload',
       name: 'upload',
-      component: () => import('./views/UploadPage.vue')      
+      component: () => import('./views/UploadPage.vue')
     },
-    {
-      path: '/framework',
-      name: 'framework',
-      component: () => import('./views/Framework.vue')      
-    },
+    // {
+    //   path: '/framework',
+    //   name: 'framework',
+    //   component: () => import('./views/Framework.vue')      
+    // },
     {
       path: '/createproject',
       name: 'createproject',
       component: () => import('./views/CreateProject.vue')
+    },
+    {
+      path: '/editproject',
+      name: 'editproject',
+      component: () => import('./views/EditProject.vue')
     },
     {
       path: '/404',
@@ -68,15 +73,15 @@ const router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if (store.state.loggedIn === false && to.name !== 'login') {
-    alert('Please login before access this page')
-    next('/login')
-  } else if (store.state.loggedIn === true && to.name === 'login') {
-    alert('You alread logged in')
-    next('/home')
-  }
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   if (store.state.loggedIn === false && to.name !== 'login') {
+//     alert('Please login before access this page')
+//     next('/login')
+//   } else if (store.state.loggedIn === true && to.name === 'login') {
+//     alert('You alread logged in')
+//     next('/home')
+//   }
+//   next()
+// })
 
 export default router

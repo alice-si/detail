@@ -19,10 +19,9 @@
         <nav class="navbar navbar-light bg-white flex-column justify-content-start">
             <router-link to="/home"><img :src="homeImgSrc" id="home-icon" class="home" alt="home"></router-link>
             <img :src="dashboardImgSrc" id="dashboard" class="dashboard" alt="dashboard">
+            <router-link to="/editproject"><img :src="editpageImgSrc" id="edit-project-icon" class="edit-project-icon" alt="edit-project"></router-link>
             <!-- FIXME: change link directory -->
-            <router-link to="/"><img src='../src/assets/Add.svg' class="add" alt="add"></router-link>
-            <!-- FIXME: change link directory -->
-            <router-link to="/"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link>
+            <router-link to="/home"><img src='../src/assets/Settings.svg' class="settings" alt="settings"></router-link>
         </nav>
       </aside>
     </div>
@@ -38,7 +37,8 @@ export default {
   data () {
     return {
       homeImgSrc: require('../src/assets/Home-selected.svg'),
-      dashboardImgSrc: require('../src/assets/Dashboard.svg')
+      dashboardImgSrc: require('../src/assets/Dashboard.svg'),
+      editpageImgSrc: require('../src/assets/Edit.svg')
     }
   },
   mounted () {
@@ -63,15 +63,29 @@ export default {
       const clickedRoute = to.name
       const homeIcon = document.getElementById('home-icon')
       const dashboardIcon = document.getElementById('dashboard')
+      const editpageIcon = document.getElementById('edit-project-icon')
+
       if (clickedRoute === 'home') {
+        console.log('home')
         this.homeImgSrc = require('../src/assets/Home-selected.svg')
         this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
-        dashboardIcon.style.border = '0px'
+        this.editpageImgSrc = require('../src/assets/Edit.svg')
         homeIcon.style.borderRight = '3px solid #8954BA'
+        dashboardIcon.style.border = '0px'
+        editpageIcon.style.border = '0px'
+      } else if (clickedRoute === 'editproject') {
+        this.homeImgSrc = require('../src/assets/Home.svg')
+        this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
+        this.editpageImgSrc = require('../src/assets/Edit-selected.svg')
+        homeIcon.style.border = '0px'
+        editpageIcon.style.borderRight = '3px solid #8954BA'
+        dashboardIcon.style.border = '0px'
       } else {
         this.homeImgSrc = require('../src/assets/Home.svg')
         this.dashboardImgSrc = require('../src/assets/Dashboard-selected.svg')
+        this.editpageImgSrc = require('../src/assets/Edit.svg')
         homeIcon.style.border = '0px'
+        editpageIcon.style.border = '0px'
         dashboardIcon.style.borderRight = '3px solid #8954BA'
       }
     }
@@ -210,6 +224,10 @@ h3 {
 #home-icon {
   padding: 0 12px 0 12px;
   border-right: 3px solid #8954BA;
+}
+
+#edit-project-icon {
+  padding: 0 12px 0 12px;
 }
 
 .dashboard {
