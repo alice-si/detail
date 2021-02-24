@@ -1,12 +1,12 @@
 <template>
   <form class="editproject-dropbox-form">
   <div class="editproject-dropbox">
-    <button type="button" class="editproject-dropdown-toggle" @click="toggleDropdown(cssId)">
-      Select option
+    <button type="button" class="editproject-dropdown-toggle" @click="toggleDropdown(cssId)" @blur="toggleDropdown(cssId)">
+      {{selectboxPlaceholder}}
     </button>
     <ul class="editproject-dropdown-menu" v-bind:id="cssId">
       <li class="editproject-dropdown-item" v-for="(option, index) in selectboxOption" v-bind:key="index">
-        <button :value="option" class="editproejct-dropdown-option" @click="getText(option,'company')">
+        <button :value="option" class="editproejct-dropdown-option" @click="getText(option, cssId)">
           {{option}}
         </button>
       </li>
@@ -25,8 +25,13 @@ export default {
       type: Array
     }
   },
+  data () {
+    return {
+      selectboxPlaceholder: 'Select option'
+    }
+  },
   mounted () {
-    console.log(this.cssId, this.selectboxOption)
+    // console.log(this.cssId, this.selectboxOption)
   },
   methods: {
     toggleDropdown (cssSelectorId) {
@@ -34,13 +39,25 @@ export default {
       menu.classList.toggle('show')
     },
     getText (selectedOption, selectboxType) {
-      console.log(selectedOption)
-      console.log(selectboxType)
-      this.selectedCompany = selectedOption
       switch (selectboxType) {
-        case 'company':
-          this.toggleDropdown('company-selectbox')
+        case 'company-selectbox':
+          this.selectboxPlaceholder = selectedOption
+          this.$emit('get-selectbox-text', { selectedOption, selectboxType })
+          break
+        case 'project-selectbox':
+          console.log(selectedOption, selectboxType)
+          this.selectboxPlaceholder = selectedOption
+          this.$emit('get-selectbox-text', { selectedOption, selectboxType })
+          break
+        default:
+          this.selectboxPlaceholder = 'Select option'
       }
+    }
+  },
+  watch: {
+    selectboxOption () {
+      console.log(this.selectboxOption)
+      this.selectboxPlaceholder = 'Select option'
     }
   }
 }
@@ -77,7 +94,7 @@ export default {
 
 .editproject-dropbox-form .editproject-dropbox {
   background-color: #fff;
-  margin-top: 2rem;
+  /* margin-top: 2rem; */
   width: 39.8rem;
 }
 
@@ -112,6 +129,7 @@ export default {
   border: 1px solid transparent;
   transition: border-color 200ms ease-in, padding 200ms ease-in,
     max-height 200ms ease-in, box-shadow 200ms ease-in;
+  margin-bottom: 0;
 }
 
 .editproject-dropdown-menu.show {

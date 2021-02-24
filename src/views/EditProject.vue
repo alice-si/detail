@@ -2,24 +2,25 @@
   <main id="edit-proejct">
     <div class="back">
       <router-link to="/home">
-        <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back 
+        <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back
       </router-link>
     </div>
     <section class="your-project">
       <h1 class="edit-project-title">Your projects</h1>
       <h3 class="edit-project-subtitle">Your company's name</h3>
-        <article class="editproject-dropdown" v-if="showSelectBox===true">
+        <article class="editproject-dropdown" v-if="showCompanySelectBox===true">
           <select-box
             :cssId="companyCssId"
-            :selectboxOption="companyNames">
-          </select-box>        
+            :selectboxOption="companyNames"
+            @get-selectbox-text="getSelectboxText">
+          </select-box>
         </article>
-        <article class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
-          <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*99"
-            @add-objectives="addObjectives"
+        <article class="objective-vfor-wrapper" v-if="showCreatenewCompany === true">
+          <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*99"
+            @add-objectives="addCompany"
             @remove-objectives="removeObjectives"
-            :objectives="objectives"
-            :addedText="addedObj"
+            :objectives="companyNameInput"
+            :addedText="addedCompany"
             :removeText="removedItem"
             :index="i"
             :placeholderText="companyPlaceholder"
@@ -27,17 +28,20 @@
           ></object-input-div>
         </article>
       <h3 class="edit-project-subtitle">Your project’s name</h3>
-        <article class="editproject-dropdown">
+        <article class="editproject-dropdown" v-if="showProjectSelectBox === true">
           <select-box
             :cssId="projectCssId"
-            :selectboxOption="projectNames">
+            :selectboxOption="projectNames"
+            @get-selectbox-text="getSelectboxText">
           </select-box>
         </article>
-        <article class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
-          <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*98"
+        <h3 class="objective-vfor-wrapper-subtitle-2" v-if="showProjectNotice === true">Please select company first</h3>
+        <article class="objective-vfor-wrapper" v-if="showCreateNewProject === true">
+          <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new project</h3>
+          <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*98"
             @add-objectives="addObjectives"
             @remove-objectives="removeObjectives"
-            :objectives="objectives"
+            :objectives="projectNameInput"
             :addedText="addedObj"
             :removeText="removedItem"
             :index="i"
@@ -46,14 +50,9 @@
           ></object-input-div>
         </article>
       <h3 class="edit-project-subtitle">Your project’s impact objective(s)</h3>
-        <article class="editproject-dropdown">
-          <select-box
-            :cssId="objectiveCssId"
-            :selectboxOption="objectives">
-          </select-box>
-        </article>      
-        <article class="objective-vfor-wrapper" v-if="noOfObjectiveInputForm !==0">
-          <object-input-div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*97"
+        <h3 class="objective-vfor-wrapper-subtitle-2" v-if="showObjectNotice === true">Please select company & project first</h3>    
+        <article class="objective-vfor-wrapper" v-if="showCreateNewObject === true">
+          <object-input-div v-for="i in noOfObjInputForm" v-bind:key="i + noOfObjInputForm*97"
             @add-objectives="addObjectives"
             @remove-objectives="removeObjectives"
             :objectives="objectives"
@@ -133,17 +132,6 @@
 </template>
 
 <script>
-// TODO:
-// 1. 회사 이름 렌더링하기
-// 1-1.저장된 회사 이름이 있다면 -> 해당 회사 이름을 가지고 셀렉트 박스를 만든다 / ok!
-// 1-2. 저장된 회사 이름이 없다면 셀렉트박스를 숨기고 회사 이름을 추가하는 박스만 렌더링
-// 2. 프로젝트 이름 렌더링하기
-// 2-1. 회사 이름이 있다면 : 회사 이름을 선택할 수 있도록 셀렉트박스 렌더링 -> 해당 회사 명 아래에 추가되어있는 project impact objective를 보여준다 
-// 2-2. 회사 이름이 없다면 생성할 수 있는 인풋박스를 렌더링
-// 3. Objective 리스트 렌더링
-// 3-1. 저장되어 있는 목표가 있다면: 이미 저장된 목표 리스트를 렌더링, 리스트 아래에 새 목표를 추가하는 영역 렌더링
-//
-
 import { getLessons, getStudentAvgAcrossSchools } from '../data/data-provider.js'
 import { compareDataByYear, calcDifference } from '../data/data-handler'
 import { store } from '../store/store'
@@ -163,15 +151,19 @@ export default {
     return {
       companyCssId: 'company-selectbox',
       companyNames: [],
+      companyNameInput: [''],
       selectedCompany: null,
       companyPlaceholder: ['eg Vodafon foundation'],
       projectCssId: 'project-selectbox',
-      projectNames: ['Project Kakao', 'Project Naver', 'Project Hello'],
+      projectNames: null,
+      projectNameInput: [''],
+      selectedProject: null,
       projectPlaceholder: ['eg INS project'],
       objectiveCssId: 'objective-selectbox',
-      objectives: ['objective 1', 'objective 2', 'objective 3'],
+      objectives: [''],
       objectivePlaceholder: ['eg How many lessons use INS', 'eg How many students have ICT skills', 'How many students have ICT skills'],
       removedItem: '',
+      addedCompany: '',
       addedObj: null,
       dashboardName: 'INS Lessons',
       lastUpdate: '31/12/2019',
@@ -180,7 +172,15 @@ export default {
       editHoverboxShow1: false,
       editHoverboxShow2: false,
       editHoverboxShow3: false,
-      showSelectBox: false
+      showCompanySelectBox: false,
+      showProjectSelectBox: false,
+      showCreatenewCompany: false,
+      showCreateNewProject: false,
+      showCreateNewObject: false,
+      showProjectNotice: false,
+      showObjectNotice: false,
+      viewMode: null,
+      editMode: null
     }
   },
   mounted () {
@@ -188,16 +188,16 @@ export default {
     this.getInsGrowthRate()
     this.showNavBar()
 
-    const database = this.$database.ref('otVF6ZdcXFhnXY1MeeveGhfDGGl1') // naver login
+    const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
     // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
     database.on('value', (snapshot) => {
-      try {
-        const createdCompanies = Object.keys(snapshot.val().projectInfo)
-        console.log(createdCompanies)
-        // create selectbox
+      try { // create company selectbox
+        const createdCompanies = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
         this.companyNames = createdCompanies
-        this.showSelectBox = true
+        this.viewMode = 'Company'
+        this.updatePage()
       } catch (error) {
+        this.viewMode = 'null'
         console.log('No company name')
         // show add module
       }
@@ -212,15 +212,15 @@ export default {
       const menu = document.getElementById(`${cssSelectorId}`)
       menu.classList.toggle('show')
     },
-    getText (selectedOption, selectboxType) {
-      console.log(selectedOption)
-      console.log(selectboxType)
-      this.selectedCompany = selectedOption
-      switch (selectboxType) {
-        case 'company':
-          this.toggleDropdown('company-selectbox')
-      }
+    addCompany (addedCompanyFromComp) {
+      // const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
+      // const update = {}
+      // update[`/${userId}/projectInfo/${addedCompanyFromComp}/`] = {}
+      this.companyNames.unshift(addedCompanyFromComp)
     },
+    // addProject (addedProject) {
+    //   console.log(addedProject)
+    // },
     addObjectives (addedObj) {
       store.commit('setObjectives', {
         addedObj
@@ -265,12 +265,130 @@ export default {
           this.editHoverboxShow3 = false
           break
       }
+    },
+    getSelectboxText (selected) {
+      const selectboxType = selected.selectboxType
+      const selectedOption = selected.selectedOption
+
+      switch (selectboxType) {
+        case 'company-selectbox':
+          this.viewMode = 'Company'
+          this.selectedCompany = selectedOption
+          break
+        case 'project-selectbox':
+          this.viewMode = 'Project'
+          this.selectedProject = selectedOption
+          break
+      }
+    },
+    updatePage () {
+      console.log(this.viewMode)
+      switch (this.viewMode) {
+        case 'Company':
+          console.log('company change')
+          this.projectNames = null
+          this.objectives = ['']
+          this.showCompanySelectBox = true
+          if (this.selectedCompany === null) {
+            this.showCreatenewCompany = false
+            this.showCreateNewObject = false
+            this.showProjectNotice = true
+            this.showObjectNotice = true
+          } else {
+            this.showProjectNotice = false
+            this.setProjectSelectbox()
+          }
+          break
+        case 'Project':
+          console.log('project change')
+          this.objectives = ['']
+          if (this.selectedCompany !== null) {
+            this.showCreateNewProject = false
+            this.setObjectiveInputbox()
+          } else {
+            this.setObjectiveInputbox()
+          }
+      }
+    },
+    setProjectSelectbox () {
+      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
+      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      database.on('value', (snapshot) => {
+        try { // set project selectbox
+          const projectInfo = snapshot.val().projectInfo
+          this.projectNames = [...Object.keys(projectInfo[this.selectedCompany]), 'Create new project']
+          this.showCompanySelectBox = true
+          this.showCreatenewCompany = false
+          this.showProjectSelectBox = true
+        } catch (error) {
+          console.log('No company name')
+          this.switchEditMode('Company')
+        }
+      })
+    },
+    setObjectiveInputbox () {
+      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
+      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      database.on('value', (snapshot) => {
+        try { // set project selectbox
+          const projectInfo = snapshot.val().projectInfo
+          const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
+          this.objectives = objectList
+          this.showCreateNewObject = true
+          this.showObjectNotice = false
+        } catch (error) {
+          console.log('No project name')
+          this.switchEditMode('Project')
+        }
+      })
+    },
+    switchEditMode (editArea) {
+      switch (editArea) {
+        case 'Company':
+          this.showCreatenewCompany = true
+          this.showProjectSelectBox = false
+          this.showCreateNewProject = false
+          this.showCreateNewObject = false
+          this.showProjectNotice = true
+          this.showObjectNotice = true
+          break
+
+        case 'Project':
+          console.log(editArea)
+          this.showCreateNewProject = true
+          this.showCreatenewCompany = false
+          this.showCreateNewObject = true
+          this.showObjectNotice = false
+          break
+      }
+    }
+  },
+  watch: {
+    selectedCompany () {
+      this.viewMode = 'Company'
+      this.updatePage()
+    },
+    selectedProject () {
+      this.viewMode = 'Project'
+      this.updatePage()
+    },
+    companyNames () {
+      console.log(this.companyNames)
+      this.selectedCompany = this.companyNames[0]
+      // TODO: 셀렉트박스가 this.companyNames[0]로 선택되도록 하고
+      // Project name create 박스가 활성화된다
+      // project name이 저장되면 objective 저장 박스가 활성화된다
+      // update를 누르면 업로드영역이 활성화된다
+      // TODO: objective까지 있어야만 파일 업로드 영역과 대시보드가 활성화된다
     }
   },
   computed: {
-    noOfObjectiveInputForm () {
+    noOfInputForm () {
       return 1
       // return store.state.objectives.length
+    },
+    noOfObjInputForm () {
+      return this.objectives.length
     }
   }
 }
@@ -298,7 +416,7 @@ export default {
 .your-project {
   display: flex;
   flex-direction: column;
-  margin-top: 5.2rem;
+  margin-top: 1rem;
 }
 
 .your-project h1 {
@@ -317,88 +435,9 @@ export default {
   text-align: left;
 }
 
-/* .editproject-dropdown {
-  position: relative;
-  z-index: 1;
+.editproject-dropdown {
+  margin-bottom: 2rem;
 }
-
-.editproject-dropbox-form ul,
-.editproject-dropbox-form li {
-  list-style-type: none;
-  padding-left: 0;
-  margin-left: 0;
-}
-
-.editproject-dropbox-form button {
-  font-size: 1.5rem;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: #3f4150;
-  background-color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.editproject-dropbox-form button:focus,
-.editproject-dropbox-form button:active {
-  outline: none;
-  box-shadow: none;
-}
-
-.editproject-dropbox-form .editproject-dropbox {
-  background-color: #fff;
-  margin-top: 2rem;
-  width: 39.8rem;
-}
-
-.editproject-dropbox-form .editproject-dropdown-item {
-  padding: 0 1.6rem 0 1.6rem;
-  margin: 0;
-  border-top: 1px solid #DCE2F0;
-}
-
-.editproject-dropdown-toggle {
-  width: 100%;
-  height: 5rem;
-  color: rgba(133, 136, 150, 0.5);
-  text-align: left;
-  transition: border-color 100ms ease-in;
-  padding: 0 1.6rem 0 1.6rem;
-  background-image: url('../assets/Dropdown.svg');
-  background-position: right;
-  background-repeat: no-repeat;
-  background-origin: content-box;
-  border-bottom: 1px solid #DCE2F0;
-}
-
-.editproject-dropdown-menu {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  width: 39.8rem;
-  max-height: 0;
-  overflow: hidden;
-  background-color: #fff;
-  border: 1px solid transparent;
-  transition: border-color 200ms ease-in, padding 200ms ease-in,
-    max-height 200ms ease-in, box-shadow 200ms ease-in;
-}
-
-.editproject-dropdown-menu.show {
-  max-height: 38.2rem;
-}
-
-.editproejct-dropdown-option {
-  width: 100%;
-  height: 4.6rem;
-  padding: 0;
-  line-height: 2.88rem;
-  text-align: left;
-  font-size: 1.68rem;
-  font-family: Helvetica;
-  color: #686868;
-  margin: 0;
-} */
 
 #edit-proejct > section.framework-area > div.container {
   display: flex;
@@ -447,6 +486,22 @@ export default {
   width: 100%;
   margin: 0 0 2rem 0;
   /* margin-bottom: 2.7rem; */
+}
+
+.objective-vfor-wrapper-subtitle {
+  text-align: left;
+  font-family: Helvetica;
+  font-size: 1.6rem;
+  color: #686868;
+  margin: 0.3rem 0 1.1rem 0;
+}
+
+.objective-vfor-wrapper-subtitle-2 {
+  text-align: left;
+  font-family: Helvetica;
+  font-size: 1.6rem;
+  color: #686868;
+  margin: 0.3rem 0 2rem 0 !important;
 }
 
 .upload-module-area {

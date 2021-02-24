@@ -92,6 +92,7 @@ export default {
       } else {
         this.isLoading = true
         try {
+          console.log(store.state)
           let file = upload
           const metadata = { contentType: file.type }
           const storageRef = this.$fileupload.ref()

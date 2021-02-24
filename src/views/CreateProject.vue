@@ -102,7 +102,7 @@ export default {
         }
 
         const update = {}
-        update[`/${userId}/projectInfo/${this.companyName}/`] = projectInfo
+        update[`/${userId}/projectInfo/${this.companyName}/${this.projectName}/`] = projectInfo
         this.$database.ref().update(update)
           .then(() => {
             const database = this.$database.ref(`${userId}`)
@@ -110,6 +110,10 @@ export default {
               const projectInfo = snapshot.val().projectInfo
               const savedObjectives = projectInfo[this.companyName].projectObjectives
               console.log(savedObjectives)
+              store.commit('setProjectInfo', {
+                companyName: this.companyName,
+                projectName: this.projectName
+              })
               // this.objectives = savedObjectives
               // this.$forceUpdate()
             })
@@ -122,9 +126,10 @@ export default {
       }
     },
     saveFileList () {
+      console.log(store.state)
       const fileList = store.state.filelist
       const update = {}
-      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projectFiles/`] = fileList
+      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/${store.state.projectName}/projectFiles/`] = fileList
       this.$database.ref().update(update)
         .then(() => {
           store.commit('clearObjectives')

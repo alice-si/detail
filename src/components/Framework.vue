@@ -2,7 +2,7 @@
   <div class="framework-form-area">
     <form class="dropdown-form">
       <div class="dropdown">
-        <button type="button" class="dropdown-toggle" @click="toggleDropdown">
+        <button type="button" class="dropdown-toggle" @click="toggleDropdown" @blur="toggleDropdown">
           Select option
         </button>
         <ul class="dropdown-menu">

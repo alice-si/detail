@@ -47,17 +47,25 @@ export default {
     }
   },
   mounted () {
-    this.userInputSubComp = store.state.objectives[this.index - 1]
-    try {
-      this.setPlaceholder()
-      this.loadingspinnerShow = false
-    } catch (error) {
-      // loader calling
-      this.loadingspinnerShow = true
-      return null
-    }
+    this.setText()
   },
   methods: {
+    setText () {
+      if (store.state.objectives[0] !== "") {
+        this.userInputSubComp = store.state.objectives[this.index - 1]
+        try {
+          this.setPlaceholder()
+          this.loadingspinnerShow = false
+        } catch (error) {
+          // loader calling
+          this.loadingspinnerShow = true
+          return null
+        }
+      } else {
+        this.setPlaceholder()
+        this.userInputSubComp = this.objectives[this.index - 1]
+      }
+    },
     getText (userInputText) {
       if (userInputText.length > 0) {
         this.onKeyupEvent = true
@@ -81,9 +89,9 @@ export default {
     }
   },
   watch: {
-    // userInputSubComp () {
-    //   console.log(this.userInputSubComp)
-    // }
+    objectives () {
+      this.setText()
+    }
   }
 }
 </script>
