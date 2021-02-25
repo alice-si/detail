@@ -35,10 +35,12 @@ export default {
   },
   methods: {
     toggleDropdown (cssSelectorId) {
+      console.log(cssSelectorId)
       const menu = document.getElementById(`${cssSelectorId}`)
       menu.classList.toggle('show')
     },
     getText (selectedOption, selectboxType) {
+      console.log(selectedOption, selectboxType)
       switch (selectboxType) {
         case 'company-selectbox':
           this.selectboxPlaceholder = selectedOption
@@ -64,9 +66,10 @@ export default {
 </script>
 
 <style>
-.editproject-dropdown {
+.editproject-dropbox {
   position: relative;
   z-index: 1;
+  /* background-color: yellowgreen; */
 }
 
 .editproject-dropbox-form ul,
@@ -116,10 +119,11 @@ export default {
   background-repeat: no-repeat;
   background-origin: content-box;
   border-bottom: 1px solid #DCE2F0;
+  font-size: 1.6rem;
 }
 
 .editproject-dropdown-menu {
-  position: absolute;
+  position: relative;
   z-index: 2;
   left: 0;
   width: 39.8rem;
@@ -142,7 +146,7 @@ export default {
   padding: 0;
   line-height: 2.88rem;
   text-align: left;
-  font-size: 1.68rem;
+  font-size: 1.6rem;
   font-family: Helvetica;
   color: #686868;
   margin: 0;

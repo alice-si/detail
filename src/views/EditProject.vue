@@ -8,7 +8,7 @@
     <section class="your-project">
       <h1 class="edit-project-title">Your projects</h1>
       <h3 class="edit-project-subtitle">Your company's name</h3>
-        <article class="editproject-dropdown" v-if="showCompanySelectBox===true">
+        <article class="editproject-dropdown" v-if="showCompanySelectBox === true">
           <select-box
             :cssId="companyCssId"
             :selectboxOption="companyNames"
@@ -16,6 +16,7 @@
           </select-box>
         </article>
         <article class="objective-vfor-wrapper" v-if="showCreatenewCompany === true">
+          <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new company</h3>          
           <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*99"
             @add-objectives="addCompany"
             @remove-objectives="removeObjectives"
@@ -35,7 +36,9 @@
             @get-selectbox-text="getSelectboxText">
           </select-box>
         </article>
-        <h3 class="objective-vfor-wrapper-subtitle-2" v-if="showProjectNotice === true">Please select company first</h3>
+        <article class="objective-vfor-wrapper-subtitle-2" v-if="showProjectNotice === true">
+          <h3>Please select company first</h3>
+        </article>
         <article class="objective-vfor-wrapper" v-if="showCreateNewProject === true">
           <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new project</h3>
           <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*98"
@@ -50,7 +53,9 @@
           ></object-input-div>
         </article>
       <h3 class="edit-project-subtitle">Your project’s impact objective(s)</h3>
-        <h3 class="objective-vfor-wrapper-subtitle-2" v-if="showObjectNotice === true">Please select company & project first</h3>    
+        <article class="objective-vfor-wrapper-subtitle-2" v-if="showObjectNotice === true">
+          <h3>Please select company & project first</h3>    
+        </article>
         <article class="objective-vfor-wrapper" v-if="showCreateNewObject === true">
           <object-input-div v-for="i in noOfObjInputForm" v-bind:key="i + noOfObjInputForm*97"
             @add-objectives="addObjectives"
@@ -198,7 +203,7 @@ export default {
         this.updatePage()
       } catch (error) {
         this.viewMode = 'null'
-        console.log('No company name')
+        // console.log('No company name')
         // show add module
       }
     })
@@ -273,23 +278,30 @@ export default {
       switch (selectboxType) {
         case 'company-selectbox':
           this.viewMode = 'Company'
+          if (selectedOption === 'Create new company') {
+            this.switchEditMode(selectboxType)
+          }          
           this.selectedCompany = selectedOption
           break
         case 'project-selectbox':
           this.viewMode = 'Project'
+          if (selectedOption === 'Create new project') {
+            this.switchEditMode(selectboxType)
+          }
           this.selectedProject = selectedOption
           break
       }
     },
     updatePage () {
-      console.log(this.viewMode)
+      // console.log(this.viewMode)
       switch (this.viewMode) {
         case 'Company':
-          console.log('company change')
+          // console.log('company change')
           this.projectNames = null
           this.objectives = ['']
           this.showCompanySelectBox = true
           if (this.selectedCompany === null) {
+            this.showProjectSelectBox = false
             this.showCreatenewCompany = false
             this.showCreateNewObject = false
             this.showProjectNotice = true
@@ -300,7 +312,7 @@ export default {
           }
           break
         case 'Project':
-          console.log('project change')
+          // console.log('project change')
           this.objectives = ['']
           if (this.selectedCompany !== null) {
             this.showCreateNewProject = false
@@ -321,7 +333,7 @@ export default {
           this.showCreatenewCompany = false
           this.showProjectSelectBox = true
         } catch (error) {
-          console.log('No company name')
+          // console.log('No company name')
           this.switchEditMode('Company')
         }
       })
@@ -337,7 +349,7 @@ export default {
           this.showCreateNewObject = true
           this.showObjectNotice = false
         } catch (error) {
-          console.log('No project name')
+          // console.log('No project name')
           this.switchEditMode('Project')
         }
       })
@@ -346,18 +358,17 @@ export default {
       switch (editArea) {
         case 'Company':
           this.showCreatenewCompany = true
+          this.showProjectNotice = true
+          this.showObjectNotice = true
           this.showProjectSelectBox = false
           this.showCreateNewProject = false
           this.showCreateNewObject = false
-          this.showProjectNotice = true
-          this.showObjectNotice = true
           break
 
         case 'Project':
-          console.log(editArea)
           this.showCreateNewProject = true
-          this.showCreatenewCompany = false
           this.showCreateNewObject = true
+          this.showCreatenewCompany = false
           this.showObjectNotice = false
           break
       }
@@ -371,21 +382,20 @@ export default {
     selectedProject () {
       this.viewMode = 'Project'
       this.updatePage()
-    },
-    companyNames () {
-      console.log(this.companyNames)
-      this.selectedCompany = this.companyNames[0]
-      // TODO: 셀렉트박스가 this.companyNames[0]로 선택되도록 하고
-      // Project name create 박스가 활성화된다
-      // project name이 저장되면 objective 저장 박스가 활성화된다
-      // update를 누르면 업로드영역이 활성화된다
-      // TODO: objective까지 있어야만 파일 업로드 영역과 대시보드가 활성화된다
     }
+    // companyNames () {
+    //   // console.log(this.companyNames)
+    //   // this.selectedCompany = this.companyNames[0]
+    //   // TODO: 셀렉트박스가 this.companyNames[0]로 선택되도록 하고
+    //   // Project name create 박스가 활성화된다
+    //   // project name이 저장되면 objective 저장 박스가 활성화된다
+    //   // update를 누르면 업로드영역이 활성화된다
+    //   // TODO: objective까지 있어야만 파일 업로드 영역과 대시보드가 활성화된다
+    // }
   },
   computed: {
     noOfInputForm () {
       return 1
-      // return store.state.objectives.length
     },
     noOfObjInputForm () {
       return this.objectives.length
@@ -501,7 +511,15 @@ export default {
   font-family: Helvetica;
   font-size: 1.6rem;
   color: #686868;
+  background-color: #ffffff;
+  width: 39.8rem;
+  padding: 1.6rem;
   margin: 0.3rem 0 2rem 0 !important;
+}
+
+.objective-vfor-wrapper-subtitle-2 h3 {
+  margin: 0;
+  font-size: 1.68rem;
 }
 
 .upload-module-area {
