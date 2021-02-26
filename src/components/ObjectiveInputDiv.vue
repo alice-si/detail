@@ -49,20 +49,21 @@ export default {
   },
   methods: {
     setText () {
-      if (store.state.objectives[0] !== "") {
-        this.userInputSubComp = store.state.objectives[this.index - 1]
-        try {
-          this.setPlaceholder()
-          this.loadingspinnerShow = false
-        } catch (error) {
-          // loader calling
-          this.loadingspinnerShow = true
-          return null
-        }
-      } else {
-        this.setPlaceholder()
-        this.userInputSubComp = this.objectives[this.index - 1]
-      }
+      // if (store.state.objectives[0] !== "") {
+      //   this.userInputSubComp = store.state.objectives[this.index - 1]
+      //   try {
+      //     this.setPlaceholder()
+      //     this.loadingspinnerShow = false
+      //   } catch (error) {
+      //     // loader calling
+      //     this.loadingspinnerShow = true
+      //     return null
+      //   }
+      // } else {
+      //   this.setPlaceholder()
+      //   this.userInputSubComp = this.objectives[this.index - 1]
+      // }
+      console.log(this.objectives)
     },
     getText (userInputText) {
       if (userInputText.length > 0) {

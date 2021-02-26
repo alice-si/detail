@@ -1,7 +1,7 @@
 <template>
   <main id="attendance">
     <section id="page-title" class="container-fluid">
-      <div class="back"><router-link to="/home"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
+      <div class="back"><router-link to="/"><img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back </router-link></div>
       <div><h1 class="title">Students attendance</h1></div>
     </section>
     <section class="attendance-select-area">

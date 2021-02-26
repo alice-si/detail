@@ -4,7 +4,7 @@
       <row>
         <column :lg="8" class="page-title">
           <div align="left" class="back">
-            <router-link to="/home">
+            <router-link to="/">
               <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back
             </router-link>
           </div>

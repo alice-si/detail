@@ -1,7 +1,7 @@
 <template>
   <main id="edit-proejct">
     <div class="back">
-      <router-link to="/home">
+      <router-link to="/">
         <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back
       </router-link>
     </div>
