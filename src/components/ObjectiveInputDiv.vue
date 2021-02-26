@@ -2,15 +2,13 @@
   <div class="project-objective-add">
     <input type="text" @keyup="getText(userInputSubComp)" v-model="userInputSubComp" class="objective-text" :placeholder="placeholderTextProp">
     <input v-if="onKeyupEvent !== true" type="button" class="add-objective-button" />
-    <input v-if="onKeyupEvent === true" type="button" class="save-objective-button" @click="addObjectives(userInputSubComp)"/>
+    <input v-if="onKeyupEvent === true" type="button" class="save-objective-button" @click="addObjectives(userInputSubComp, noOfIndex)"/>
     <input v-if="noOfIndex > 1 && noOfIndex === inputLength" type="button" class="remove-button" @click="removeObjectives(userInputSubComp, noOfIndex)"/>
     <loading-spinner v-if="loadingspinnerShow === true"></loading-spinner>
   </div>
 </template>
 
 <script>
-// TODO: 목표를 추가하는 버튼 처음엔 SAVE -> 클릭되고나면 + 버튼으로 바뀜, + 버튼으로 바뀌었을때 눌리면 새로운 폼 추가
-
 import { store } from '../store/store'
 import LoadingSpinner from './LoadingSpinner.vue'
 export default {
@@ -22,9 +20,9 @@ export default {
     inputText: {
       type: String
     },
-    addedText: {
-      type: String
-    },
+    // addedText: {
+    //   type: String
+    // },
     index: {
       type: Number
     },
@@ -76,8 +74,8 @@ export default {
     removeObjectives (userInputSubComp, noOfIndex) {
       this.$emit('remove-objectives', { userInputSubComp, noOfIndex })
     },
-    addObjectives (inputText) {
-      this.$emit('add-objectives', inputText)
+    addObjectives (userInputSubComp, noOfIndex) {
+      this.$emit('add-objectives', { userInputSubComp, noOfIndex })
     },
     setPlaceholder () {
       if (this.placeholderText.length === 1) {
@@ -90,6 +88,7 @@ export default {
   },
   watch: {
     objectives () {
+      console.log(this.objectives)
       this.setText()
     }
   }
@@ -97,6 +96,10 @@ export default {
 </script>
 
 <style>
+input:focus {
+  outline: none;
+}
+
 .project-objective-add {
   display: flex;
   flex-direction: row !important;
@@ -113,6 +116,7 @@ export default {
   border: none;
   border-radius: 0.2rem;
   margin: 0 !important;
+  font-size: 1.68rem;
 }
 
 .project-objective-add .add-objective-button {

@@ -12,6 +12,7 @@
           <select-box
             :cssId="companyCssId"
             :selectboxOption="companyNames"
+            :selectedOption="selectedCompany"
             @get-selectbox-text="getSelectboxText">
           </select-box>
         </article>
@@ -19,9 +20,9 @@
           <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new company</h3>          
           <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*99"
             @add-objectives="addCompany"
-            @remove-objectives="removeObjectives"
+            @remove-objectives="removeCompnay"
             :objectives="companyNameInput"
-            :addedText="addedCompany"
+            :addedText="selectedCompany"
             :removeText="removedItem"
             :index="i"
             :placeholderText="companyPlaceholder"
@@ -33,6 +34,7 @@
           <select-box
             :cssId="projectCssId"
             :selectboxOption="projectNames"
+            :selectedOption="selectedProject"
             @get-selectbox-text="getSelectboxText">
           </select-box>
         </article>
@@ -42,10 +44,10 @@
         <article class="objective-vfor-wrapper" v-if="showCreateNewProject === true">
           <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new project</h3>
           <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*98"
-            @add-objectives="addObjectives"
-            @remove-objectives="removeObjectives"
+            @add-objectives="addProject"
+            @remove-objectives="removeProject"
             :objectives="projectNameInput"
-            :addedText="addedObj"
+            :addedText="selectedProject"
             :removeText="removedItem"
             :index="i"
             :placeholderText="projectPlaceholder"
@@ -61,7 +63,6 @@
             @add-objectives="addObjectives"
             @remove-objectives="removeObjectives"
             :objectives="objectives"
-            :addedText="addedObj"
             :removeText="removedItem"
             :index="i"
             :placeholderText="objectivePlaceholder"
@@ -160,16 +161,17 @@ export default {
       selectedCompany: null,
       companyPlaceholder: ['eg Vodafon foundation'],
       projectCssId: 'project-selectbox',
-      projectNames: null,
+      projectNames: [],
       projectNameInput: [''],
       selectedProject: null,
       projectPlaceholder: ['eg INS project'],
       objectiveCssId: 'objective-selectbox',
-      objectives: [''],
+      objectives: [],
       objectivePlaceholder: ['eg How many lessons use INS', 'eg How many students have ICT skills', 'How many students have ICT skills'],
       removedItem: '',
       addedCompany: '',
-      addedObj: null,
+      addedProject: '',
+      addedObj: [],
       dashboardName: 'INS Lessons',
       lastUpdate: '31/12/2019',
       insGrowthRate: '',
@@ -199,6 +201,11 @@ export default {
       try { // create company selectbox
         const createdCompanies = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
         this.companyNames = createdCompanies
+        store.commit('setLogin', { // fake login store commit
+          loggedIn: true,
+          loginUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
+          loginUserFullName: 'Joanna Kang'
+        })
         this.viewMode = 'Company'
         this.updatePage()
       } catch (error) {
@@ -209,32 +216,153 @@ export default {
     })
   },
   methods: {
+    updatePage () {
+      console.log(this.viewMode)
+      switch (this.viewMode) {
+        case 'Company':
+          this.projectNames = null
+          this.showCompanySelectBox = true
+          if (this.selectedCompany === null) {
+            this.objectives = ['']
+            this.showProjectNotice = true
+            this.showObjectNotice = true
+            this.showProjectSelectBox = false
+            this.showCreatenewCompany = false
+            this.showCreateNewObject = false
+          } else {
+            this.showProjectNotice = false
+            this.objectives = ['']
+            this.setProjectSelectbox()
+          }
+          break
+        case 'Project':
+          this.objectives = ['']
+          if (this.selectedProject === 'Create new project') {
+            console.log(this.selectedProject)
+            this.showCreateNewProject = true
+            this.showCreateNewObject = false
+            this.showObjectNotice = true
+            this.setObjectiveInputbox()
+          } else if (this.selectedProject !== null) {
+            this.showCreateNewProject = false
+            this.setObjectiveInputbox()
+          } else {
+            this.setObjectiveInputbox()
+          }
+      }
+    },
+    setProjectSelectbox () {
+      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      database.on('value', (snapshot) => {
+        try { // set project selectbox
+          const projectInfo = snapshot.val().projectInfo
+          this.projectNames = [...Object.keys(projectInfo[this.selectedCompany]), 'Create new project']
+          this.showCompanySelectBox = true
+          this.showCreatenewCompany = false
+          this.showProjectSelectBox = true
+        } catch (error) {
+          console.log('No company name')
+          console.log(this.selectedCompany)
+          if (this.selectedCompany === 'Create new company') {
+            this.switchEditMode('Company')
+          } else if (this.selectedCompany && this.selectedProject === null) {
+            this.switchEditMode('Project')
+          }
+        }
+      })
+    },
+    setObjectiveInputbox () {
+      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      database.on('value', (snapshot) => {
+        try { // set project selectbox
+          const projectInfo = snapshot.val().projectInfo
+          const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
+          if (objectList === undefined) {
+            this.objectives = [""]
+            this.showCreateNewObject = true
+            this.showObjectNotice = false            
+          } else {
+            this.objectives = objectList
+            console.log(this.objectives)
+            this.showCreateNewObject = true
+            this.showObjectNotice = false
+          }
+        } catch (error) {
+          console.log('No project name')
+          if (this.selectedProject === 'Create new project') {
+            this.switchEditMode('Project')
+          } else {
+            this.showCreateNewObject = true
+            this.showObjectNotice = false
+          }
+        }
+      })
+    },
+    switchEditMode (editArea) {
+      switch (editArea) {
+        case 'Company':
+          this.showCreatenewCompany = true
+          this.showProjectNotice = true
+          this.showObjectNotice = true
+          this.showProjectSelectBox = false
+          this.showCreateNewProject = false
+          this.showCreateNewObject = false
+          break
+
+        case 'Project':
+          this.showCreateNewProject = true
+          this.showObjectNotice = true
+          this.showCreateNewObject = false
+          this.showCreatenewCompany = false
+          break
+      }
+    },    
     showNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'inline'
     },
-    toggleDropdown (cssSelectorId) {
-      const menu = document.getElementById(`${cssSelectorId}`)
-      menu.classList.toggle('show')
-    },
     addCompany (addedCompanyFromComp) {
-      // const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
-      // const update = {}
-      // update[`/${userId}/projectInfo/${addedCompanyFromComp}/`] = {}
-      this.companyNames.unshift(addedCompanyFromComp)
+      this.companyNames.unshift(addedCompanyFromComp.userInputSubComp)
+      this.companyNames.pop()
+      this.selectedCompany = addedCompanyFromComp.userInputSubComp
+      this.showCreatenewCompany = false
+      // alert('new company saved!')
     },
-    // addProject (addedProject) {
-    //   console.log(addedProject)
-    // },
-    addObjectives (addedObj) {
-      store.commit('setObjectives', {
-        addedObj
-      })
-      this.objectives = store.state.objectives
+    addProject (addedProjectFromComp) {
+      if (this.projectNames === null) {
+        // add new project to new company
+        this.selectedProject = addedProjectFromComp.userInputSubComp
+        this.projectNames = [addedProjectFromComp.userInputSubComp]
+        this.showCreateNewProject = false
+        this.showProjectSelectBox = true
+      } else {
+        // add new project to existing company in database
+        this.projectNames.unshift(addedProjectFromComp)
+        this.showCreateNewProject = false
+      }
+      // alert('new project saved!')
+    },
+    addObjectives (editedObjFromComp) {
+      const editedIndex = editedObjFromComp.noOfIndex - 1
+      const edtiedText = editedObjFromComp.userInputSubComp
+      this.objectives.splice(editedIndex, 1, edtiedText)
+      if (editedIndex === this.objectives.length - 1) {
+        this.objectives.push("")
+      }
+
       this.$forceUpdate()
     },
-    removeObjectives (removeIndex) {
-      this.objectives.splice(removeIndex - 1, 1)
+    removeObjectives (editedObjFromComp) {
+      const editedIndex = editedObjFromComp.noOfIndex - 1  
+      this.objectives.splice(editedIndex, 1)
+    },
+    removeCompnay (removeIndex) {
+      console.log(removeIndex)
+    },
+    removeProject (removeIndex) {
+      console.log(removeIndex)
     },
     getInsGrowthRate () {
       const prevYear = getLessons([], [], [], '2018')
@@ -243,7 +371,57 @@ export default {
       this.ictGrowthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
     },
     projectUpdate () {
-      console.log('project created')
+      this.firebaseUpdate()
+      alert('new project information has been saved!')
+    },
+    async firebaseUpdate () {
+      const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
+      const company = this.selectedCompany
+      const project = this.selectedProject
+      const objective = this.objectives
+
+      console.log('🥕', objective)
+
+      if (company && project && objective) {
+        const projectInfo = {
+          companyName: company,
+          projectName: project,
+          projectObjectives: objective
+        }
+
+        const update = {}
+        update[`/${userId}/projectInfo/${company}/${project}/`] = projectInfo
+        await this.$database.ref().update(update)
+          .then(() => {
+            try {
+              const database = this.$database.ref(`${userId}`)
+              database.on('value', (snapshot) => {
+                const projectInfo = snapshot.val().projectInfo
+                const addedObjectives = projectInfo[company][project].projectObjectives
+
+                this.selectedCompany = company
+                this.selectedProject = project
+                this.objectives = addedObjectives
+                this.updatePage()
+                this.uploadAreaShow = true
+
+                // update Vuex store
+                store.commit('setProjectInfo', {
+                  companyName: company,
+                  projectName: project
+                })
+
+                objective.forEach(addedObj => {
+                  store.commit('setObjectives', {
+                    addedObj
+                  })
+                })
+              })
+            } catch (error) {
+              console.log(error)
+            }
+          })
+      }
     },
     mouseHover (number) {
       switch (number) {
@@ -274,14 +452,18 @@ export default {
     getSelectboxText (selected) {
       const selectboxType = selected.selectboxType
       const selectedOption = selected.selectedOption
+      console.log('🔥', selectboxType, selectedOption)
 
       switch (selectboxType) {
         case 'company-selectbox':
           this.viewMode = 'Company'
           if (selectedOption === 'Create new company') {
             this.switchEditMode(selectboxType)
-          }          
+          }
           this.selectedCompany = selectedOption
+          this.selectedProject = null
+          this.objective = [""]
+          this.updatePage()
           break
         case 'project-selectbox':
           this.viewMode = 'Project'
@@ -289,100 +471,21 @@ export default {
             this.switchEditMode(selectboxType)
           }
           this.selectedProject = selectedOption
-          break
-      }
-    },
-    updatePage () {
-      // console.log(this.viewMode)
-      switch (this.viewMode) {
-        case 'Company':
-          // console.log('company change')
-          this.projectNames = null
-          this.objectives = ['']
-          this.showCompanySelectBox = true
-          if (this.selectedCompany === null) {
-            this.showProjectSelectBox = false
-            this.showCreatenewCompany = false
-            this.showCreateNewObject = false
-            this.showProjectNotice = true
-            this.showObjectNotice = true
-          } else {
-            this.showProjectNotice = false
-            this.setProjectSelectbox()
-          }
-          break
-        case 'Project':
-          // console.log('project change')
-          this.objectives = ['']
-          if (this.selectedCompany !== null) {
-            this.showCreateNewProject = false
-            this.setObjectiveInputbox()
-          } else {
-            this.setObjectiveInputbox()
-          }
-      }
-    },
-    setProjectSelectbox () {
-      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
-      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
-      database.on('value', (snapshot) => {
-        try { // set project selectbox
-          const projectInfo = snapshot.val().projectInfo
-          this.projectNames = [...Object.keys(projectInfo[this.selectedCompany]), 'Create new project']
-          this.showCompanySelectBox = true
-          this.showCreatenewCompany = false
-          this.showProjectSelectBox = true
-        } catch (error) {
-          // console.log('No company name')
-          this.switchEditMode('Company')
-        }
-      })
-    },
-    setObjectiveInputbox () {
-      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
-      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
-      database.on('value', (snapshot) => {
-        try { // set project selectbox
-          const projectInfo = snapshot.val().projectInfo
-          const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
-          this.objectives = objectList
-          this.showCreateNewObject = true
-          this.showObjectNotice = false
-        } catch (error) {
-          // console.log('No project name')
-          this.switchEditMode('Project')
-        }
-      })
-    },
-    switchEditMode (editArea) {
-      switch (editArea) {
-        case 'Company':
-          this.showCreatenewCompany = true
-          this.showProjectNotice = true
-          this.showObjectNotice = true
-          this.showProjectSelectBox = false
-          this.showCreateNewProject = false
-          this.showCreateNewObject = false
-          break
-
-        case 'Project':
-          this.showCreateNewProject = true
-          this.showCreateNewObject = true
-          this.showCreatenewCompany = false
-          this.showObjectNotice = false
+          console.log('🌟', this.selectedCompany, this.selectedProject)
+          this.setObjectiveInputbox()
           break
       }
     }
   },
   watch: {
-    selectedCompany () {
-      this.viewMode = 'Company'
-      this.updatePage()
-    },
-    selectedProject () {
-      this.viewMode = 'Project'
-      this.updatePage()
-    }
+    // selectedCompany () {
+    //   this.viewMode = 'Company'
+    //   this.updatePage()
+    // },
+    // selectedProject () {
+    //   this.viewMode = 'Project'
+    //   this.updatePage()
+    // }
     // companyNames () {
     //   // console.log(this.companyNames)
     //   // this.selectedCompany = this.companyNames[0]
@@ -511,7 +614,7 @@ export default {
   font-family: Helvetica;
   font-size: 1.6rem;
   color: #686868;
-  background-color: #ffffff;
+  background-color: #fafafa;
   width: 39.8rem;
   padding: 1.6rem;
   margin: 0.3rem 0 2rem 0 !important;

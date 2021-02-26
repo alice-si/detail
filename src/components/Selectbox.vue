@@ -23,6 +23,9 @@ export default {
     },
     selectboxOption: {
       type: Array
+    },
+    selectedOption: {
+      type: String
     }
   },
   data () {
@@ -31,23 +34,25 @@ export default {
     }
   },
   mounted () {
-    // console.log(this.cssId, this.selectboxOption)
+    console.log(this.selectedOption)
+    // if (this.selectedOption === null) {
+    //   this.selectboxPlaceholder = 'Select option'
+    // } else {
+    //   this.selectboxPlaceholder = this.selectedOption
+    // }
   },
   methods: {
     toggleDropdown (cssSelectorId) {
-      console.log(cssSelectorId)
       const menu = document.getElementById(`${cssSelectorId}`)
       menu.classList.toggle('show')
     },
     getText (selectedOption, selectboxType) {
-      console.log(selectedOption, selectboxType)
       switch (selectboxType) {
         case 'company-selectbox':
           this.selectboxPlaceholder = selectedOption
           this.$emit('get-selectbox-text', { selectedOption, selectboxType })
           break
         case 'project-selectbox':
-          console.log(selectedOption, selectboxType)
           this.selectboxPlaceholder = selectedOption
           this.$emit('get-selectbox-text', { selectedOption, selectboxType })
           break
@@ -58,8 +63,13 @@ export default {
   },
   watch: {
     selectboxOption () {
-      console.log(this.selectboxOption)
-      this.selectboxPlaceholder = 'Select option'
+      console.log(this.selectedOption)
+      // this.selectboxPlaceholder = 'Select option'
+      if (this.selectedOption === null) {
+        this.selectboxPlaceholder = 'Select option'
+      } else {
+        this.selectboxPlaceholder = this.selectedOption
+      }      
     }
   }
 }
@@ -77,6 +87,12 @@ export default {
   list-style-type: none;
   padding-left: 0;
   margin-left: 0;
+}
+
+.editproject-dropbox-form li:hover,
+.editproject-dropbox-form li button:hover {
+  background-color: #2FB9EF;
+  color: #ffffff;
 }
 
 .editproject-dropbox-form button {
@@ -108,7 +124,7 @@ export default {
 }
 
 .editproject-dropdown-toggle {
-  width: 100%;
+  width: 39.8rem;
   height: 5rem;
   color: rgba(133, 136, 150, 0.5);
   text-align: left;
