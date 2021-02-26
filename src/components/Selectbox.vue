@@ -103,6 +103,7 @@ export default {
   background-color: #fff;
   border: none;
   cursor: pointer;
+  width: 36.8rem;  
 }
 
 .editproject-dropbox-form button:focus,
@@ -114,7 +115,7 @@ export default {
 .editproject-dropbox-form .editproject-dropbox {
   background-color: #fff;
   /* margin-top: 2rem; */
-  width: 39.8rem;
+  width: 36.8rem;
 }
 
 .editproject-dropbox-form .editproject-dropdown-item {

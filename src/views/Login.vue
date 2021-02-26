@@ -141,7 +141,7 @@ export default {
                 loginUserFullName: username
               })
               alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
-              router.push('/home')
+              router.push('/')
             })
           // store.state.loggedIn = true
         })
@@ -164,7 +164,7 @@ export default {
                 loginUserFullName: username
               })
               alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
-              router.push('/home')
+              router.push('/')
             })
             .catch((error) => {
               alert(error)
