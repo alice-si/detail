@@ -9,16 +9,15 @@
         <h1>Your project's name</h1>
         <input v-model="projectName" type="text" class="projectname-text" placeholder="eg Instant Network Schools - INS">
         <h1 class="objective-form-title">Your project’s impact objective(s)</h1>
-          <div v-for="i in noOfObjectiveInputForm" v-bind:key="i + noOfObjectiveInputForm*100" class="objective-vfor-wrapper">
+          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-vfor-wrapper">
             <objective-input-div
               @add-objectives="addObjectives"
               @remove-objectives="removeObjectives"
-              :objectives="objectives"
-              :addedText="addedObj"
-              :removeText="removedItem"
-              :index="i"
+              :objective="objective"
+              :index="index"
               :placeholderText="placeholders"
-              v-bind:class="i"
+              :totalLength="noOfObjectiveInputForm"
+              v-bind:class="index"
             ></objective-input-div>
           </div>
       </form>
@@ -49,8 +48,6 @@ export default {
       companyName: '',
       projectName: '',
       objectives: [''],
-      removedItem: '',
-      addedObj: null,
       uploadAreaShow: false,
       uploadButtonShow: false,
       placeholders: ['eg How many lessons use INS', 'eg How many students have ICT skills', 'How many students have ICT skills']
@@ -80,25 +77,35 @@ export default {
       })
     },
     addObjectives (addedObj) {
-      store.commit('setObjectives', {
-        addedObj
-      })
-      this.objectives = store.state.objectives
-      this.$forceUpdate()
+      const userInput = addedObj.userInputSubComp
+      const index = addedObj.noOfIndex
+
+      this.objectives[index - 1] = userInput
+      if (this.objectives.length === index) this.objectives.push('')
+
+
+      // store.commit('setObjectives', {
+      //   addedObj
+      // })
+      // this.objectives = store.state.objectives
+      // this.$forceUpdate()
     },
     removeObjectives (removeObj) {
-      this.objectives.splice(removeObj.noOfIndex - 1, 1)
+      // const userInput = removeObj.userInputSubComp
+      const index = removeObj.noOfIndex
+      this.objectives.splice(index - 1, 1)
     },
     projectCreate () {
-      const userId = store.state.loginUserId
-      // eslint-disable-next-line quotes
-      const objectives = store.state.objectives.filter(el => el !== "")
-
-      if (userId && objectives && this.companyName && this.projectName) {
+      console.log(this.objectives)
+      console.log(this.companyName, this.projectName)
+  
+      // const userId = store.state.loginUserId
+      const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
+      if (userId && this.objectives && this.companyName && this.projectName) {
         const projectInfo = {
           companyName: this.companyName,
           projectName: this.projectName,
-          projectObjectives: objectives
+          projectObjectives: this.objectives
         }
 
         const update = {}
@@ -107,16 +114,22 @@ export default {
           .then(() => {
             const database = this.$database.ref(`${userId}`)
             database.on('value', (snapshot) => {
-              const projectInfo = snapshot.val().projectInfo
-              const savedObjectives = projectInfo[this.companyName].projectObjectives
+              const projectInfo = snapshot.val().projectInfo[this.companyName][this.projectName]
+              const savedObjectives = projectInfo.projectObjectives
               console.log(savedObjectives)
+
               store.commit('setProjectInfo', {
-                companyName: this.companyName,
-                projectName: this.projectName
+                companyName: projectInfo.companyName,
+                projectName: projectInfo.projectName
               })
-              // this.objectives = savedObjectives
-              // this.$forceUpdate()
+
+              savedObjectives.forEach(objective => {
+                store.commit('setObjectives', {
+                  addedObj: objective
+                })
+              })
             })
+            console.log(store.state)
             alert('Project detail saved!')
 
             this.uploadAreaShow = true
@@ -146,7 +159,8 @@ export default {
   },
   computed: {
     noOfObjectiveInputForm () {
-      return store.state.objectives.length
+      console.log(this.objectives)
+      return this.objectives.length
     }
   }
 }

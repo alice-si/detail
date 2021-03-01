@@ -82,7 +82,7 @@ export default {
         const detailBox = document.getElementsByClassName('dz-preview')
         for (let i = 0; i < detailBox.length; i++) {
           detailBox[i].style.display = 'none'
-        }    
+        }
       } else if (this.savedFileList.includes(upload.name)) {
         alert(`[ ${upload.name} ] has already been added in system`)
         const detailBox = document.getElementsByClassName('dz-preview')

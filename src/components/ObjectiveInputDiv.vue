@@ -3,13 +3,12 @@
     <input type="text" @keyup="getText(userInputSubComp)" v-model="userInputSubComp" class="objective-text" :placeholder="placeholderTextProp">
     <input v-if="onKeyupEvent !== true" type="button" class="add-objective-button" />
     <input v-if="onKeyupEvent === true" type="button" class="save-objective-button" @click="addObjectives(userInputSubComp, noOfIndex)"/>
-    <input v-if="noOfIndex > 1 && noOfIndex === inputLength" type="button" class="remove-button" @click="removeObjectives(userInputSubComp, noOfIndex)"/>
+    <input v-if="noOfIndex > 1 && noOfIndex - 1 === totalLength - 1" type="button" class="remove-button" @click="removeObjectives(userInputSubComp, noOfIndex)"/>
     <loading-spinner v-if="loadingspinnerShow === true"></loading-spinner>
   </div>
 </template>
 
 <script>
-import { store } from '../store/store'
 import LoadingSpinner from './LoadingSpinner.vue'
 export default {
   name: 'objective-input',
@@ -17,59 +16,39 @@ export default {
     LoadingSpinner
   },
   props: {
-    inputText: {
+    objective: {
       type: String
     },
-    // addedText: {
-    //   type: String
-    // },
     index: {
       type: Number
     },
-    objectives: {
-      type: Array
-    },
     placeholderText: {
       type: Array
+    },
+    totalLength: {
+      type: Number
     }
   },
   data () {
     return {
-      userInput: null,
       userInputSubComp: null,
-      noOfIndex: this.index,
-      inputLength: this.objectives.length,
+      noOfIndex: this.index + 1,
       placeholderTextProp: '',
-      loadingspinnerShow: false,
+      loadingspinnerShow: false, 
       onKeyupEvent: false
     }
   },
   mounted () {
+    this.setPlaceholder()
     this.setText()
   },
   methods: {
     setText () {
-      // if (store.state.objectives[0] !== "") {
-      //   this.userInputSubComp = store.state.objectives[this.index - 1]
-      //   try {
-      //     this.setPlaceholder()
-      //     this.loadingspinnerShow = false
-      //   } catch (error) {
-      //     // loader calling
-      //     this.loadingspinnerShow = true
-      //     return null
-      //   }
-      // } else {
-      //   this.setPlaceholder()
-      //   this.userInputSubComp = this.objectives[this.index - 1]
-      // }
-      console.log(this.objectives)
+      this.userInputSubComp = this.objective
     },
     getText (userInputText) {
       if (userInputText.length > 0) {
         this.onKeyupEvent = true
-      } else {
-        this.onKeyupEvent = false
       }
     },
     removeObjectives (userInputSubComp, noOfIndex) {
@@ -77,6 +56,7 @@ export default {
     },
     addObjectives (userInputSubComp, noOfIndex) {
       this.$emit('add-objectives', { userInputSubComp, noOfIndex })
+      this.onKeyupEvent = false
     },
     setPlaceholder () {
       if (this.placeholderText.length === 1) {
@@ -88,8 +68,7 @@ export default {
     }
   },
   watch: {
-    objectives () {
-      console.log(this.objectives)
+    objective () {
       this.setText()
     }
   }

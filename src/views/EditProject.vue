@@ -21,7 +21,7 @@
           <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*99"
             @add-objectives="addCompany"
             @remove-objectives="removeCompnay"
-            :objectives="companyNameInput"
+            :objectives="objectives"
             :addedText="selectedCompany"
             :removeText="removedItem"
             :index="i"
@@ -43,31 +43,34 @@
         </article>
         <article class="objective-vfor-wrapper" v-if="showCreateNewProject === true">
           <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new project</h3>
-          <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*98"
-            @add-objectives="addProject"
-            @remove-objectives="removeProject"
-            :objectives="projectNameInput"
-            :addedText="selectedProject"
-            :removeText="removedItem"
-            :index="i"
-            :placeholderText="projectPlaceholder"
-            v-bind:class="i"
-          ></object-input-div>
+          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-wrapper">
+            <object-input-div
+              @add-objectives="addProject"
+              @remove-objectives="removeProject"
+              :objective="objective"
+              :index="index"
+              :placeholderText="projectPlaceholder"
+              :totalLength="noOfObjInputForm"
+              v-bind:class="index"
+            ></object-input-div>
+          </div>  
         </article>
       <h3 class="edit-project-subtitle">Your project’s impact objective(s)</h3>
         <article class="objective-vfor-wrapper-subtitle-2" v-if="showObjectNotice === true">
           <h3>Please select company & project first</h3>    
         </article>
         <article class="objective-vfor-wrapper" v-if="showCreateNewObject === true">
-          <object-input-div v-for="i in noOfObjInputForm" v-bind:key="i + noOfObjInputForm*97"
-            @add-objectives="addObjectives"
-            @remove-objectives="removeObjectives"
-            :objectives="objectives"
-            :removeText="removedItem"
-            :index="i"
-            :placeholderText="objectivePlaceholder"
-            v-bind:class="i"
-          ></object-input-div>
+          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-wrapper">
+            <object-input-div
+              @add-objectives="addObjectives"
+              @remove-objectives="removeObjectives"
+              :objective="objective"
+              :index="index"
+              :placeholderText="objectivePlaceholder"
+              :totalLength="noOfObjInputForm"
+              v-bind:class="index"
+            ></object-input-div>
+          </div>
         </article>
       <button @click="projectUpdate" class="project-update-button">Update</button>
     </section>
@@ -279,6 +282,8 @@ export default {
         try { // set project selectbox
           const projectInfo = snapshot.val().projectInfo
           const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
+
+          console.log(projectInfo, objectList)
           if (objectList === undefined) {
             this.objectives = [""]
             this.showCreateNewObject = true
@@ -599,6 +604,11 @@ export default {
   width: 100%;
   margin: 0 0 2rem 0;
   /* margin-bottom: 2.7rem; */
+}
+
+.your-project .objective-vfor-wrapper .objective-text{
+  width: 37.1rem;
+  padding: 0 1.6rem;
 }
 
 .objective-vfor-wrapper-subtitle {
