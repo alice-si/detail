@@ -17,17 +17,18 @@
           </select-box>
         </article>
         <article class="objective-vfor-wrapper" v-if="showCreatenewCompany === true">
-          <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new company</h3>          
-          <object-input-div v-for="i in noOfInputForm" v-bind:key="i + noOfInputForm*99"
-            @add-objectives="addCompany"
-            @remove-objectives="removeCompnay"
-            :objectives="objectives"
-            :addedText="selectedCompany"
-            :removeText="removedItem"
-            :index="i"
-            :placeholderText="companyPlaceholder"
-            v-bind:class="i"
-          ></object-input-div>
+          <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new company</h3>
+          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-input-wrapper">      
+            <object-input-div
+              @add-objectives="addCompany"
+              @remove-objectives="removeCompnay"
+              :objective="objective"
+              :index="index"
+              :placeholderText="companyPlaceholder"
+              :totalLength="noOfObjInputForm"
+              v-bind:class="index"
+            ></object-input-div>
+          </div>
         </article>
       <h3 class="edit-project-subtitle">Your project’s name</h3>
         <article class="editproject-dropdown" v-if="showProjectSelectBox === true">
@@ -43,7 +44,7 @@
         </article>
         <article class="objective-vfor-wrapper" v-if="showCreateNewProject === true">
           <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new project</h3>
-          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-wrapper">
+          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-input-wrapper">
             <object-input-div
               @add-objectives="addProject"
               @remove-objectives="removeProject"
@@ -53,14 +54,14 @@
               :totalLength="noOfObjInputForm"
               v-bind:class="index"
             ></object-input-div>
-          </div>  
+          </div>
         </article>
       <h3 class="edit-project-subtitle">Your project’s impact objective(s)</h3>
         <article class="objective-vfor-wrapper-subtitle-2" v-if="showObjectNotice === true">
           <h3>Please select company & project first</h3>    
         </article>
         <article class="objective-vfor-wrapper" v-if="showCreateNewObject === true">
-          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-wrapper">
+          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-input-wrapper">
             <object-input-div
               @add-objectives="addObjectives"
               @remove-objectives="removeObjectives"
@@ -76,10 +77,10 @@
     </section>
     <section class="upload-module-area">
       <upload-module></upload-module>
-      <button @click="projectUpdate" class="project-update-button">Upload</button>      
+      <button @click="fileListUpdate" class="project-update-button">Upload</button>      
     </section>
-    <section class="framework-area">
-      <h3 class="framework-area-title">Your project's dashboards</h3>
+    <section class="dashboard-area">
+      <h3 class="dashboard-area-title">Your project's dashboards</h3>
         <row :gutter="12" class="framework-thumbnails-wrapper">
           <column class="framework-thumbnail-tile" :lg="3" :md="2" :xs="5">
             <router-link to="/ins">
@@ -133,9 +134,15 @@
             </div>
           </column>
         </row>
+    </section>
+    <section class="framework-area">
       <h3 class="edit-project-subtitle-2">Your impact measurement framework(s)</h3>
       <h3 class="edit-project-subtitle-3">Your framework</h3>
       <framework-select-box></framework-select-box>
+      <div class="framework-target">
+        <h3 class="edit-project-subtitle-3">Your framework's target</h3>
+        <framework-target-selectbox></framework-target-selectbox>
+      </div>
     </section>
   </main>
 </template>
@@ -147,6 +154,7 @@ import { store } from '../store/store'
 import UploadModule from '../components/UploadModule.vue'
 import ObjectInputDiv from '../components/ObjectiveInputDiv.vue'
 import FrameworkSelectBox from '../components/Framework.vue'
+import FrameworkTargetSelectbox from '../components/FrameworkTargetSelectbox.vue'
 import SelectBox from '../components/Selectbox.vue'
 
 export default {
@@ -154,6 +162,7 @@ export default {
     ObjectInputDiv,
     UploadModule,
     FrameworkSelectBox,
+    FrameworkTargetSelectbox,
     SelectBox
   },
   data () {
@@ -202,6 +211,7 @@ export default {
     // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
     database.on('value', (snapshot) => {
       try { // create company selectbox
+        console.log('🚀🚀🚀🚀🚀🚀🚀', snapshot)
         const createdCompanies = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
         this.companyNames = createdCompanies
         store.commit('setLogin', { // fake login store commit
@@ -221,12 +231,13 @@ export default {
   methods: {
     updatePage () {
       console.log(this.viewMode)
+      console.log(this.selectedCompany, this.selectedProject, this.objectives)
       switch (this.viewMode) {
         case 'Company':
           this.projectNames = null
           this.showCompanySelectBox = true
           if (this.selectedCompany === null) {
-            this.objectives = ['']
+            // this.objectives = ['']
             this.showProjectNotice = true
             this.showObjectNotice = true
             this.showProjectSelectBox = false
@@ -234,7 +245,7 @@ export default {
             this.showCreateNewObject = false
           } else {
             this.showProjectNotice = false
-            this.objectives = ['']
+            // this.objectives = ['']
             this.setProjectSelectbox()
           }
           break
@@ -265,13 +276,12 @@ export default {
           this.showCreatenewCompany = false
           this.showProjectSelectBox = true
         } catch (error) {
-          console.log('No company name')
-          console.log(this.selectedCompany)
           if (this.selectedCompany === 'Create new company') {
             this.switchEditMode('Company')
-          } else if (this.selectedCompany && this.selectedProject === null) {
-            this.switchEditMode('Project')
-          }
+          } 
+          // else if (this.selectedCompany && this.selectedProject === null) {
+          //   this.switchEditMode('Project')
+          // }
         }
       })
     },
@@ -283,14 +293,13 @@ export default {
           const projectInfo = snapshot.val().projectInfo
           const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
 
-          console.log(projectInfo, objectList)
           if (objectList === undefined) {
             this.objectives = [""]
             this.showCreateNewObject = true
-            this.showObjectNotice = false            
+            this.showObjectNotice = false
           } else {
             this.objectives = objectList
-            console.log(this.objectives)
+            this.showCreateNewProject = false
             this.showCreateNewObject = true
             this.showObjectNotice = false
           }
@@ -306,6 +315,8 @@ export default {
       })
     },
     switchEditMode (editArea) {
+      console.log('🤖', editArea)
+      this.objectives = [""]
       switch (editArea) {
         case 'Company':
           this.showCreatenewCompany = true
@@ -333,7 +344,6 @@ export default {
       this.companyNames.pop()
       this.selectedCompany = addedCompanyFromComp.userInputSubComp
       this.showCreatenewCompany = false
-      // alert('new company saved!')
     },
     addProject (addedProjectFromComp) {
       if (this.projectNames === null) {
@@ -344,7 +354,7 @@ export default {
         this.showProjectSelectBox = true
       } else {
         // add new project to existing company in database
-        this.projectNames.unshift(addedProjectFromComp)
+        this.projectNames.unshift(addedProjectFromComp.userInputSubComp)
         this.showCreateNewProject = false
       }
       // alert('new project saved!')
@@ -377,15 +387,13 @@ export default {
     },
     projectUpdate () {
       this.firebaseUpdate()
-      alert('new project information has been saved!')
+      alert('Project information has been saved!')
     },
     async firebaseUpdate () {
       const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
       const company = this.selectedCompany
       const project = this.selectedProject
       const objective = this.objectives
-
-      console.log('🥕', objective)
 
       if (company && project && objective) {
         const projectInfo = {
@@ -411,22 +419,25 @@ export default {
                 this.uploadAreaShow = true
 
                 // update Vuex store
-                store.commit('setProjectInfo', {
-                  companyName: company,
-                  projectName: project
-                })
+                // store.commit('setProjectInfo', {
+                //   companyName: company,
+                //   projectName: project
+                // })
 
-                objective.forEach(addedObj => {
-                  store.commit('setObjectives', {
-                    addedObj
-                  })
-                })
+                // objective.forEach(addedObj => {
+                //   store.commit('setObjectives', {
+                //     addedObj
+                //   })
+                // })
               })
             } catch (error) {
               console.log(error)
             }
           })
       }
+    },
+    fileListUpdate () {
+      console.log(store.state)
     },
     mouseHover (number) {
       switch (number) {
@@ -457,54 +468,55 @@ export default {
     getSelectboxText (selected) {
       const selectboxType = selected.selectboxType
       const selectedOption = selected.selectedOption
-      console.log('🔥', selectboxType, selectedOption)
 
       switch (selectboxType) {
         case 'company-selectbox':
           this.viewMode = 'Company'
           if (selectedOption === 'Create new company') {
-            this.switchEditMode(selectboxType)
+            this.objective = [""]
+            this.switchEditMode(this.viewMode)
+          } else {
+            this.selectedCompany = selectedOption
+            this.selectedProject = null
+            this.objective = [""]
+            // this.updatePage()
           }
-          this.selectedCompany = selectedOption
-          this.selectedProject = null
-          this.objective = [""]
-          this.updatePage()
           break
         case 'project-selectbox':
           this.viewMode = 'Project'
           if (selectedOption === 'Create new project') {
-            this.switchEditMode(selectboxType)
+            this.objective = [""]
+            this.switchEditMode(this.viewMode)
+          } else {
+            this.selectedProject = selectedOption
+            this.objective = [""]
+            // this.setObjectiveInputbox()
           }
-          this.selectedProject = selectedOption
-          console.log('🌟', this.selectedCompany, this.selectedProject)
-          this.setObjectiveInputbox()
           break
       }
     }
   },
   watch: {
-    // selectedCompany () {
-    //   this.viewMode = 'Company'
-    //   this.updatePage()
-    // },
-    // selectedProject () {
-    //   this.viewMode = 'Project'
-    //   this.updatePage()
-    // }
-    // companyNames () {
-    //   // console.log(this.companyNames)
-    //   // this.selectedCompany = this.companyNames[0]
-    //   // TODO: 셀렉트박스가 this.companyNames[0]로 선택되도록 하고
-    //   // Project name create 박스가 활성화된다
-    //   // project name이 저장되면 objective 저장 박스가 활성화된다
-    //   // update를 누르면 업로드영역이 활성화된다
-    //   // TODO: objective까지 있어야만 파일 업로드 영역과 대시보드가 활성화된다
-    // }
+    selectedCompany () {
+      console.log(this.selectedCompany)      
+      if (this.selectedCompany === 'Create new company') {
+        this.switchEditMode('Company')
+      } else {
+        this.viewMode = 'Company'
+        this.updatePage()
+      }
+    },
+    selectedProject () {
+      console.log(this.selectedProject)
+      if (this.selectedProject === 'Create new project') {
+        this.switchEditMode('Project')
+      } else {
+        this.viewMode = 'Project'
+        this.updatePage()
+      }      
+    }
   },
   computed: {
-    noOfInputForm () {
-      return 1
-    },
     noOfObjInputForm () {
       return this.objectives.length
     }
@@ -557,7 +569,7 @@ export default {
   margin-bottom: 2rem;
 }
 
-#edit-proejct > section.framework-area > div.container {
+#edit-proejct > section.dashboard-area > div.container {
   display: flex;
   max-width: 144rem;
 }
@@ -585,7 +597,7 @@ export default {
 .edit-project-subtitle,
 .edit-project-subtitle-2,
 .edit-project-subtitle-3,
-.framework-area-title {
+.dashboard-area-title {
   font-family: Helvetica;
   font-size: 2.6rem;
   color: #8954BA;
@@ -593,7 +605,7 @@ export default {
   text-align: left;
 }
 
-.framework-area-title {
+.dashboard-area-title {
   margin-bottom: 4.8rem;
   text-align: left;
 }
@@ -665,12 +677,17 @@ export default {
   font-size: 1.88rem;
 }
 
-.framework-area {
+.dashboard-area {
   margin-top: 5.4rem;
 }
 
-.framework-area .container {
+.dashboard-area .container {
   max-width: 144rem;
+}
+
+.framework-area {
+  display: flex;
+  flex-direction: column;
 }
 
 .framework-thumbnail-tile,
@@ -776,5 +793,11 @@ export default {
 .framework-link-title h1 {
   display: inline;
 }
+
+.framework-target {
+  position: relative;
+  /* margin-top: 10rem; */
+}
+
 
 </style>

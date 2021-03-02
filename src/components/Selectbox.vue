@@ -47,6 +47,7 @@ export default {
       menu.classList.toggle('show')
     },
     getText (selectedOption, selectboxType) {
+      console.log(selectedOption, selectboxType)
       switch (selectboxType) {
         case 'company-selectbox':
           this.selectboxPlaceholder = selectedOption

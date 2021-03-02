@@ -1,74 +1,103 @@
 <template>
   <div class="framework-form-area">
     <form class="dropdown-form">
-      <div class="dropdown">
-        <button type="button" class="dropdown-toggle" @click="toggleDropdown" @blur="toggleDropdown">
-          Select option
+      <div class="framework-dropdown">
+        <button type="button" class="framework-dropdown-toggle" @click="FrameworkToggleDropdown" @blur="FrameworkToggleDropdown">
+          {{selectboxPlaceholder}}
         </button>
-        <ul class="dropdown-menu">
-          <li class="dropdown-item" v-for="(option, index) in selectList" v-bind:key="index">
-            <button type="button" :value="option" class="dropdown-option" @click="getText">
-              {{option}} <a v-if="index === 0 || index === 1 || index === 2 || index === 3 || index === 4" href="#"> - link</a>
+        <ul class="framework-dropdown-menu">
+          <li class="framework-dropdown-item" v-for="(option, index) in selectList" v-bind:key="index">
+            <button type="button" :value="option" class="framework-dropdown-option" @click="getFrameworkText(option)">
+              {{option}}
             </button>
           </li>
         </ul>
       </div>
     </form>
-    <form class="add-link-form" v-if="textInputShow === true">
+    <form class="add-link-form">
       <h3 class='framework-sub-title'>Add a link to the framework you’re using</h3>
-      <input class='text-form' type='text' placeholder="https://www.sopact.com/social-impact-measurement-framework">
+      <!-- <input class='text-form' type='text' placeholder="https://www.sopact.com/social-impact-measurement-framework"> -->
+      <div v-for="(link, index) in linkes" v-bind:key="index" class="objective-input-wrapper">
+        <framework-link-input
+          @add-objectives="addFrameworks"
+          @remove-objectives="removeObjectives"
+          :objective="link"
+          :index="index"
+          :placeholderText="placeholderText"
+          :totalLength="noOfObjInputForm"
+          v-bind:class="index"
+        ></framework-link-input>
+      </div>
       <button class='text-submit'>Add</button>
     </form>
   </div>
 </template>
 
 <script>
+import FrameworkLinkInput from '../components/ObjectiveInputDiv'
 export default {
   name: 'framework',
+  components: {
+    FrameworkLinkInput
+  },
   data () {
     return {
-      selectList: ['SDG - Sustainable Development Goals',
+      selectList: [
+        'No framework',
+        'SDG - Sustainable Development Goals',
         'SROI - Social Return on Investment',
         'ESG - Environmental, Social, Governance',
         'IRIS - Impact Reporting & Investment Standards',
         'GIIRS - Global Impact Investing Rating System',
-        'Other',
-        'Add your own',
-        'No impact measurement framework'],
+        'Other framework'],
       textInputShow: false,
-      selectedOption: ''
+      selectedOption: '',
+      placeholderText: ["https://www.sopact.com/social-impact-measurement-framework"],
+      linkes: [""],
+      selectboxPlaceholder: 'No framework'
     }
   },
   mounted () {
 
   },
   methods: {
-    toggleDropdown () {
-      const menu = document.querySelector('.dropdown-menu')
-      console.log('menu', menu);
-      
+    FrameworkToggleDropdown () {
+      const menu = document.querySelector('.framework-dropdown-menu')
       menu.classList.toggle('show')
     },
-    getText (e) {
-      this.selectedOption = e.target.value
-      const toggleBtn = document.querySelector('.dropdown-toggle')
-      toggleBtn.textContent = this.selectedOption
-      toggleBtn.style.color = '#3f4150'
-
-      const SHOW_CONDITION = ['Other', 'Add your own', 'No impact measurement framework']
-      SHOW_CONDITION.includes(this.selectedOption) ? this.textInputShow = true : this.textInputShow = false
-      this.toggleDropdown()
+    getFrameworkText (text) {
+      console.log(text)
+      this.selectboxPlaceholder = text
+    },
+    addFrameworks (addedFramework) {
+      console.log(addedFramework)
+      this.linkes.unshift(addedFramework.userInputSubComp)
+    },
+    removeObjectives (removedFramework) {
+      const editedIndex = removedFramework.noOfIndex - 1
+      this.linkes.splice(editedIndex, 1)
+      console.log(this.linkes)
     }
   },
   watch: {
-    selectedOption () {
-      this.getText()
+    // selectedOption () {
+    //   this.getFrameworkText()
+    // }
+  },
+  computed: {
+    noOfObjInputForm () {
+      return this.linkes.length
     }
   }
 }
 </script>
 
 <style>
+.framework-form-area {
+  display: flex;
+  flex-direction: column;
+}
+
 .framework-form-area ul,
 .framework-form-area li {
   list-style-type: none;
@@ -105,7 +134,9 @@ export default {
 .framework-form-area .dropdown-form {
   background-color: #fff;
   margin-top: 2rem;
-  width: 45rem;
+  width: 39.7rem;
+  height: 4.7rem;
+  position: relative;
 }
 
 .framework-form-area form h1 {
@@ -116,20 +147,20 @@ export default {
   color: #3f4150;
 }
 
-.framework-form-area .dropdown {
+.framework-form-area .framework-dropdown {
   position: relative;
   z-index: 1;
 }
 
-.framework-form-area .dropdown-item {
+.framework-form-area .framework-dropdown-item {
   padding: 0 1.6rem 0 1.6rem;
   margin: 0;
   border-bottom: 1px solid #DCE2F0;
 }
 
-.framework-form-area .dropdown-toggle {
+.framework-form-area .framework-dropdown-toggle {
   width: 100%;
-  height: 5rem;
+  height: 4.7rem;
   color: rgba(133, 136, 150, 0.5);
   text-align: left;
   transition: border-color 100ms ease-in;
@@ -140,7 +171,7 @@ export default {
   background-origin: content-box;
 }
 
-.framework-form-area .dropdown-toggle.selected {
+.framework-form-area .framework-dropdown-toggle.selected {
   color: #3f4150;
   border-color: rgba(224, 226, 231, 1);
 }
@@ -149,8 +180,8 @@ export default {
   border-color: rgba(224, 226, 231, 1);
 }
 
-.framework-form-area .dropdown-menu {
-  position: absolute;
+.framework-form-area .framework-dropdown-menu {
+  position: relative;
   z-index: 2;
   left: 0;
   width: 100%;
@@ -162,13 +193,13 @@ export default {
     max-height 200ms ease-in, box-shadow 200ms ease-in;
 }
 
-.framework-form-area .dropdown-menu.show {
+.framework-form-area .framework-dropdown-menu.show {
   max-height: 38.2rem;
 }
 
-.framework-form-area .dropdown-option {
+.framework-form-area .framework-dropdown-option {
   width: 100%;
-  height: 4.6rem;
+  height: 4.7rem;
   padding: 0;
   line-height: 2.88rem;
   text-align: left;
@@ -178,34 +209,22 @@ export default {
   margin: 0;
 }
 
-.framework-form-area .dropdown-option:hover {
+.framework-form-area .framework-dropdown-option:hover {
   background-color: #f8f9fa;
 }
 
 .framework-form-area .add-link-form {
-  margin-top: 4rem;
+  margin-top: 2.5rem;
   display: flex;
   flex-direction: column;
 }
 
 .framework-form-area .add-link-form h3 {
-  margin-bottom: 4rem;
-}
-
-.framework-form-area .text-form {
-  width: 50.7rem;
-  height:  7.3rem;
-  border-style: none;
-  border-color: Transparent;
-  overflow: auto;
-  outline: none;
-}
-
-.framework-form-area .text-form::placeholder {
+  margin-bottom: 2.5rem;
   font-family: Helvetica;
-  font-size: 1.68rem;
-  color: rgba(0,0,0,0.25);
-  text-align: center;
+  font-size: 1.6rem;
+  color: #686868;
+  text-align: left;
 }
 
 .framework-form-area .text-submit {
@@ -216,9 +235,9 @@ export default {
   color: #ffffff;
   height: 5.5rem;
   width: 12rem;
-  position: absolute;
+  /* position: relative;
   top: 95%;
-  left: 80%;
+  left: 80%; */
 }
 
 .framework-form-area button::after {
