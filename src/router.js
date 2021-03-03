@@ -66,6 +66,11 @@ const router = new Router({
       component: () => import('./views/EditProject.vue')
     },
     {
+      path: '/editdashboard',
+      name: 'editdashboard',
+      component: () => import('./views/EditDashboard.vue')
+    },    
+    {
       path: '/404',
       name: 'four-o-four',
       component: () => import('./views/404.vue')

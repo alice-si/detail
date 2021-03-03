@@ -65,14 +65,14 @@ export default {
       const dashboardIcon = document.getElementById('dashboard')
       const editpageIcon = document.getElementById('edit-project-icon')
 
-      if (clickedRoute === '/') {
+      if (clickedRoute === '/' || clickedRoute === 'home') {
         this.homeImgSrc = require('../src/assets/Home-selected.svg')
         this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
         this.editpageImgSrc = require('../src/assets/Edit.svg')
         homeIcon.style.borderRight = '3px solid #8954BA'
         dashboardIcon.style.border = '0px'
         editpageIcon.style.border = '0px'
-      } else if (clickedRoute === 'editproject') {
+      } else if (clickedRoute === 'editproject' || clickedRoute === 'editdashboard' ) {
         this.homeImgSrc = require('../src/assets/Home.svg')
         this.dashboardImgSrc = require('../src/assets/Dashboard.svg')
         this.editpageImgSrc = require('../src/assets/Edit-selected.svg')

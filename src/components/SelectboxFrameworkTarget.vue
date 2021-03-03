@@ -9,7 +9,7 @@
           <li class="framework-target-dropdown-item" v-for="(option, index) in selectList" v-bind:key="index" v-bind:for="option" :id="option">
             <button type="button" :value="option" v-bind:for="option" @mouseenter="mouseEnter" @mouseleave="mouseLeave" class="framework-target-dropdown-option" >
               {{option}}
-              <input type="checkbox" :value="option" :class="option" :id="option" @click="toggleCheckboxSelection">
+              <input type="checkbox" :value="option" :class="option" :id="option" @click="setSelectboxPlaceholder">
             </button>
           </li>
         </ul>
@@ -50,7 +50,7 @@ export default {
       const checkBox = document.querySelector(`input[id='${text}']`)
       const checkedOption = document.querySelector(`li[id='${text}']`)
       checkedOption.style.backgroundColor = checkBox.checked ? this.colorLightBlue : this.colorBlue
-      checkedOption.firstChild.style.color = this.colorGrey
+      checkedOption.firstChild.style.color = this.colorWhite
     },
     mouseLeave (event) {
       const text = event.target.value
@@ -69,11 +69,9 @@ export default {
       const menu = document.querySelector('.framework-target-dropdown-menu')
       menu.classList.toggle('show')
     },
-    toggleCheckboxSelection (event) {
+    setSelectboxPlaceholder (event) {
       const text = event.target.value
       const checkBox = document.querySelector(`input[id='${text}']`)
-      const checkedOption = document.querySelector(`li[id='${text}']`)
-      console.log(checkedOption.firstChild.style)
 
       if (checkBox.checked) {
         this.selectedOption.push(text)
@@ -213,12 +211,6 @@ export default {
   background-color: rgb(0, 0, 0, 0);
   margin: 0;
 }
-
-
-/* .framework-target-dropdown-item:hover {
-  background-color: rgb(47, 185, 239);
-  color: #ffffff;
-} */
 
 .framework-target-form-area .add-link-form {
   margin-top: 2.5rem;

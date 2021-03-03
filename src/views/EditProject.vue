@@ -83,7 +83,7 @@
       <h3 class="dashboard-area-title">Your project's dashboards</h3>
         <row :gutter="12" class="framework-thumbnails-wrapper">
           <column class="framework-thumbnail-tile" :lg="3" :md="2" :xs="5">
-            <router-link to="/ins">
+            <router-link to="/editdashboard">
             <div @mouseover="mouseHover(1)" @mouseout="mouseOut(1)">
               <div class="framework-link-title">
                 <h1>INS Lessons</h1>
@@ -100,7 +100,7 @@
             </div>
           </column>
           <column class="framework-thumbnail-tile-2" :lg="3" :md="2" :xs="5">
-            <router-link to="/attendance">
+            <router-link to="/editdashboard">
             <div @mouseover="mouseHover(2)" @mouseout="mouseOut(2)">
               <div class="framework-link-title">
                 <h1>Students attendance</h1>
@@ -117,7 +117,7 @@
             </div>
           </column>
           <column class="framework-thumbnail-tile-3" :lg="3" :md="2" :xs="5">
-            <router-link to="/ict">
+            <router-link to="/editdashboard">
             <div @mouseover="mouseHover(3)" @mouseout="mouseOut(3)">
               <div class="framework-link-title">
                 <h1>ICT skills acquired</h1>
@@ -141,7 +141,7 @@
       <framework-select-box></framework-select-box>
       <div class="framework-target">
         <h3 class="edit-project-subtitle-3">Your framework's target</h3>
-        <framework-target-selectbox></framework-target-selectbox>
+        <selectbox-framework-target></selectbox-framework-target>
       </div>
     </section>
   </main>
@@ -154,7 +154,7 @@ import { store } from '../store/store'
 import UploadModule from '../components/UploadModule.vue'
 import ObjectInputDiv from '../components/ObjectiveInputDiv.vue'
 import FrameworkSelectBox from '../components/Framework.vue'
-import FrameworkTargetSelectbox from '../components/FrameworkTargetSelectbox.vue'
+import SelectboxFrameworkTarget from '../components/SelectboxFrameworkTarget.vue'
 import SelectBox from '../components/Selectbox.vue'
 
 export default {
@@ -162,7 +162,7 @@ export default {
     ObjectInputDiv,
     UploadModule,
     FrameworkSelectBox,
-    FrameworkTargetSelectbox,
+    SelectboxFrameworkTarget,
     SelectBox
   },
   data () {
@@ -211,7 +211,6 @@ export default {
     // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
     database.on('value', (snapshot) => {
       try { // create company selectbox
-        console.log('🚀🚀🚀🚀🚀🚀🚀', snapshot)
         const createdCompanies = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
         this.companyNames = createdCompanies
         store.commit('setLogin', { // fake login store commit
@@ -498,7 +497,7 @@ export default {
   },
   watch: {
     selectedCompany () {
-      console.log(this.selectedCompany)      
+      console.log(this.selectedCompany)
       if (this.selectedCompany === 'Create new company') {
         this.switchEditMode('Company')
       } else {
@@ -752,8 +751,8 @@ export default {
 }
 
 .framework-thumbnail-tile a {
-   text-decoration: none;
- }
+  text-decoration: none;
+}
 
 .framework-thumbnail-tile-3 img,
 .framework-thumbnail-tile-2 img,
@@ -796,7 +795,7 @@ export default {
 
 .framework-target {
   position: relative;
-  /* margin-top: 10rem; */
+  margin-top: 5rem;
 }
 
 

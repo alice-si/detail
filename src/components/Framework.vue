@@ -110,9 +110,10 @@ export default {
   line-height: 1;
   letter-spacing: -0.02em;
   color: #3f4150;
-  background-color: #fff;
+  background-color: rgb(255, 255, 255, 0);
   border: none;
   cursor: pointer;
+  width: 100%;
 }
 
 .framework-form-area button:focus,
@@ -153,7 +154,7 @@ export default {
 }
 
 .framework-form-area .framework-dropdown-item {
-  padding: 0 1.6rem 0 1.6rem;
+  /* padding: 0 1.6rem 0 1.6rem; */
   margin: 0;
   border-bottom: 1px solid #DCE2F0;
 }
@@ -185,9 +186,10 @@ export default {
   z-index: 2;
   left: 0;
   width: 100%;
+  /* padding: 0 1.6rem; */
   max-height: 0;
   overflow: hidden;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255);
   border: 1px solid transparent;
   transition: border-color 200ms ease-in, padding 200ms ease-in,
     max-height 200ms ease-in, box-shadow 200ms ease-in;
@@ -209,12 +211,22 @@ export default {
   margin: 0;
 }
 
-.framework-form-area .framework-dropdown-option:hover {
-  background-color: #f8f9fa;
+.framework-dropdown-menu li {
+  width: 100%;
+  padding: 0 1.6rem;
+}
+
+.framework-dropdown-menu li:hover {
+  background-color: #2FB9EF;
+}
+
+.framework-dropdown-menu li button:hover {
+  color: #ffffff;
 }
 
 .framework-form-area .add-link-form {
-  margin-top: 2.5rem;
+  /* margin-top: 2.5rem; */
+  margin-top: 4rem;
   display: flex;
   flex-direction: column;
 }

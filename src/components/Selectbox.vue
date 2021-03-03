@@ -90,9 +90,11 @@ export default {
   margin-left: 0;
 }
 
-.editproject-dropbox-form li:hover,
-.editproject-dropbox-form li button:hover {
+.editproject-dropbox-form li:hover {
   background-color: #2FB9EF;
+}
+
+.editproject-dropbox-form li button:hover {
   color: #ffffff;
 }
 
@@ -101,7 +103,7 @@ export default {
   line-height: 1;
   letter-spacing: -0.02em;
   color: #3f4150;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0);
   border: none;
   cursor: pointer;
 }
@@ -114,7 +116,6 @@ export default {
 
 .editproject-dropbox-form .editproject-dropbox {
   background-color: #fff;
-  /* margin-top: 2rem; */
   width: 39.8rem;
 }
 
