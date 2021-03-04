@@ -16,25 +16,40 @@
         </column>
       </row>
     </section>
-    <section class="ins-select-area">
+    <section class="edit-dashboard-select-area">
       <row :gutter="12" >
-        <column :lg="1.5"><h3 class="ins-select-country">Select Country</h3></column>
-        <column :lg="2.5" class="ins-select-box"><v-select :options="countries" v-model="selectedCountry" placeholder="Show all" :searchable="false"></v-select></column>
+        <column :lg="1.5"><h3 class="edit-dashboard-selectbox-title-1">Select Country</h3></column>
+        <column :lg="2.5" class="edit-dashboard-select-box">
+          <selectbox-edit-dashboard
+            :cssId="countryCssId"
+            :selectedOption="selectedCountry"
+            :selectboxOption="countries"
+            @remove-option="remove1stSelectboxOption"
+            @add-option="add1stSelectboxOption"
+            @get-selectbox-text="get1stTextInput"
+            @save-selectbox-option="save1stSelectboxInput"/>
+        </column>
         <column :lg="1.5"><h3 class="ins-select-camp">Select Camp</h3></column>
-        <column :lg="2.5" class="ins-select-box">
-          <v-select :options="camps" v-model="selectedCamp" class="select-camp" placeholder="Select country to activate" :searchable="false" :disabled="campSelectboxDisabled">
-            <span slot="no-options">
-              <h3>No more available options</h3>
-            </span>
-          </v-select>
+        <column :lg="2.5" class="edit-dashboard-select-box">
+          <selectbox-edit-dashboard
+            :cssId="campCssId"
+            :selectedOption="selectedCamp"
+            :selectboxOption="camps"
+            @remove-option="remove2ndSelectboxOption"
+            @add-option="add2ndSelectboxOption"
+            @get-selectbox-text="get2ndTextInput"
+            @save-selectbox-option="save2ndSelectboxInput"/>
         </column>
         <column :lg="1.5"><h3 class="ins-select-school">Select School</h3></column>
-        <column :lg="2.5" class="ins-select-box">
-          <v-select :options="schools" v-model="selectedSchool" class="select-school" placeholder="Select camp to activate" :searchable="false" :disabled="schoolSelectboxDisabled">
-            <span slot="no-options">
-              <h3 style="text-align:left; padding-left: 1.8rem; color:#686868; font-family: Helvetica; font-size:1.4rem;">No more available options</h3> 
-            </span>            
-          </v-select>
+        <column :lg="2.5" class="edit-dashboard-select-box">
+          <selectbox-edit-dashboard
+            :cssId="schoolCssId"
+            :selectedOption="selectedSchool"
+            :selectboxOption="schools"
+            @remove-option="remove3rdSelectboxOption"
+            @add-option="add3reSelectboxOption"
+            @get-selectbox-text="get3rdTextInput"
+            @save-selectbox-option="save3rdSelectboxInput"/>
         </column>
       </row>
     </section>
@@ -109,6 +124,7 @@ import TableForTopic from '../components/TableforTopic'
 import StackedBarChart from '../components/StackedBarChart.js'
 import AimDoughnutChart from '../components/AimDoughnutChart.vue'
 import TimeDoughnutChart from '../components/TimeDoughnutChart.vue'
+import SelectboxEditDashboard from '../components/SelectboxEditDashboard'
 import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
 import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
@@ -121,14 +137,18 @@ export default {
     TableForTopic,
     StackedBarChart,
     AimDoughnutChart,
-    TimeDoughnutChart
+    TimeDoughnutChart,
+    SelectboxEditDashboard
   },
   data () {
     return {
       viewMode: 'All',
       selectedCountry: null,
+      countryCssId: 'country-selectbox',
       selectedCamp: null,
+      campCssId: 'camp-selectbox',
       selectedSchool: null,
+      schoolCssId: 'school-selectbox',
       selectedYear: 2019,
       chartData: {},
       linechartShow: true,
@@ -159,9 +179,9 @@ export default {
       TopicTableData: [],
       summaryBoxData: [],
       yearOptions: [],
-      countries: [],
-      camps: [],
-      schools: [],
+      countries: ['Kenya', 'Tanzania', 'South Soudan', 'DR Congo'],
+      camps: ['camp1', 'camp2', 'camp3', 'camp4'],
+      schools: ['school1', 'school2', 'school3', 'school4'],
       country: '',
       camp: '',
       school: '',
@@ -484,7 +504,45 @@ export default {
           dom[tableFontDomIndex].style.color = '#212529'
         }
       }
-    }
+    },
+    remove1stSelectboxOption (removedItem) {
+      this.countries.splice(removedItem.index, 1)
+    },
+    remove2ndSelectboxOption (removedItem) {
+      this.camps.splice(removedItem.index, 1)
+    },
+    remove3rdSelectboxOption (removedItem) {
+      this.schools.splice(removedItem.index, 1)
+    },
+    add1stSelectboxOption (addedItem) {
+      this.countries.push(addedItem.item)
+    },
+    add2ndSelectboxOption (addedItem) {
+      this.camps.push(addedItem.item)
+    },
+    add3reSelectboxOption (addedItem) {
+      this.schools.push(addedItem.item)
+    },
+    get1stTextInput (addedItem) {
+      this.countries.splice(addedItem.index, 1, addedItem.selectedOption)
+    },
+    get2ndTextInput (addedItem) {
+      this.camps.splice(addedItem.index, 1, addedItem.selectedOption)
+      console.log(this.camps)
+    },
+    get3rdTextInput (addedItem) {
+      this.schools.splice(addedItem.index, 1, addedItem.selectedOption)
+      console.log(this.schools)
+    },
+    save1stSelectboxInput () {
+      alert(`${this.countries} saved!`)
+    },
+    save2ndSelectboxInput () {
+      alert(`${this.camps} saved!`)
+    },
+    save3rdSelectboxInput () {
+      alert(`${this.schools} saved!`)
+    }    
   },
   watch: {
     checkedItems () {
@@ -595,23 +653,35 @@ main#edit-dashboard {
   padding-bottom: 2rem;
 }
 
-/* select box area start */
-#edit-dashboard .ins-select-area {
-  max-width: 125.5rem !important;
+.edit-dashboard-select-box {
+  height: 10rem;
 }
 
-#edit-dashboard .ins-select-area .container {
+.editdashboard-dropbox-form {
+  display: flex;
+  justify-content: flex-end;
+  height: 9rem;
+}
+
+/* select box area start */
+#edit-dashboard .edit-dashboard-select-area {
   max-width: 125.5rem !important;
+  margin-top: 5rem;
   align-items: center;
 }
 
-#edit-dashboard .ins-select-area h3 {
+#edit-dashboard .edit-dashboard-select-area .container {
+  max-width: 125.5rem !important;
+  align-items: flex-end;
+}
+
+#edit-dashboard .edit-dashboard-select-area h3 {
   font-size: 1.4rem;
   color: #858585;
   margin: 0;
 }
 
-#edit-dashboard .ins-select-country {
+#edit-dashboard .edit-dashboard-selectbox-title-1 {
   margin: 0;
   padding: 0;
   text-align: left;
@@ -627,71 +697,6 @@ main#edit-dashboard {
   margin:0 1rem 0 0;
 }
 
-/* select box area end */
-
-/* selectbox design customizing start */
-#edit-dashboar .ins-select-area .vs__dropdown-toggle {
-  width: 24.2rem;
-  height: 3.9rem;
-  background-color: #ffffff;
-  border: none;
-  font-size: 1.68rem;
-  color: #686868;
-  padding-left: 1rem;
-}
-
-#edit-dashboard  .ins-select-area .vs__dropdown-menu {
-  background-color: #ffffff;
-  box-shadow: none;
-  border: none;
-  border-radius: 2px;
-  font-size: 1.68rem;
-  width: 24.2rem !important;
-  color: #686868;
-}
-
-#edit-dashboard .ins-select-area .vs--disabled .vs__dropdown-toggle {
-  background-color: rgba(255, 255, 255, 0.40);
-  font-size: 14px;
-  color: rgba(104,104,104,0.40) !important; 
-}
-
-#edit-dashboard .ins-select-area .vs--disabled .vs__search {
-  background-color: rgba(255, 255, 255, 0.40);
-  font-size: 14px;
-  color: rgba(104,104,104,0.40) !important; 
-}
-
-#edit-dashboard .year-select-box .vs__dropdown-toggle {
-  background-color: #ffffff;
-  border: none;
-  font-size: 1.4rem;
-  min-width: 12rem;
-  padding-left: 1rem;
-}
-
-#edit-dashboard .year-select-box .vs__dropdown-menu {
-  background-color:  #ffffff;
-  box-shadow: none;
-  border: none;
-  border-radius: 2px;
-  font-size: 1.4rem;
-  min-width: 12rem !important;
-  color: #686868;
-}
-
-#edit-dashboard .vs__search {
-  margin: 0;
-  padding: 0;
-  color: #686868;    
-}
-
-#edit-dashboard .vs__selected {
-  margin: 0;
-  padding: 0;
-  color: #686868;  
-}
-/* selectbox design customizing end */
 
 #edit-dashboard .chart-title-area {
   display: flex;
