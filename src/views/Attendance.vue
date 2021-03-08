@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import GroupBarChart from '../components/GroupBarChart'
+import GroupBarChart from '../components/Chart/GroupBarChart'
 import TableForAttendance from '../components/TableForAttendance.vue'
 import { getGroupBarChartColorSheme } from '../data/colour-scheme'
 

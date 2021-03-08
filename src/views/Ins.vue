@@ -102,13 +102,13 @@
 </template>
 
 <script>
-import LineChart from '../components/LineChart.js'
-import BarChart from '../components/BarChart.js'
+import LineChart from '../components/Chart/LineChart.js'
+import BarChart from '../components/Chart/BarChart.js'
+import StackedBarChart from '../components/Chart/StackedBarChart.js'
+import AimDoughnutChart from '../components/Chart/AimDoughnutChart.vue'
+import TimeDoughnutChart from '../components/Chart/TimeDoughnutChart.vue'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
-import StackedBarChart from '../components/StackedBarChart.js'
-import AimDoughnutChart from '../components/AimDoughnutChart.vue'
-import TimeDoughnutChart from '../components/TimeDoughnutChart.vue'
 import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
 import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
 import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'

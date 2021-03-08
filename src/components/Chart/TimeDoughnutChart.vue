@@ -1,6 +1,6 @@
 <template>
   <div>
-    <canvas id="box" width="114" height="114"></canvas>
+    <canvas id="box2" width="114" height="114"></canvas>
   </div>
 </template>
 
@@ -12,17 +12,8 @@ export default {
     }
   },
   mounted () {
-    this.drawCircle(
-      this.doughnutChartData.box,
-      this.doughnutChartData.title,
-      this.doughnutChartData.subtitle1,
-      this.doughnutChartData.subtitle2,
-      this.doughnutChartData.percentage,
-      this.doughnutChartData.insideText,
-      this.doughnutChartData.color)
-
     let min = 0
-    let max = this.doughnutChartData.percentage
+    let max = this.doughnutChartData.percentage / 3 * 100
     setInterval(() => {
       if (min <= max) {
         min += 0.3
@@ -32,12 +23,11 @@ export default {
   },
   // data () {
   //   return {
-  //     box: ''
   //   }
   // },
   methods: {
     drawCircle (endpoint) {
-      const canvas = document.getElementById('box')
+      const canvas = document.getElementById('box2')
       const centerX = canvas.width / 1.65
       const centerY = canvas.height / 1.6
       const ctx = canvas.getContext('2d')
@@ -48,16 +38,15 @@ export default {
       ctx.fillText(this.doughnutChartData.title, 0, 15)
       ctx.font = '300 12px Helvetica'
       ctx.fillStyle = '#686868'
-      ctx.fillText(this.doughnutChartData.subtitle1, 0, 36.2, 60)
-      ctx.font = '300 10px Helvetica'      
+      ctx.fillText('in ' + this.doughnutChartData.subtitle1, 0, 36.2, 60)
       ctx.fillStyle = '#686868'
       ctx.fillText(this.doughnutChartData.subtitle2, 0, 49.2, 60)
       ctx.font = '20px Helvetica'
       ctx.fillStyle = '#686868'
-      ctx.fillText(`${this.doughnutChartData.percentage}%`, 50, 68, 60)
+      ctx.fillText(`${this.doughnutChartData.percentage}`, 60, 68, 60)
       ctx.font = '300 12px Helvetica'
       ctx.fillStyle = '#686868'
-      ctx.fillText(this.doughnutChartData.insideText, 45, 88, 60)
+      ctx.fillText(this.doughnutChartData.insideText, 42, 88, 60)
       // background
       ctx.beginPath()
       ctx.lineWidth = 8
@@ -78,21 +67,30 @@ export default {
       ctx.fillStyle = 'rgb(255, 255, 255, 0)'
       ctx.fill()
     }
-    // fillCircle (color, min) {
-    //   const canvas = document.getElementById('box')
-    //   const centerX = canvas.width / 1.65
-    //   const centerY = canvas.height / 1.8
-    //   const ctx = canvas.getContext('2d')
-    //   ctx.beginPath()
-    //   ctx.lineWidth = 8
-    //   ctx.strokeStyle = `${color}`
-    //   ctx.lineCap = 'round'
-    //   const fraction = min / 100
-    //   ctx.arc(centerX, centerY, 38, 1.5 * Math.PI, (1.0 + fraction) * 1.5 * Math.PI, false)
-    //   ctx.stroke()
-    //   ctx.fillStyle = 'rgb(255, 255, 255, 0)'
-    //   ctx.fill()
-    // }
+  },
+  watch: {
+    doughnutChartData: {
+      handler: function (val) {
+        this.drawCircle(
+          val.box,
+          val.title,
+          val.subtitle1,
+          val.subtitle2,
+          val.percentage,
+          val.insideText,
+          val.color)
+        
+        // let min = 0
+        // let max = val.percentage
+        // setInterval(() => {
+        //   if (min <= max) {
+        //     min += 0.3
+        //     this.drawCircle(min)
+        //   }
+        // }, 0.01)
+      },
+      deep: true
+    }
   }
 }
 </script>

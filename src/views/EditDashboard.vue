@@ -2,16 +2,22 @@
   <main id="edit-dashboard">
     <section id="page-title">
       <row>
-        <column :lg="8" class="page-title">
+        <column :lg="7" class="page-title">
           <div align="left" class="back">
             <router-link to="/editproject">
               <img src="../../src/assets/BackArrow.svg" alt="back-arrow"/> Back
             </router-link>
           </div>
-          <h1 class="title">INS Lessons</h1>
+          <h1 class="title">INS Lessons - Edit</h1>
         </column>
-        <column :lg="4" class="progress-summary">
+        <column :lg="5" class="progress-summary">
+          <span class="tap-to-edit-1" v-if="saveAimBtnShow === false">Tap to edit</span>
+          <input type="button" class="doughnut-inputbox-saveBtn" v-if="saveAimBtnShow === true" @click="clearAimText"/>
+          <input type="text" class="doughnut-inputbox-1" value="doughnut-inputbox-1" v-model="doughnutChartData1.subtitle1" @focus="changeTextColor"  @keyup="getAimText(doughnutChartData1.subtitle1)"></input>
           <div class="doughnut-1"><aim-doughnut-chart :doughnutChartData="doughnutChartData1"></aim-doughnut-chart></div>
+          <span class="tap-to-edit-2" v-if="saveTimeBtnShow === false">Tap to edit</span>
+          <input type="button" class="doughnut-inputbox-saveBtn" v-if="saveTimeBtnShow === true" @click="clearTimeText"/>
+          <input type="text" class="doughnut-inputbox-2"  value="doughnut-inputbox-2" v-model="doughnutChartData2.subtitle1" @focus="changeTextColor" @keyup="getTimeText(doughnutChartData2.subtitle1)"/>
           <div class="doughnut-2"><time-doughnut-chart :doughnutChartData="doughnutChartData2"></time-doughnut-chart></div>
         </column>
       </row>
@@ -117,17 +123,17 @@
 </template>
 
 <script>
-import LineChart from '../components/LineChart.js'
-import BarChart from '../components/BarChart.js'
+import LineChart from '../components/Chart/LineChart.js'
+import BarChart from '../components/Chart/BarChart.js'
+import StackedBarChart from '../components/Chart/StackedBarChart.js'
+import AimDoughnutChart from '../components/Chart/AimDoughnutChart.vue'
+import TimeDoughnutChart from '../components/Chart/TimeDoughnutChart.vue'
 import Table from '../components/Table'
 import TableForTopic from '../components/TableforTopic'
-import StackedBarChart from '../components/StackedBarChart.js'
-import AimDoughnutChart from '../components/AimDoughnutChart.vue'
-import TimeDoughnutChart from '../components/TimeDoughnutChart.vue'
 import SelectboxEditDashboard from '../components/SelectboxEditDashboard'
-import { setYearSelectBox, getCountries, getCamps, getSchools, getLessons, getLessonsByTopics, getTotalLessonsByCountry, getTotalLessonsByCamp } from '../data/data-provider.js'
+import { setYearSelectBox, getCountries, getLessons } from '../data/data-provider.js'
 import { getAllPurpleColor, getLineChartColorScheme } from '../data/colour-scheme.js'
-import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData, getStackedBarChartData } from '../data/data-handler'
+import { calcSum, compareDataByYear, getLineChartData, getTableData, getBarChartData } from '../data/data-handler'
 
 export default {
   components: {
@@ -151,6 +157,8 @@ export default {
       schoolCssId: 'school-selectbox',
       selectedYear: 2019,
       chartData: {},
+      saveAimBtnShow: false,
+      saveTimeBtnShow: false,
       linechartShow: true,
       stackedChartShow: false,
       campSelectboxDisabled: true,
@@ -160,7 +168,7 @@ export default {
       doughnutChartData1: {
         box: 'box1',
         title: 'Aim',
-        subtitle1: '800 lessons',
+        subtitle1: '800',
         subtitle2: 'using INS',
         percentage: '87',
         insideText: 'complete',
@@ -169,7 +177,7 @@ export default {
       doughnutChartData2: {
         box: 'box2',
         title: 'Time',
-        subtitle1: 'in 3 years',
+        subtitle1: '3 years',
         subtitle2: '',
         percentage: '1',
         insideText: 'more year',
@@ -334,135 +342,39 @@ export default {
       this.updateConditionalRendering()
       let lessons = {}
       let prevYearLessons = {}
-      let totalCurrLessons = []
-      let totalPrevLessons = []
+      // let totalCurrLessons = []
+      // let totalPrevLessons = []
       let tableLessons = {}
       let prevTableLessons = {}
 
-      switch (this.viewMode) {
-        case 'All':
-          tableLessons = getLessons(getCountries(), [], [], this.selectedYear)
-          prevTableLessons = getLessons(getCountries(), [], [], this.selectedYear - 1)
-          if (this.checkedItems.length === 0) {
-            lessons = getLessons([], [], [], this.selectedYear)
-            prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
-            this.totalLessons = calcSum(Object.values(lessons.lessons[0]))
-            this.growthRate = compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
-            this.chartData = getLineChartData(lessons, getAllPurpleColor)
-          } else {
-            lessons = tableLessons
-            this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
-          }
-          this.barChartData = getBarChartData(getTableData('Country', tableLessons, prevTableLessons))
-          this.tableData = getTableData('Country', tableLessons, prevTableLessons)
-          this.summaryBoxData = this.filterTopics(getTableData('Country', tableLessons, prevTableLessons))
-          this.updateColors(this.viewMode, getLineChartColorScheme)
-          break
-
-        case 'Country':
-          tableLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
-          prevTableLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
-          if (this.checkedItems.length === 0) {
-            lessons = getTotalLessonsByCountry(this.selectedCountry, this.selectedYear)
-            prevYearLessons = getTotalLessonsByCountry(this.selectedCountry, this.selectedYear - 1)
-            this.chartData = getLineChartData(lessons, getAllPurpleColor)
-          } else {
-            lessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear)
-            prevYearLessons = getLessons([this.selectedCountry], getCamps(this.selectedCountry), [], this.selectedYear - 1)
-            this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
-          }
-          totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
-          totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
-          this.totalLessons = calcSum(totalCurrLessons)
-          this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.barChartData = getBarChartData(getTableData('Camps', tableLessons, prevTableLessons))
-          this.tableData = getTableData('Camps', tableLessons, prevTableLessons)
-          this.summaryBoxData = this.filterTopics(getTableData('Camps', tableLessons, prevTableLessons))
-          this.updateColors(this.viewMode, getLineChartColorScheme)
-          break
-
-        case 'Camp':
-          // table lessons data
-          tableLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
-          prevTableLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
-          
-          if (this.checkedItems.length === 0) {
-            lessons = getTotalLessonsByCamp(this.selectedCountry, this.selectedCamp, this.selectedYear)
-            prevYearLessons = getTotalLessonsByCamp(this.selectedCountry, this.selectedCamp, this.selectedYear - 1)
-            this.chartData = getLineChartData(lessons, getAllPurpleColor)
-          } else {
-            lessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear)
-            prevYearLessons = getLessons([this.selectedCountry], [this.selectedCamp], getSchools(this.selectedCountry, this.selectedCamp), this.selectedYear - 1)
-            this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
-          }
-          totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
-          totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
-          this.totalLessons = calcSum(totalCurrLessons)
-          this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.barChartData = getBarChartData(getTableData('Schools', tableLessons, prevTableLessons))
-          this.tableData = getTableData('Schools', tableLessons, prevTableLessons)
-          this.summaryBoxData = this.filterTopics(getTableData('Schools', tableLessons, prevTableLessons))
-          this.updateColors(this.viewMode, getLineChartColorScheme)
-          break
-
-        case 'School':
-          lessons = getLessonsByTopics([this.selectedCountry], [this.selectedCamp], [this.selectedSchool], this.selectedYear)
-          prevYearLessons = getLessonsByTopics([this.selectedCountry], [this.selectedCamp], [this.selectedSchool], this.selectedYear - 1)
-          totalCurrLessons = lessons.lessons.flatMap(el => Object.values(el))
-          totalPrevLessons = prevYearLessons.lessons.flatMap(el => Object.values(el))
-          this.totalLessons = calcSum(totalCurrLessons)
-          this.growthRate = compareDataByYear(totalPrevLessons, totalCurrLessons)
-          this.stackedBarChartData = this.filterChartData(getStackedBarChartData(lessons, getLineChartColorScheme), this.checkedItems)
-          this.TopicTableData = getTableData('Topics', lessons, prevYearLessons)
-          this.summaryBoxData = this.filterTopics(getTableData('Topics', lessons, prevYearLessons)) // for checkbox rendering
-          this.updateColors(this.viewMode, getLineChartColorScheme)
-          break
+      tableLessons = getLessons(getCountries(), [], [], this.selectedYear)
+      prevTableLessons = getLessons(getCountries(), [], [], this.selectedYear - 1)
+      if (this.checkedItems.length === 0) {
+        lessons = getLessons([], [], [], this.selectedYear)
+        prevYearLessons = getLessons([], [], [], this.selectedYear - 1)
+        this.totalLessons = calcSum(Object.values(lessons.lessons[0]))
+        this.growthRate = compareDataByYear(Object.values(prevYearLessons.lessons[0]), Object.values(lessons.lessons[0]))
+        this.chartData = getLineChartData(lessons, getAllPurpleColor)
+      } else {
+        lessons = tableLessons
+        this.chartData = this.filterChartData(getLineChartData(lessons, getLineChartColorScheme), this.checkedItems)
       }
+      this.barChartData = getBarChartData(getTableData('Country', tableLessons, prevTableLessons))
+      this.tableData = getTableData('Country', tableLessons, prevTableLessons)
+      this.summaryBoxData = this.filterTopics(getTableData('Country', tableLessons, prevTableLessons))
+      this.updateColors(this.viewMode, getLineChartColorScheme)
     },
     updateConditionalRendering () {
-      switch (this.viewMode) {
-        case 'All':
-          this.linechartShow = true
-          this.stackedChartShow = false
-          this.camplSelectboxDisabled = true
-          this.schoolSelectboxDisabled = true
-          this.selectedCountry = null
-          this.selectedCamp = null
-          this.selectedSchool = null
-          this.country = '- across countries'
-          this.camp = ''
-          this.school = ''
-          break
-        case 'Country':
-          this.linechartShow = true
-          this.stackedChartShow = false
-          this.campSelectboxDisabled = false
-          this.schoolSelectboxDisabled = true
-          this.selectedCamp = null
-          this.selectedSchool = null
-          this.camps = getCamps(this.selectedCountry)
-          this.country = '- ' + this.selectedCountry
-          this.camp = ''
-          this.school = ''
-          break
-        case 'Camp':
-          this.linechartShow = true
-          this.stackedChartShow = false
-          this.campSelectboxDisabled = false
-          this.schoolSelectboxDisabled = false
-          this.selectedSchool = null
-          this.schools = getSchools(this.selectedCountry, this.selectedCamp)
-          this.camp = ', ' + this.selectedCamp
-          this.school = ''
-          break
-        case 'School':
-          this.linechartShow = false
-          this.stackedChartShow = true
-          this.campSelectboxDisabled = false
-          this.schoolSelectboxDisabled = false
-          this.school = ', ' + this.selectedSchool
-          break
-      }
+      this.linechartShow = true
+      this.stackedChartShow = false
+      this.camplSelectboxDisabled = true
+      this.schoolSelectboxDisabled = true
+      this.selectedCountry = null
+      this.selectedCamp = null
+      this.selectedSchool = null
+      this.country = '- across countries'
+      this.camp = ''
+      this.school = ''
     },
     filterTopics (tableData) {
       const filtered = tableData.filter(el => el.totalLessons !== 0)
@@ -485,7 +397,6 @@ export default {
       return chartData
     },
     updateColors (view, colorScheme) {
-      const tableFontDomIndex = view === 'School' ? 7 : 9
       for (let i = 0; i < this.summaryBoxData.length; i++) {
         const cssId = this.summaryBoxData[i].cssId
         const dom = document.getElementsByClassName(`${cssId}`)
@@ -495,13 +406,13 @@ export default {
           dom[2].style.border = `1px solid ${checkedColor}` // connected div to checkbox
           dom[3].style.color = checkedColor // V
           dom[4].style.color = checkedColor // Topic text
-          dom[tableFontDomIndex].style.color = checkedColor // Table name
+          dom[9].style.color = checkedColor // Table name
         } else if (dom.length !== 0 && !dom[0].checked) {
           dom[1].style.color = '#D8D8D8'
           dom[2].style.border = '1px solid #D8D8D8'
           dom[3].style.color = '#ffffff'
           dom[4].style.color = '#D8D8D8'
-          dom[tableFontDomIndex].style.color = '#212529'
+          dom[9].style.color = '#212529'
         }
       }
     },
@@ -528,11 +439,9 @@ export default {
     },
     get2ndTextInput (addedItem) {
       this.camps.splice(addedItem.index, 1, addedItem.selectedOption)
-      console.log(this.camps)
     },
     get3rdTextInput (addedItem) {
       this.schools.splice(addedItem.index, 1, addedItem.selectedOption)
-      console.log(this.schools)
     },
     save1stSelectboxInput () {
       alert(`${this.countries} saved!`)
@@ -542,49 +451,59 @@ export default {
     },
     save3rdSelectboxInput () {
       alert(`${this.schools} saved!`)
-    }    
+    },
+    getAimText (aimText) {
+      this.doughnutChartData1.subtitle1 = ''
+      this.saveAimBtnShow = true
+      const inputText = document.getElementsByClassName('doughnut-inputbox-1')
+      inputText[0].style.color = '#686868'
+      this.doughnutChartData1.subtitle1 = (aimText === '') ? '       ' : aimText
+    },
+    clearAimText () {
+      const inputText = document.getElementsByClassName('doughnut-inputbox-1')
+      inputText[0].style.color = 'rgba(0, 0, 0, 0)'
+      this.saveAimBtnShow = false
+    },
+    getTimeText (timeText) {
+      this.doughnutChartData2.subtitle1 = ''
+      this.saveTimeBtnShow = true
+      const inputText = document.getElementsByClassName('doughnut-inputbox-2')
+      inputText[0].style.color = '#686868'
+      this.doughnutChartData2.subtitle1 = timeText
+    },
+    clearTimeText () {
+      const inputText = document.getElementsByClassName('doughnut-inputbox-2')
+      inputText[0].style.color = 'rgba(0, 0, 0, 0)'
+      this.saveTimeBtnShow = false
+    },
+    changeTextColor (event) {
+      // console.log(event.target.className)
+      const className = (event.target.className === 'doughnut-inputbox-1') ? 'doughnut-inputbox-1' : 'doughnut-inputbox-2'
+      const inputText = document.getElementsByClassName(className)
+      inputText[0].style.color = '#686868'
+    }
   },
   watch: {
     checkedItems () {
       this.updateData()
     },
-    selectedYear () {
-      this.uncheckAllCheckboxes()
-      this.updateData()
-    },
-    selectedCountry () {
-      if (this.selectedCountry === null) {
-        this.viewMode = 'All'
-        this.uncheckAllCheckboxes()
-        this.updateData()
-      } else {
-        this.viewMode = 'Country'
-        this.uncheckAllCheckboxes()
-        this.updateData()
-      }
-    },
-    selectedCamp () {
-      if (this.selectedCamp === null) {
-        this.viewMode = 'Country'
-        this.uncheckAllCheckboxes()
-        this.updateData()
-      } else {
-        this.viewMode = 'Camp'
-        this.uncheckAllCheckboxes()
-        this.updateData()
-      }
-    },
-    selectedSchool () {
-      if (this.selectedSchool === null) {
-        this.viewMode = 'Camp'
-        this.uncheckAllCheckboxes()
-        this.updateData()
-      } else {
-        this.viewMode = 'School'
-        this.uncheckAllCheckboxes()
-        this.updateData()
-      }
+    timeTextInput () {
+      console.log(this.timeTextInput)
     }
+    // doughnutChartData1: {
+    //   handler: function (val) {
+    //     console.log(val)
+    //     this.clearAimText()
+    //   },
+    //   deep: true
+    // },
+    // doughnutChartData2: {
+    //   handler: function (val) {
+    //     console.log(val)
+    //     this.clearTimeText()
+    //   },
+    //   deep: true
+    // }
   }
 }
 </script>
@@ -612,6 +531,7 @@ main#edit-dashboard {
   color: var(--color-purple);
   font-weight: 300;
   text-align: left;
+  margin-top: 1rem;
 }
 
 #edit-dashboard #page-title {
@@ -625,12 +545,70 @@ main#edit-dashboard {
   padding-right: 1.2rem !important;
 }
 
-#edit-dashboard .doughnut-1 {
-  padding-right: 4.2825rem;
+#edit-dashboard .progress-summary .tap-to-edit-1 {
+  position: relative;
+  top: 2.6rem;
+  left: 1.5rem;
+  color: #686868;
 }
 
-#edit-dashboard .doughnut-2 {
-  padding-left: 4.2825rem;
+#edit-dashboard .progress-summary .tap-to-edit-2 {
+  position: relative;
+  top: 2.63rem;
+  left: 3.5rem;
+  color: #686868;
+}
+
+.doughnut-inputbox-1 {
+  position: relative;
+  top: 2.25rem;
+  left: 2.2rem;
+  width: 2.4rem;
+  height: 1.8rem;
+  background-color: rgba(245, 247, 252, 0);
+  color: #686868;
+  border: none;
+  border-bottom: 1px solid #686868;
+  font-size: 1.1rem;
+}
+
+.doughnut-inputbox-2 {
+  position: relative;
+  font-size: 1rem;
+  top: 2.2rem;
+  left: 5.3rem;
+  width: 3.5em;
+  height: 2rem;
+  background-color: rgb(245, 247, 252, 0);
+  color: #686868;
+  border: none;
+  border-bottom: 1px solid #686868;
+  font-size: 1.2rem;
+}
+
+.doughnut-inputbox-saveBtn,
+.doughnut-inputbox-1:focus,
+.doughnut-inputbox-2:focus {
+  background-color: rgb(245, 247, 252);
+  outline: none;
+}
+
+.doughnut-inputbox-saveBtn {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  font-size: 3.5rem;
+  width: 3rem;
+  height: 3rem;
+  color: #8954BA;
+  box-shadow: 0 7px 20px 0 rgba(159,168,214,0.59);
+  position: relative;
+  right: -1.5rem;
+  top: 2rem;
+  padding: 0;
+  background-image: url('../assets/ObjectSaveBtn.svg');
+  background-position: 50% 25%;
+  background-size: 5em 5rem;
 }
 
 #edit-dashboard .progress-summary{
@@ -869,6 +847,28 @@ main#edit-dashboard {
 #edit-dashboard .year-select-box {
   align-self: flex-end;
   margin: 1rem 3.5rem 0 0;
+}
+
+#edit-dashboard .year-select-box .vs__dropdown-toggle {
+  background-color: #ffffff;
+  border: none;
+  font-size: 1.4rem;
+  min-width: 12rem;
+  padding-left: 1rem;
+}
+
+#edit-dashboard .year-select-box .vs__dropdown-menu {
+  background-color:  #ffffff;
+  box-shadow: none;
+  border: none;
+  border-radius: 2px;
+  font-size: 1.4rem;
+  min-width: 12rem !important;
+  color: #686868;
+}
+
+.vs__dropdown-menu .vs__search{
+  border: none;
 }
 
 #edit-dashboard .summary-area #bar-chart #bar-chart {

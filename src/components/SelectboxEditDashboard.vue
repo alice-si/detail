@@ -2,7 +2,7 @@
   <form class="editdashboard-dropbox-form">
   <input type="button" class="editdashboard-dropbox-activateBtn" value="Drop to edit" v-if="savebuttonShow === false">
   <input type="button" class="save-optionlist-button" v-if="savebuttonShow === true"  @click="saveOption"/>
-  <div class="editdashboard-dropbox" @mouseenter="toggleDropdown(cssId)" @mouseleave="toggleDropdown(cssId)">
+  <div class="editdashboard-dropbox" @mouseleave="toggleDropdown(cssId)">
     <button type="button" class="editdashboard-dropdown-toggle" @click="toggleDropdown(cssId)">
       {{selectboxPlaceholder}}
     </button>

@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import GroupBarChart from '../components/GroupBarChart'
+import GroupBarChart from '../components/Chart/GroupBarChart'
 import TableForICT from '../components/TableForICT'
 import TableForICTSkills from '../components/TableForICTSkills'
 import { getTeacherSchoolSkillData,
