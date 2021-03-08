@@ -8,59 +8,57 @@
     <section class="your-project">
       <h1 class="edit-project-title">Your projects</h1>
       <h3 class="edit-project-subtitle">Your company's name</h3>
-        <article class="editproject-dropdown" v-if="showCompanySelectBox === true">
+        <article class="editproject-dropdown" v-if="showCompanySelectBox">
           <select-box
             :cssId="companyCssId"
             :selectboxOption="companyNames"
             :selectedOption="selectedCompany"
-            @get-selectbox-text="getSelectboxText">
+            @get-selectbox-text="getSelectboxText"
+            >
           </select-box>
         </article>
-        <article class="objective-vfor-wrapper" v-if="showCreatenewCompany === true">
-          <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new company</h3>
-          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-input-wrapper">      
+        <article class="objective-vfor-wrapper" v-if="showCreateNewCompany">
+          <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new company name</h3>
             <object-input-div
               @add-objectives="addCompany"
-              @remove-objectives="removeCompnay"
-              :objective="objective"
-              :index="index"
+              @remove-objectives="removeCompany"
+              objective=""
+              index=0
               :placeholderText="companyPlaceholder"
-              :totalLength="noOfObjInputForm"
-              v-bind:class="index"
+              totalLength=1
+              v-bind:class="0"
             ></object-input-div>
-          </div>
-        </article>
+        </article>        
       <h3 class="edit-project-subtitle">Your project’s name</h3>
-        <article class="editproject-dropdown" v-if="showProjectSelectBox === true">
+        <article class="editproject-dropdown" v-if="showProjectSelectBox">
           <select-box
             :cssId="projectCssId"
             :selectboxOption="projectNames"
             :selectedOption="selectedProject"
-            @get-selectbox-text="getSelectboxText">
+            @get-selectbox-text="getSelectboxText"
+            >
           </select-box>
         </article>
-        <article class="objective-vfor-wrapper-subtitle-2" v-if="showProjectNotice === true">
+        <article class="objective-vfor-wrapper-subtitle-2" v-if="!showProjectSelectBox">
           <h3>Please select company first</h3>
         </article>
-        <article class="objective-vfor-wrapper" v-if="showCreateNewProject === true">
+        <article class="objective-vfor-wrapper" v-if="showCreateNewProject">
           <h3 class="objective-vfor-wrapper-subtitle">Please type the name of the new project</h3>
-          <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-input-wrapper">
             <object-input-div
               @add-objectives="addProject"
               @remove-objectives="removeProject"
-              :objective="objective"
-              :index="index"
+              objective=""
+              :index="0"
               :placeholderText="projectPlaceholder"
               :totalLength="noOfObjInputForm"
-              v-bind:class="index"
+              v-bind:class="0"
             ></object-input-div>
-          </div>
         </article>
       <h3 class="edit-project-subtitle">Your project’s impact objective(s)</h3>
-        <article class="objective-vfor-wrapper-subtitle-2" v-if="showObjectNotice === true">
+        <article class="objective-vfor-wrapper-subtitle-2" v-if="!showCreateNewObject">
           <h3>Please select company & project first</h3>    
         </article>
-        <article class="objective-vfor-wrapper" v-if="showCreateNewObject === true">
+        <article class="objective-vfor-wrapper" v-if="showCreateNewObject">
           <div v-for="(objective, index) in objectives" v-bind:key="index" class="objective-input-wrapper">
             <object-input-div
               @add-objectives="addObjectives"
@@ -93,7 +91,7 @@
               <img src="../../src/assets/dummy1.svg"/>
               </div>
             </router-link>
-            <div class="framework-thumbnail-hover" v-if="editHoverboxShow1 === true">
+            <div class="framework-thumbnail-hover" v-if="editHoverboxShow1">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -110,7 +108,7 @@
               <img src="../../src/assets/dummy2.svg"/>
             </div>  
             </router-link>
-            <div class="framework-thumbnail-hover-2" v-if="editHoverboxShow2 === true">
+            <div class="framework-thumbnail-hover-2" v-if="editHoverboxShow2">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -127,7 +125,7 @@
               <img src="../../src/assets/dummy3.svg"/>
             </div>
             </router-link>
-            <div class="framework-thumbnail-hover-3" v-if="editHoverboxShow3 === true">
+            <div class="framework-thumbnail-hover-3" v-if="editHoverboxShow3">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -169,12 +167,10 @@ export default {
     return {
       companyCssId: 'company-selectbox',
       companyNames: [],
-      companyNameInput: [''],
       selectedCompany: null,
       companyPlaceholder: ['eg Vodafon foundation'],
       projectCssId: 'project-selectbox',
       projectNames: [],
-      projectNameInput: [''],
       selectedProject: null,
       projectPlaceholder: ['eg INS project'],
       objectiveCssId: 'objective-selectbox',
@@ -193,33 +189,41 @@ export default {
       editHoverboxShow3: false,
       showCompanySelectBox: false,
       showProjectSelectBox: false,
-      showCreatenewCompany: false,
+      showCreateNewCompany: false,
       showCreateNewProject: false,
       showCreateNewObject: false,
-      showProjectNotice: false,
-      showObjectNotice: false,
-      viewMode: null,
-      editMode: null
+      stateSelectCompany: 'stateSelectCompany',
+      stateSelectProject: 'stateSelectProject',
+      stateEditCompany: 'stateEditCompany',
+      stateEditProject: 'stateEditProject',
+      stateEditObjectives: 'stateEditObjectives',
+      state: null,
+      createNewCompanyString: 'Create new company',
+      createNewProjectString: 'Create new project',
+      emptyObjectiveList: [""],
+      companyDropdown: 0,
+      projectDropdown: 1,
+      loggedInUserId: 'spqo4phrmdUbvKf722BiQdld3R12'
     }
   },
   mounted () {
     this.showNavBar()
     this.getInsGrowthRate()
-    this.showNavBar()
+    // this.showNavBar()
 
     const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
     // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
     database.on('value', (snapshot) => {
       try { // create company selectbox
-        const createdCompanies = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
+        const createdCompanies = [...Object.keys(snapshot.val().projectInfo), this.createNewCompanyString]
         this.companyNames = createdCompanies
         store.commit('setLogin', { // fake login store commit
           loggedIn: true,
           loginUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
           loginUserFullName: 'Joanna Kang'
         })
-        this.viewMode = 'Company'
-        this.updatePage()
+        this.changeState(this.stateSelectCompany)
+        // this.handleSelectLogic()
       } catch (error) {
         this.viewMode = 'null'
         // console.log('No company name')
@@ -228,135 +232,146 @@ export default {
     })
   },
   methods: {
-    updatePage () {
-      console.log(this.viewMode)
-      console.log(this.selectedCompany, this.selectedProject, this.objectives)
-      switch (this.viewMode) {
-        case 'Company':
-          this.projectNames = null
-          this.showCompanySelectBox = true
-          if (this.selectedCompany === null) {
-            // this.objectives = ['']
-            this.showProjectNotice = true
-            this.showObjectNotice = true
-            this.showProjectSelectBox = false
-            this.showCreatenewCompany = false
-            this.showCreateNewObject = false
-          } else {
-            this.showProjectNotice = false
-            // this.objectives = ['']
-            this.setProjectSelectbox()
-          }
-          break
-        case 'Project':
-          this.objectives = ['']
-          if (this.selectedProject === 'Create new project') {
-            console.log(this.selectedProject)
-            this.showCreateNewProject = true
-            this.showCreateNewObject = false
-            this.showObjectNotice = true
-            this.setObjectiveInputbox()
-          } else if (this.selectedProject !== null) {
-            this.showCreateNewProject = false
-            this.setObjectiveInputbox()
-          } else {
-            this.setObjectiveInputbox()
-          }
-      }
-    },
-    setProjectSelectbox () {
-      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
-      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
-      database.on('value', (snapshot) => {
-        try { // set project selectbox
-          const projectInfo = snapshot.val().projectInfo
-          this.projectNames = [...Object.keys(projectInfo[this.selectedCompany]), 'Create new project']
-          this.showCompanySelectBox = true
-          this.showCreatenewCompany = false
-          this.showProjectSelectBox = true
-        } catch (error) {
-          if (this.selectedCompany === 'Create new company') {
-            this.switchEditMode('Company')
-          } 
-          // else if (this.selectedCompany && this.selectedProject === null) {
-          //   this.switchEditMode('Project')
-          // }
-        }
-      })
-    },
-    setObjectiveInputbox () {
-      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
-      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
-      database.on('value', (snapshot) => {
-        try { // set project selectbox
-          const projectInfo = snapshot.val().projectInfo
-          const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
-
-          if (objectList === undefined) {
-            this.objectives = [""]
-            this.showCreateNewObject = true
-            this.showObjectNotice = false
-          } else {
-            this.objectives = objectList
-            this.showCreateNewProject = false
-            this.showCreateNewObject = true
-            this.showObjectNotice = false
-          }
-        } catch (error) {
-          console.log('No project name')
-          if (this.selectedProject === 'Create new project') {
-            this.switchEditMode('Project')
-          } else {
-            this.showCreateNewObject = true
-            this.showObjectNotice = false
-          }
-        }
-      })
-    },
-    switchEditMode (editArea) {
-      console.log('🤖', editArea)
-      this.objectives = [""]
-      switch (editArea) {
-        case 'Company':
-          this.showCreatenewCompany = true
-          this.showProjectNotice = true
-          this.showObjectNotice = true
+    changeState (newState) {
+      this.objectives = ['']
+      
+      switch (newState) {
+        case this.stateSelectCompany:
+          this.selectedProject = null
+          this.showCreateNewCompany = false
+          this.showCreateNewObject = false
           this.showProjectSelectBox = false
+          this.showCompanySelectBox = true
+          this.showCreateNewProject = false
+          break
+        case this.stateEditCompany:
+          this.showCreateNewCompany = true
+          this.showCreateNewObject = false
+          this.showProjectSelectBox = false
+          this.showCompanySelectBox = true
+          this.showCreateNewProject = false
+          break
+        case this.stateSelectProject:
+          this.showCompanySelectBox = true
+          this.showCreateNewCompany = false
+          this.selectedProject = null
+          this.showProjectSelectBox = this.selectedCompany !== null
           this.showCreateNewProject = false
           this.showCreateNewObject = false
           break
-
-        case 'Project':
+        case this.stateEditProject:
+          this.showCompanySelectBox = true
+          this.showCreateNewCompany = false
+          this.showProjectSelectBox = true
           this.showCreateNewProject = true
-          this.showObjectNotice = true
           this.showCreateNewObject = false
-          this.showCreatenewCompany = false
+          break
+        case this.stateEditObjectives:
+          this.showCompanySelectBox = true
+          this.showCreateNewCompany = false
+          this.showProjectSelectBox = true
+          this.showCreateNewProject = false
+          this.showCreateNewObject = true
           break
       }
-    },    
+
+      this.state = newState
+      console.log('🌟', this.state)
+    },
+    // Only to be called when select dropdown menu
+    handleSelectLogic (dropdownType) {
+      console.log(dropdownType)
+      console.assert(dropdownType === this.companyDropdown || dropdownType === this.projectDropdown)
+
+      switch (dropdownType) {
+        case this.companyDropdown:
+          this.projectNames = null
+          if (this.selectedCompany === this.createNewCompanyString) {
+            this.changeState(this.stateEditCompany)
+          } else if (this.selectedCompany !== null) {
+            this.getProjectListFromDB()
+            this.changeState(this.stateSelectProject)
+          }
+          break
+        case this.projectDropdown:
+          if (this.selectedProject === this.createNewProjectString) {
+            this.changeState(this.stateEditProject)
+          } else if (this.selectedProject !== null) {
+            this.changeState(this.stateEditObjectives)
+            this.getObjectiveListFromDB()
+          }
+          break
+      }
+    },
+    getProjectListFromDB () {
+      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      database.on('value', (snapshot) => {
+        try { // set project selectbox
+          console.assert(this.selectedCompany)
+          const projectInfo = snapshot.val().projectInfo
+          this.projectNames = [...Object.keys(projectInfo[this.selectedCompany]), this.createNewProjectString]
+        } catch (error) {
+          alert('No company name in getProjectListFromDB')
+        }
+      })
+    },
+    // this function gets the objected associated with this company + project from database set in internal state
+    getObjectiveListFromDB () {
+      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      database.on('value', (snapshot) => {
+        try { // set project selectbox
+          console.assert(this.selectedCompany)
+          console.assert(this.selectedProject && this.selectedProject !== this.createNewProjectString)
+          const projectInfo = snapshot.val().projectInfo
+          const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
+          this.objectives = objectList ? objectList : this.emptyObjectiveList
+        } catch (error) {
+          alert('No project name in getObjectiveListFromDB')
+        }
+      })
+    },
     showNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'inline'
     },
-    addCompany (addedCompanyFromComp) {
-      this.companyNames.unshift(addedCompanyFromComp.userInputSubComp)
-      this.companyNames.pop()
-      this.selectedCompany = addedCompanyFromComp.userInputSubComp
-      this.showCreatenewCompany = false
+    addCompany (addedProjectFromComp) {
+      console.assert(this.state === this.stateEditProject)
     },
     addProject (addedProjectFromComp) {
-      if (this.projectNames === null) {
-        // add new project to new company
-        this.selectedProject = addedProjectFromComp.userInputSubComp
-        this.projectNames = [addedProjectFromComp.userInputSubComp]
-        this.showCreateNewProject = false
-        this.showProjectSelectBox = true
-      } else {
-        // add new project to existing company in database
-        this.projectNames.unshift(addedProjectFromComp.userInputSubComp)
-        this.showCreateNewProject = false
+      console.assert(this.state === this.stateEditProject)
+      const createdProject = addedProjectFromComp.userInputSubComp
+      this.saveNewProjectInDB(createdProject)
+      this.projectNames.unshift(addedProjectFromComp.userInputSubComp)
+      this.selectedProject = addedProjectFromComp.userInputSubComp
+      this.changeState(this.stateEditObjectives)
+    },
+    async saveNewProjectInDB (createdProject) {
+      const userId = this.loggedInUserId
+      const company = this.selectedCompany
+      console.assert(userId, company, createdProject)
+      const projectInfo = {
+        companyName: company,
+        projectName: createdProject
       }
-      // alert('new project saved!')
+      const update = {}
+      update[`/${userId}/projectInfo/${company}/${createdProject}/`] = projectInfo
+      await this.$database.ref().update(update)
+        .then(() => {
+          try {
+            const database = this.$database.ref(`${userId}`)
+            database.on('value', (snapshot) => {
+              const projectInfo = snapshot.val().projectInfo
+              this.selectedCompany = company
+              this.selectedProject = createdProject
+              alert(`[${projectInfo[company][createdProject].projectName}] project created!`)
+              this.objectives = this.emptyObjectiveList
+            })
+          } catch (error) {
+            console.log(error)
+          }
+        })      
     },
     addObjectives (editedObjFromComp) {
       const editedIndex = editedObjFromComp.noOfIndex - 1
@@ -372,7 +387,7 @@ export default {
       const editedIndex = editedObjFromComp.noOfIndex - 1  
       this.objectives.splice(editedIndex, 1)
     },
-    removeCompnay (removeIndex) {
+    removeCompany (removeIndex) {
       console.log(removeIndex)
     },
     removeProject (removeIndex) {
@@ -414,20 +429,7 @@ export default {
                 this.selectedCompany = company
                 this.selectedProject = project
                 this.objectives = addedObjectives
-                this.updatePage()
                 this.uploadAreaShow = true
-
-                // update Vuex store
-                // store.commit('setProjectInfo', {
-                //   companyName: company,
-                //   projectName: project
-                // })
-
-                // objective.forEach(addedObj => {
-                //   store.commit('setObjectives', {
-                //     addedObj
-                //   })
-                // })
               })
             } catch (error) {
               console.log(error)
@@ -470,49 +472,20 @@ export default {
 
       switch (selectboxType) {
         case 'company-selectbox':
-          this.viewMode = 'Company'
-          if (selectedOption === 'Create new company') {
-            this.objective = [""]
-            this.switchEditMode(this.viewMode)
-          } else {
-            this.selectedCompany = selectedOption
-            this.selectedProject = null
-            this.objective = [""]
-            // this.updatePage()
-          }
+          this.selectedCompany = selectedOption
+          this.handleSelectLogic(this.companyDropdown)
           break
         case 'project-selectbox':
-          this.viewMode = 'Project'
-          if (selectedOption === 'Create new project') {
-            this.objective = [""]
-            this.switchEditMode(this.viewMode)
-          } else {
-            this.selectedProject = selectedOption
-            this.objective = [""]
-            // this.setObjectiveInputbox()
-          }
+          this.selectedProject = selectedOption
+          this.handleSelectLogic(this.projectDropdown)
           break
       }
     }
   },
   watch: {
-    selectedCompany () {
-      console.log(this.selectedCompany)
-      if (this.selectedCompany === 'Create new company') {
-        this.switchEditMode('Company')
-      } else {
-        this.viewMode = 'Company'
-        this.updatePage()
-      }
+    selectedCompany (newVal) {
     },
-    selectedProject () {
-      console.log(this.selectedProject)
-      if (this.selectedProject === 'Create new project') {
-        this.switchEditMode('Project')
-      } else {
-        this.viewMode = 'Project'
-        this.updatePage()
-      }      
+    selectedProject (newVal) {      
     }
   },
   computed: {

@@ -1,7 +1,7 @@
 <template>
   <form class="editproject-dropbox-form">
   <div class="editproject-dropbox">
-    <button type="button" class="editproject-dropdown-toggle" @click="toggleDropdown(cssId)" @blur="toggleDropdown(cssId)">
+    <button type="button" class="editproject-dropdown-toggle" @click="toggleDropdown(cssId)">
       {{selectboxPlaceholder}}
     </button>
     <ul class="editproject-dropdown-menu" v-bind:id="cssId">
@@ -43,15 +43,18 @@ export default {
   },
   methods: {
     toggleDropdown (cssSelectorId) {
+      console.log('toggle')
       const menu = document.getElementById(`${cssSelectorId}`)
       menu.classList.toggle('show')
     },
     getText (selectedOption, selectboxType) {
       console.log(selectedOption, selectboxType)
+      this.toggleDropdown(selectboxType)
       switch (selectboxType) {
         case 'company-selectbox':
           this.selectboxPlaceholder = selectedOption
           this.$emit('get-selectbox-text', { selectedOption, selectboxType })
+
           break
         case 'project-selectbox':
           this.selectboxPlaceholder = selectedOption
