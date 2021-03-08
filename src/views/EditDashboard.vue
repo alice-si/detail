@@ -12,11 +12,11 @@
         </column>
         <column :lg="5" class="progress-summary">
           <span class="tap-to-edit-1" v-if="saveAimBtnShow === false">Tap to edit</span>
-          <input type="button" class="doughnut-inputbox-saveBtn" v-if="saveAimBtnShow === true" @click="clearAimText"/>
-          <input type="text" class="doughnut-inputbox-1" value="doughnut-inputbox-1" v-model="doughnutChartData1.subtitle1" @focus="changeTextColor"  @keyup="getAimText(doughnutChartData1.subtitle1)"></input>
+          <input type="button" class="doughnut-inputbox-1-saveBtn" v-if="saveAimBtnShow === true" @click="clearTextInput('doughnut-inputbox-1')"/>
+          <input type="text" class="doughnut-inputbox-1" value="doughnut-inputbox-1" v-model="doughnutChartData1.subtitle1" @focus="changeTextColor" @keyup="getAimText(doughnutChartData1.subtitle1)"></input>
           <div class="doughnut-1"><aim-doughnut-chart :doughnutChartData="doughnutChartData1"></aim-doughnut-chart></div>
           <span class="tap-to-edit-2" v-if="saveTimeBtnShow === false">Tap to edit</span>
-          <input type="button" class="doughnut-inputbox-saveBtn" v-if="saveTimeBtnShow === true" @click="clearTimeText"/>
+          <input type="button" class="doughnut-inputbox-2-saveBtn" v-if="saveTimeBtnShow === true" @click="clearTextInput('doughnut-inputbox-2')"/>
           <input type="text" class="doughnut-inputbox-2"  value="doughnut-inputbox-2" v-model="doughnutChartData2.subtitle1" @focus="changeTextColor" @keyup="getTimeText(doughnutChartData2.subtitle1)"/>
           <div class="doughnut-2"><time-doughnut-chart :doughnutChartData="doughnutChartData2"></time-doughnut-chart></div>
         </column>
@@ -30,10 +30,10 @@
             :cssId="countryCssId"
             :selectedOption="selectedCountry"
             :selectboxOption="countries"
-            @remove-option="remove1stSelectboxOption"
-            @add-option="add1stSelectboxOption"
-            @get-selectbox-text="get1stTextInput"
-            @save-selectbox-option="save1stSelectboxInput"/>
+            @remove-option="removeSelectboxOption"
+            @add-option="addSelectboxOption"
+            @get-selectbox-text="getTextInput"
+            @save-selectbox-option="saveSelectboxInput"/>
         </column>
         <column :lg="1.5"><h3 class="ins-select-camp">Select Camp</h3></column>
         <column :lg="2.5" class="edit-dashboard-select-box">
@@ -41,10 +41,10 @@
             :cssId="campCssId"
             :selectedOption="selectedCamp"
             :selectboxOption="camps"
-            @remove-option="remove2ndSelectboxOption"
-            @add-option="add2ndSelectboxOption"
-            @get-selectbox-text="get2ndTextInput"
-            @save-selectbox-option="save2ndSelectboxInput"/>
+            @remove-option="removeSelectboxOption"
+            @add-option="addSelectboxOption"
+            @get-selectbox-text="getTextInput"
+            @save-selectbox-option="saveSelectboxInput"/>
         </column>
         <column :lg="1.5"><h3 class="ins-select-school">Select School</h3></column>
         <column :lg="2.5" class="edit-dashboard-select-box">
@@ -52,10 +52,10 @@
             :cssId="schoolCssId"
             :selectedOption="selectedSchool"
             :selectboxOption="schools"
-            @remove-option="remove3rdSelectboxOption"
-            @add-option="add3reSelectboxOption"
-            @get-selectbox-text="get3rdTextInput"
-            @save-selectbox-option="save3rdSelectboxInput"/>
+            @remove-option="removeSelectboxOption"
+            @add-option="addSelectboxOption"
+            @get-selectbox-text="getTextInput"
+            @save-selectbox-option="saveSelectboxInput"/>
         </column>
       </row>
     </section>
@@ -332,6 +332,9 @@ export default {
     this.countries = getCountries() // Set initial Country select box options
     this.yearOptions = setYearSelectBox() // Set initial Year select box options
     this.updateData()
+
+    document.getElementsByClassName('doughnut-inputbox-1')[0].style.color = 'rgba(0, 0, 0, 0)'
+    document.getElementsByClassName('doughnut-inputbox-2')[0].style.color = 'rgba(0, 0, 0, 0)'
   },
   methods: {
     showNavBar () {
@@ -416,53 +419,69 @@ export default {
         }
       }
     },
-    remove1stSelectboxOption (removedItem) {
-      this.countries.splice(removedItem.index, 1)
+    saveSelectboxInput (cssId) {
+      switch (cssId) {
+        case 'country-selectbox':
+          alert(`${this.countries} saved!`)
+          break
+        case 'camp-selectbox':
+          alert(`${this.camps} saved!`)
+          break
+        case 'school-selectbox':
+          alert(`${this.schools} saved!`)
+          break
+      }
     },
-    remove2ndSelectboxOption (removedItem) {
-      this.camps.splice(removedItem.index, 1)
+    addSelectboxOption (addedItem) {
+      const selectboxType = addedItem.cssId
+      console.log(addedItem)
+      switch (selectboxType) {
+        case 'country-selectbox':
+          this.countries.push(addedItem.item)
+          break
+        case 'camp-selectbox':
+          this.camps.push(addedItem.item)
+          break
+        case 'school-selectbox':
+          this.schools.push(addedItem.item)
+          break
+      }
     },
-    remove3rdSelectboxOption (removedItem) {
-      this.schools.splice(removedItem.index, 1)
+    removeSelectboxOption (removedItem) {
+      const selectboxType = removedItem.cssId
+      console.log(removedItem)
+      switch (selectboxType) {
+        case 'country-selectbox':
+          this.countries.splice(removedItem.index, 1)
+          break
+        case 'camp-selectbox':
+          this.camps.splice(removedItem.index, 1)
+          break
+        case 'school-selectbox':
+          this.schools.splice(removedItem.index, 1)
+          break
+      }
     },
-    add1stSelectboxOption (addedItem) {
-      this.countries.push(addedItem.item)
-    },
-    add2ndSelectboxOption (addedItem) {
-      this.camps.push(addedItem.item)
-    },
-    add3reSelectboxOption (addedItem) {
-      this.schools.push(addedItem.item)
-    },
-    get1stTextInput (addedItem) {
-      this.countries.splice(addedItem.index, 1, addedItem.selectedOption)
-    },
-    get2ndTextInput (addedItem) {
-      this.camps.splice(addedItem.index, 1, addedItem.selectedOption)
-    },
-    get3rdTextInput (addedItem) {
-      this.schools.splice(addedItem.index, 1, addedItem.selectedOption)
-    },
-    save1stSelectboxInput () {
-      alert(`${this.countries} saved!`)
-    },
-    save2ndSelectboxInput () {
-      alert(`${this.camps} saved!`)
-    },
-    save3rdSelectboxInput () {
-      alert(`${this.schools} saved!`)
+    getTextInput (addedItem) {
+      const selectboxType = addedItem.cssId
+      switch (selectboxType) {
+        case 'country-selectbox':
+          this.countries.splice(addedItem.index, 1, addedItem.selectedOption)
+          break
+        case 'camp-selectbox':
+          this.camps.splice(addedItem.index, 1, addedItem.selectedOption)
+          break
+        case 'school-selectbox':
+          this.schools.splice(addedItem.index, 1, addedItem.selectedOption)
+          break
+      }
     },
     getAimText (aimText) {
       this.doughnutChartData1.subtitle1 = ''
       this.saveAimBtnShow = true
       const inputText = document.getElementsByClassName('doughnut-inputbox-1')
       inputText[0].style.color = '#686868'
-      this.doughnutChartData1.subtitle1 = (aimText === '') ? '       ' : aimText
-    },
-    clearAimText () {
-      const inputText = document.getElementsByClassName('doughnut-inputbox-1')
-      inputText[0].style.color = 'rgba(0, 0, 0, 0)'
-      this.saveAimBtnShow = false
+      this.doughnutChartData1.subtitle1 = aimText
     },
     getTimeText (timeText) {
       this.doughnutChartData2.subtitle1 = ''
@@ -471,13 +490,17 @@ export default {
       inputText[0].style.color = '#686868'
       this.doughnutChartData2.subtitle1 = timeText
     },
-    clearTimeText () {
-      const inputText = document.getElementsByClassName('doughnut-inputbox-2')
+    clearTextInput (value) {
+      const inputText = document.getElementsByClassName(value)
       inputText[0].style.color = 'rgba(0, 0, 0, 0)'
-      this.saveTimeBtnShow = false
+      if (value === 'doughnut-inputbox-1') {
+        this.saveAimBtnShow = false
+      } else {
+        this.saveTimeBtnShow = false
+      }
+      alert('Saved!')
     },
     changeTextColor (event) {
-      // console.log(event.target.className)
       const className = (event.target.className === 'doughnut-inputbox-1') ? 'doughnut-inputbox-1' : 'doughnut-inputbox-2'
       const inputText = document.getElementsByClassName(className)
       inputText[0].style.color = '#686868'
@@ -486,24 +509,7 @@ export default {
   watch: {
     checkedItems () {
       this.updateData()
-    },
-    timeTextInput () {
-      console.log(this.timeTextInput)
     }
-    // doughnutChartData1: {
-    //   handler: function (val) {
-    //     console.log(val)
-    //     this.clearAimText()
-    //   },
-    //   deep: true
-    // },
-    // doughnutChartData2: {
-    //   handler: function (val) {
-    //     console.log(val)
-    //     this.clearTimeText()
-    //   },
-    //   deep: true
-    // }
   }
 }
 </script>
@@ -586,14 +592,15 @@ main#edit-dashboard {
   font-size: 1.2rem;
 }
 
-.doughnut-inputbox-saveBtn,
+.doughnut-inputbox-1-saveBtn,
+.doughnut-inputbox-2-saveBtn,
 .doughnut-inputbox-1:focus,
 .doughnut-inputbox-2:focus {
   background-color: rgb(245, 247, 252);
   outline: none;
 }
 
-.doughnut-inputbox-saveBtn {
+.doughnut-inputbox-1-saveBtn {
   background-color: #ffffff;
   border: none;
   border-radius: 50%;
@@ -607,8 +614,26 @@ main#edit-dashboard {
   top: 2rem;
   padding: 0;
   background-image: url('../assets/ObjectSaveBtn.svg');
-  background-position: 50% 25%;
-  background-size: 5em 5rem;
+  background-position: 51% 25%;
+  background-size: 5.5em 5.5rem;
+}
+
+.doughnut-inputbox-2-saveBtn {
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  font-size: 3.5rem;
+  width: 3rem;
+  height: 3rem;
+  color: #8954BA;
+  box-shadow: 0 7px 20px 0 rgba(159,168,214,0.59);
+  position: relative;
+  right: -3.5rem;
+  top: 2rem;
+  padding: 0;
+  background-image: url('../assets/ObjectSaveBtn.svg');
+  background-position: 54% 25%;
+  background-size: 5.5rem 5.5rem;
 }
 
 #edit-dashboard .progress-summary{
@@ -640,6 +665,7 @@ main#edit-dashboard {
   justify-content: flex-end;
   height: 9rem;
 }
+
 
 /* select box area start */
 #edit-dashboard .edit-dashboard-select-area {

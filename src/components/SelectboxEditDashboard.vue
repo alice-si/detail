@@ -1,7 +1,7 @@
 <template>
   <form class="editdashboard-dropbox-form">
   <input type="button" class="editdashboard-dropbox-activateBtn" value="Drop to edit" v-if="savebuttonShow === false">
-  <input type="button" class="save-optionlist-button" v-if="savebuttonShow === true"  @click="saveOption"/>
+  <input type="button" class="save-optionlist-button" v-if="savebuttonShow === true"  @click="saveOption(cssId)"/>
   <div class="editdashboard-dropbox" @mouseleave="toggleDropdown(cssId)">
     <button type="button" class="editdashboard-dropdown-toggle" @click="toggleDropdown(cssId)">
       {{selectboxPlaceholder}}
@@ -10,7 +10,7 @@
       <li class="editdashboard-dropdown-item" v-for="(option, index) in selectbox" v-bind:key="index">
         <div class="editdashboard-dropdown-option-wrapper">
           <input type="text"  class="editdashboard-dropdown-option" :placeholder="option" v-model="inputText[index]" @keyup="getText(inputText[index], index, cssId)">
-          <input type="button" class="crossImgUrl" @click="removeItem(option, index)" v-if="index !== noOfInputbox">
+          <input type="button" class="crossImgUrl" @click="removeItem(option, index, cssId)" v-if="index !== noOfInputbox">
           <input type="button" class="plusImgUrl" @click="addItem(option, index)" v-if="index === noOfInputbox">
         </div>
       </li>
@@ -47,36 +47,33 @@ export default {
     this.selectbox = [...this.selectboxOption, ""]
   },
   methods: {
-    toggleDropdown (cssSelectorId) {
-      const menu = document.getElementById(`${cssSelectorId}`)
+    toggleDropdown (cssId) {
+      const menu = document.getElementById(`${cssId}`)
       menu.classList.toggle('show')
     },
-    removeItem (item, index) {
-      console.log(item, index)
-      const removedItem = { item, index }
+    removeItem (item, index, cssId) {
+      const removedItem = { item, index, cssId }
       this.$emit('remove-option', removedItem)
       this.savebuttonShow = true
     },
-    addItem (item, index) {
-      const addedItem = { item, index }
-      console.log(addedItem)
+    addItem (item, index, cssId) {
+      const addedItem = { item, index, cssId }
       this.$emit('add-option', addedItem)
     },
-    getText (selectedOption, index, selectboxType) {
+    getText (selectedOption, index, cssId) {
       this.savebuttonShow = true
-      this.$emit('get-selectbox-text', { selectedOption, index, selectboxType })
+      this.$emit('get-selectbox-text', { selectedOption, index, cssId })
     },
-    saveOption () {
+    saveOption (cssId) {
       this.savebuttonShow = false
-      this.$emit('save-selectbox-option')
+      this.$emit('save-selectbox-option', cssId)
       this.toggleDropdown()
     }
   },
   watch: {
     selectboxOption () {
-      this.selectbox = [...this.selectboxOption, ""]
+      this.selectbox = [...this.selectboxOption, ""] 
       this.inputText = [...this.selectboxOption, ""]
-      console.log(this.selectbox)
     }
   },
   computed: {
@@ -93,6 +90,7 @@ export default {
   z-index: 1;
   top: 6.5rem;
   left: -0.1rem;
+  border-bottom: 0.1rem solid #8954BA;
 }
 
 .editdashboard-dropbox-activateBtn {

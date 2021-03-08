@@ -79,15 +79,6 @@ export default {
           val.percentage,
           val.insideText,
           val.color)
-        
-        // let min = 0
-        // let max = val.percentage
-        // setInterval(() => {
-        //   if (min <= max) {
-        //     min += 0.3
-        //     this.drawCircle(min)
-        //   }
-        // }, 0.01)
       },
       deep: true
     }

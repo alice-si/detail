@@ -13,16 +13,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.doughnutChartData)
-    // this.drawCircle(
-    //   this.doughnutChartData.box,
-    //   this.doughnutChartData.title,
-    //   this.doughnutChartData.subtitle1,
-    //   this.doughnutChartData.subtitle2,
-    //   this.doughnutChartData.percentage,
-    //   this.doughnutChartData.insideText,
-    //   this.doughnutChartData.color)
-
     let min = 0
     let max = this.doughnutChartData.percentage
     setInterval(() => {
@@ -56,7 +46,7 @@ export default {
       ctx.fillStyle = '#686868'
       ctx.fillText(' lessons', 23, 36.2, 60)
       ctx.font = '300 10px Helvetica'
-      ctx.fillStyle = '#686868'      
+      ctx.fillStyle = '#686868'
       ctx.fillText(this.doughnutChartData.subtitle2, 0, 49.2, 60)
       ctx.font = '20px Helvetica'
       ctx.fillStyle = '#686868'
@@ -96,15 +86,6 @@ export default {
           val.percentage,
           val.insideText,
           val.color)
-        
-        // let min = 0
-        // let max = val.percentage
-        // setInterval(() => {
-        //   if (min <= max) {
-        //     min += 0.3
-        //     this.drawCircle(min)
-        //   }
-        // }, 0.01)
       },
       deep: true
     }
