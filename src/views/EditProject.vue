@@ -219,7 +219,6 @@ export default {
         loginUserFullName: 'Joanna Kang'
       })
       this.changeState(this.stateSelectCompany)
-      // this.handleSelectLogic()
     })
   },
   methods: {
@@ -267,7 +266,6 @@ export default {
       }
 
       this.state = newState
-      console.log(this.state)
     },
     getSelectboxText (selected) {
       const selectboxType = selected.selectboxType
@@ -453,7 +451,6 @@ export default {
               database.on('value', (snapshot) => {
                 const projectInfo = snapshot.val().projectInfo
                 const addedObjectives = projectInfo[company].projects[project].projectObjectives
-                console.log(addedObjectives)
 
                 this.selectedCompany = company
                 this.selectedProject = project
@@ -474,7 +471,6 @@ export default {
     },
     fileListUpdate () {
       location.reload()
-      console.log(store.state)
     },
     mouseHover (number) {
       switch (number) {

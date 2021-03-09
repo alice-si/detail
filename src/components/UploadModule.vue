@@ -74,26 +74,35 @@ export default {
       const fileOriginRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/`)
       fileOriginRef.listAll()
         .then((res) => res._delegate.items
-          .forEach((el) => { this.savedFileList.push(el.name) })
+          .forEach((el) => {
+            this.savedFileList.push(el.name) 
+          })
         )
+    },
+    hidePreviewArea () {
+      const detailBox = document.getElementsByClassName('dz-preview')
+      for (let i = 0; i < detailBox.length; i++) {
+        detailBox[i].style.display = 'none'
+      }
     },
     async afterComplete (upload) {
       if (this.termsAndConditionCheck === false) {
         alert("Please check term's and condition")
-        const detailBox = document.getElementsByClassName('dz-preview')
-        for (let i = 0; i < detailBox.length; i++) {
-          detailBox[i].style.display = 'none'
-        }
+        this.hidePreviewArea()
+        // const detailBox = document.getElementsByClassName('dz-preview')
+        // for (let i = 0; i < detailBox.length; i++) {
+        //   detailBox[i].style.display = 'none'
+        // }
       } else if (this.savedFileList.includes(upload.name)) {
         alert(`[ ${upload.name} ] has already been added in system`)
-        const detailBox = document.getElementsByClassName('dz-preview')
-        for (let i = 0; i < detailBox.length; i++) {
-          detailBox[i].style.display = 'none'
-        }
+        this.hidePreviewArea()
+        // const detailBox = document.getElementsByClassName('dz-preview')
+        // for (let i = 0; i < detailBox.length; i++) {
+        //   detailBox[i].style.display = 'none'
+        // }
       } else {
         this.isLoading = true
         try {
-          console.log(store.state)
           let file = upload
           const metadata = { contentType: file.type }
           const storageRef = this.$fileupload.ref()
@@ -127,9 +136,13 @@ export default {
       const fileRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/${this.uploading[index]}`)
       fileRef.delete()
         .then(() => {
-          alert(`[ ${this.uploading[index]} ] deleted`)
+          const deletedItem = this.uploading[index]
           this.uploading.splice(index, 1)
-          console.log(this.savedFileList)
+          if (this.savedFileList.includes(deletedItem)) {
+            const savedIndex = this.savedFileList.indexOf(deletedItem)
+            this.savedFileList.splice(savedIndex, 1)
+          }
+          alert(`[ ${deletedItem} ] deleted`)
         }).catch((e) => {
           alert(e)
         })
