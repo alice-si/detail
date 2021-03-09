@@ -34,7 +34,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.selectedOption)
     // if (this.selectedOption === null) {
     //   this.selectboxPlaceholder = 'Select option'
     // } else {
@@ -43,12 +42,10 @@ export default {
   },
   methods: {
     toggleDropdown (cssSelectorId) {
-      console.log('toggle')
       const menu = document.getElementById(`${cssSelectorId}`)
       menu.classList.toggle('show')
     },
     getText (selectedOption, selectboxType) {
-      console.log(selectedOption, selectboxType)
       this.toggleDropdown(selectboxType)
       switch (selectboxType) {
         case 'company-selectbox':
@@ -67,7 +64,6 @@ export default {
   },
   watch: {
     selectboxOption () {
-      console.log(this.selectedOption)
       // this.selectboxPlaceholder = 'Select option'
       if (this.selectedOption === null) {
         this.selectboxPlaceholder = 'Select option'

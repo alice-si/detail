@@ -109,7 +109,7 @@ export default {
         }
 
         const update = {}
-        update[`/${userId}/projectInfo/${this.companyName}/${this.projectName}/`] = projectInfo
+        update[`/${userId}/projectInfo/${this.companyName}/projects/${this.projectName}/`] = projectInfo
         this.$database.ref().update(update)
           .then(() => {
             const database = this.$database.ref(`${userId}`)

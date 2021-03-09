@@ -62,6 +62,7 @@ export default {
   mounted () {
     this.hideNavBar()
     this.termsAndConditionCheck = false
+    this.uploading = []
   },
   methods: {
     hideNavBar () {
@@ -128,6 +129,7 @@ export default {
         .then(() => {
           alert(`[ ${this.uploading[index]} ] deleted`)
           this.uploading.splice(index, 1)
+          console.log(this.savedFileList)
         }).catch((e) => {
           alert(e)
         })

@@ -73,7 +73,7 @@
         </article>
       <button @click="projectUpdate" class="project-update-button">Update</button>
     </section>
-    <section class="upload-module-area">
+    <section class="upload-module-area" v-if="uploadAreaShow">
       <upload-module></upload-module>
       <button @click="fileListUpdate" class="project-update-button">Upload</button>      
     </section>
@@ -176,10 +176,6 @@ export default {
       objectiveCssId: 'objective-selectbox',
       objectives: [],
       objectivePlaceholder: ['eg How many lessons use INS', 'eg How many students have ICT skills', 'How many students have ICT skills'],
-      removedItem: '',
-      addedCompany: '',
-      addedProject: '',
-      addedObj: [],
       dashboardName: 'INS Lessons',
       lastUpdate: '31/12/2019',
       insGrowthRate: '',
@@ -203,32 +199,27 @@ export default {
       emptyObjectiveList: [""],
       companyDropdown: 0,
       projectDropdown: 1,
-      loggedInUserId: 'spqo4phrmdUbvKf722BiQdld3R12'
+      loggedInUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
+      uploadAreaShow: false
     }
   },
   mounted () {
     this.showNavBar()
     this.getInsGrowthRate()
-    // this.showNavBar()
 
     const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
     // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
     database.on('value', (snapshot) => {
-      try { // create company selectbox
-        const createdCompanies = [...Object.keys(snapshot.val().projectInfo), this.createNewCompanyString]
-        this.companyNames = createdCompanies
-        store.commit('setLogin', { // fake login store commit
-          loggedIn: true,
-          loginUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
-          loginUserFullName: 'Joanna Kang'
-        })
-        this.changeState(this.stateSelectCompany)
-        // this.handleSelectLogic()
-      } catch (error) {
-        this.viewMode = 'null'
-        // console.log('No company name')
-        // show add module
-      }
+      // create company selectbox
+      const createdCompanies = [...Object.keys(snapshot.val().projectInfo), this.createNewCompanyString]
+      this.companyNames = createdCompanies
+      store.commit('setLogin', { // fake login store commit
+        loggedIn: true,
+        loginUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
+        loginUserFullName: 'Joanna Kang'
+      })
+      this.changeState(this.stateSelectCompany)
+      // this.handleSelectLogic()
     })
   },
   methods: {
@@ -276,12 +267,26 @@ export default {
       }
 
       this.state = newState
-      console.log('🌟', this.state)
+      console.log(this.state)
+    },
+    getSelectboxText (selected) {
+      const selectboxType = selected.selectboxType
+      const selectedOption = selected.selectedOption
+
+      switch (selectboxType) {
+        case 'company-selectbox':
+          this.selectedCompany = selectedOption
+          this.handleSelectLogic(this.companyDropdown)
+          break
+        case 'project-selectbox':
+          this.selectedProject = selectedOption
+          this.handleSelectLogic(this.projectDropdown)
+          break
+      }
     },
     // Only to be called when select dropdown menu
     handleSelectLogic (dropdownType) {
-      console.log(dropdownType)
-      console.assert(dropdownType === this.companyDropdown || dropdownType === this.projectDropdown)
+      this.alertAssert(dropdownType === this.companyDropdown || dropdownType === this.projectDropdown)
 
       switch (dropdownType) {
         case this.companyDropdown:
@@ -307,13 +312,12 @@ export default {
       const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
       // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
       database.on('value', (snapshot) => {
-        try { // set project selectbox
-          console.assert(this.selectedCompany)
-          const projectInfo = snapshot.val().projectInfo
-          this.projectNames = [...Object.keys(projectInfo[this.selectedCompany]), this.createNewProjectString]
-        } catch (error) {
-          alert('No company name in getProjectListFromDB')
-        }
+        this.alertAssert(this.selectedCompany)
+        const projectInfo = snapshot.val().projectInfo
+        this.alertAssert(projectInfo[this.selectedCompany], `Selected company ${this.selectedCompany} not found in project info`)
+        const projects = projectInfo[this.selectedCompany].projects
+        this.projectNames = projects ? [...Object.keys(projects)] : []
+        this.projectNames.push(this.createNewProjectString)
       })
     },
     // this function gets the objected associated with this company + project from database set in internal state
@@ -321,57 +325,76 @@ export default {
       const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
       // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
       database.on('value', (snapshot) => {
-        try { // set project selectbox
-          console.assert(this.selectedCompany)
-          console.assert(this.selectedProject && this.selectedProject !== this.createNewProjectString)
-          const projectInfo = snapshot.val().projectInfo
-          const objectList = projectInfo[this.selectedCompany][this.selectedProject].projectObjectives
-          this.objectives = objectList ? objectList : this.emptyObjectiveList
-        } catch (error) {
-          alert('No project name in getObjectiveListFromDB')
-        }
+        this.alertAssert(this.selectedCompany, 'getObjectiveListFromDB: this.selectedCompany was falsy')
+        this.alertAssert(this.selectedProject && this.selectedProject !== this.createNewProjectString)
+        const projectInfo = snapshot.val().projectInfo
+        const objectList = projectInfo[this.selectedCompany].projects[this.selectedProject].projectObjectives
+        this.objectives = objectList ? objectList : this.emptyObjectiveList
       })
     },
     showNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'inline'
     },
-    addCompany (addedProjectFromComp) {
-      console.assert(this.state === this.stateEditProject)
+    addCompany (addedCompany) {
+      this.alertAssert(this.state === this.stateEditCompany)
+      const createdCompany = addedCompany.userInputSubComp
+      this.objectives = this.emptyObjectiveList
+      this.selectedCompany = createdCompany
+      this.saveNewCompanyInDB(createdCompany)
+      this.selectedCompany = createdCompany
+      this.changeState(this.stateSelectProject)
     },
-    addProject (addedProjectFromComp) {
-      console.assert(this.state === this.stateEditProject)
-      const createdProject = addedProjectFromComp.userInputSubComp
+    addProject (addedProject) {
+      this.alertAssert(this.state === this.stateEditProject)
+      const createdProject = addedProject.userInputSubComp
       this.saveNewProjectInDB(createdProject)
-      this.projectNames.unshift(addedProjectFromComp.userInputSubComp)
-      this.selectedProject = addedProjectFromComp.userInputSubComp
+      this.objectives = this.emptyObjectiveList
+      this.selectedProject = createdProject
       this.changeState(this.stateEditObjectives)
+    },
+    async saveNewCompanyInDB (createdCompany) {
+      const userId = this.loggedInUserId
+      const company = createdCompany
+      const dummy = {
+        placeholder: 'dummy'
+      }
+
+      // for Firebase update
+      const update = {}
+      update[`/${userId}/projectInfo/${company}`] = dummy
+      await this.$database.ref().update(update)
+        .then(() => {
+          const database = this.$database.ref(`${userId}`)
+          database.on('value', (snapshot) => {
+            this.getProjectListFromDB()
+            this.selectedCompany = createdCompany
+          })
+        })
     },
     async saveNewProjectInDB (createdProject) {
       const userId = this.loggedInUserId
       const company = this.selectedCompany
-      console.assert(userId, company, createdProject)
       const projectInfo = {
         companyName: company,
         projectName: createdProject
       }
+
+      // for Firebase update
       const update = {}
-      update[`/${userId}/projectInfo/${company}/${createdProject}/`] = projectInfo
+      let savedInfoFromDB = {}
+      update[`/${userId}/projectInfo/${company}/projects/${createdProject}/`] = projectInfo
       await this.$database.ref().update(update)
         .then(() => {
-          try {
-            const database = this.$database.ref(`${userId}`)
-            database.on('value', (snapshot) => {
-              const projectInfo = snapshot.val().projectInfo
-              this.selectedCompany = company
-              this.selectedProject = createdProject
-              alert(`[${projectInfo[company][createdProject].projectName}] project created!`)
-              this.objectives = this.emptyObjectiveList
-            })
-          } catch (error) {
-            console.log(error)
-          }
-        })      
+          const database = this.$database.ref(`${userId}`)
+          database.on('value', (snapshot) => {
+            savedInfoFromDB = snapshot.val().projectInfo
+            this.selectedCompany = company
+            this.selectedProject = createdProject
+            this.objectives = this.emptyObjectiveList
+          })
+        })
+      alert(`[${savedInfoFromDB[company].projects[createdProject].projectName}] project created!`)
     },
     addObjectives (editedObjFromComp) {
       const editedIndex = editedObjFromComp.noOfIndex - 1
@@ -403,6 +426,11 @@ export default {
       this.firebaseUpdate()
       alert('Project information has been saved!')
     },
+    alertAssert (condition, message) {
+      if(!condition) {
+        alert(message)
+      }
+    },
     async firebaseUpdate () {
       const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
       const company = this.selectedCompany
@@ -417,19 +445,26 @@ export default {
         }
 
         const update = {}
-        update[`/${userId}/projectInfo/${company}/${project}/`] = projectInfo
+        update[`/${userId}/projectInfo/${company}/projects/${project}/`] = projectInfo
         await this.$database.ref().update(update)
           .then(() => {
             try {
               const database = this.$database.ref(`${userId}`)
               database.on('value', (snapshot) => {
                 const projectInfo = snapshot.val().projectInfo
-                const addedObjectives = projectInfo[company][project].projectObjectives
+                const addedObjectives = projectInfo[company].projects[project].projectObjectives
+                console.log(addedObjectives)
 
                 this.selectedCompany = company
                 this.selectedProject = project
                 this.objectives = addedObjectives
                 this.uploadAreaShow = true
+
+                // save info in vuex store -> for file upload module
+                store.commit('setProjectInfo', {
+                  companyName: company,
+                  projectName: project
+                })
               })
             } catch (error) {
               console.log(error)
@@ -438,6 +473,7 @@ export default {
       }
     },
     fileListUpdate () {
+      location.reload()
       console.log(store.state)
     },
     mouseHover (number) {
@@ -465,27 +501,6 @@ export default {
           this.editHoverboxShow3 = false
           break
       }
-    },
-    getSelectboxText (selected) {
-      const selectboxType = selected.selectboxType
-      const selectedOption = selected.selectedOption
-
-      switch (selectboxType) {
-        case 'company-selectbox':
-          this.selectedCompany = selectedOption
-          this.handleSelectLogic(this.companyDropdown)
-          break
-        case 'project-selectbox':
-          this.selectedProject = selectedOption
-          this.handleSelectLogic(this.projectDropdown)
-          break
-      }
-    }
-  },
-  watch: {
-    selectedCompany (newVal) {
-    },
-    selectedProject (newVal) {      
     }
   },
   computed: {
