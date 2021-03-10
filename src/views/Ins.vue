@@ -140,7 +140,7 @@ export default {
       doughnutChartData1: {
         box: 'box1',
         title: 'Aim',
-        subtitle1: '800 lessons',
+        subtitle1: '800',
         subtitle2: 'using INS',
         percentage: '87',
         insideText: 'complete',
@@ -149,7 +149,7 @@ export default {
       doughnutChartData2: {
         box: 'box2',
         title: 'Time',
-        subtitle1: 'in 3 years',
+        subtitle1: '3 years',
         subtitle2: '',
         percentage: '1',
         insideText: 'more year',

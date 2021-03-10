@@ -135,14 +135,14 @@ export default {
             this.uploadAreaShow = true
           })
       } else {
-        alert('Company name & Proejct name are mandatory')
+        alert('Company name & Project name are mandatory')
       }
     },
     saveFileList () {
       console.log(store.state)
       const fileList = store.state.filelist
       const update = {}
-      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/${store.state.projectName}/projectFiles/`] = fileList
+      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/projectFiles/`] = fileList
       this.$database.ref().update(update)
         .then(() => {
           store.commit('clearObjectives')

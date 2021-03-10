@@ -2,11 +2,11 @@
   <div class="framework-form-area">
     <form class="dropdown-form">
       <div class="framework-dropdown">
-        <button type="button" class="framework-dropdown-toggle" @click="FrameworkToggleDropdown" @blur="FrameworkToggleDropdown">
+        <button type="button" class="framework-dropdown-toggle" @click="FrameworkToggleDropdown">
           {{selectboxPlaceholder}}
         </button>
         <ul class="framework-dropdown-menu">
-          <li class="framework-dropdown-item" v-for="(option, index) in selectList" v-bind:key="index">
+          <li class="framework-dropdown-item" v-for="(option, index) in selectList" v-bind:key="index" @click="FrameworkToggleDropdown">
             <button type="button" :value="option" class="framework-dropdown-option" @click="getFrameworkText(option)">
               {{option}}
             </button>
@@ -14,10 +14,10 @@
         </ul>
       </div>
     </form>
-    <form class="add-link-form">
+    <form class="add-link-form" v-if="showAddLinkArea">
       <h3 class='framework-sub-title'>Add a link to the framework you’re using</h3>
       <!-- <input class='text-form' type='text' placeholder="https://www.sopact.com/social-impact-measurement-framework"> -->
-      <div v-for="(link, index) in linkes" v-bind:key="index" class="objective-input-wrapper">
+      <div v-for="(link, index) in links" v-bind:key="index" class="objective-input-wrapper">
         <framework-link-input
           @add-objectives="addFrameworks"
           @remove-objectives="removeObjectives"
@@ -28,8 +28,8 @@
           v-bind:class="index"
         ></framework-link-input>
       </div>
-      <button class='text-submit'>Add</button>
     </form>
+    <button class='text-submit' @click="saveFrameworksData">Add</button>
   </div>
 </template>
 
@@ -50,11 +50,11 @@ export default {
         'IRIS - Impact Reporting & Investment Standards',
         'GIIRS - Global Impact Investing Rating System',
         'Other framework'],
-      textInputShow: false,
       selectedOption: '',
       placeholderText: ["https://www.sopact.com/social-impact-measurement-framework"],
-      linkes: [""],
-      selectboxPlaceholder: 'No framework'
+      links: [""],
+      selectboxPlaceholder: 'No framework',
+      showAddLinkArea: false
     }
   },
   mounted () {
@@ -66,27 +66,31 @@ export default {
       menu.classList.toggle('show')
     },
     getFrameworkText (text) {
-      console.log(text)
       this.selectboxPlaceholder = text
+      if (text === 'Other framework') {
+        this.showAddLinkArea = true
+      } else {
+        this.showAddLinkArea = false
+      }
     },
     addFrameworks (addedFramework) {
-      console.log(addedFramework)
-      this.linkes.unshift(addedFramework.userInputSubComp)
+      this.links.unshift(addedFramework.userInputSubComp)
     },
     removeObjectives (removedFramework) {
       const editedIndex = removedFramework.noOfIndex - 1
-      this.linkes.splice(editedIndex, 1)
-      console.log(this.linkes)
+      this.links.splice(editedIndex, 1)
+    },
+    saveFrameworksData () {
+      const frameworksName = this.selectboxPlaceholder
+      const addedLinks = this.links
+      this.$emit('save-framework-data', { frameworksName, addedLinks })
     }
   },
   watch: {
-    // selectedOption () {
-    //   this.getFrameworkText()
-    // }
   },
   computed: {
     noOfObjInputForm () {
-      return this.linkes.length
+      return this.links.length
     }
   }
 }
@@ -162,7 +166,8 @@ export default {
 .framework-form-area .framework-dropdown-toggle {
   width: 100%;
   height: 4.7rem;
-  color: rgba(133, 136, 150, 0.5);
+  /* color: rgba(133, 136, 150); */
+  background-color: #fff;
   text-align: left;
   transition: border-color 100ms ease-in;
   padding: 0 1.6rem 0 1.6rem;
@@ -225,6 +230,7 @@ export default {
 }
 
 .framework-form-area .add-link-form {
+  position: relative;
   /* margin-top: 2.5rem; */
   margin-top: 4rem;
   display: flex;
@@ -239,6 +245,10 @@ export default {
   text-align: left;
 }
 
+.objective-input-wrapper {
+  position: relative;
+}
+
 .framework-form-area .text-submit {
   float: inline-end;
   background: #5D38DB;
@@ -247,9 +257,7 @@ export default {
   color: #ffffff;
   height: 5.5rem;
   width: 12rem;
-  /* position: relative;
-  top: 95%;
-  left: 80%; */
+  margin-top: 2rem;
 }
 
 .framework-form-area button::after {

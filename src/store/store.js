@@ -29,6 +29,10 @@ export const store = new Vuex.Store({
       state.objectives[state.objectives.length - 1] = payload.addedObj
       state.objectives.push('')
     },
+    clearProjectInfo (state) {
+      state.companyName = ''
+      state.projectName = ''
+    },
     clearObjectives (state) {
       state.objectives = ['']
     },

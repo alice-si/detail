@@ -128,6 +128,7 @@ export default {
   width: 39.8rem;
   height: 5rem;
   color: rgba(133, 136, 150, 0.5);
+  background-color: #fff;
   text-align: left;
   transition: border-color 100ms ease-in;
   padding: 0 1.6rem 0 1.6rem;

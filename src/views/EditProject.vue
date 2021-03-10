@@ -136,10 +136,14 @@
     <section class="framework-area">
       <h3 class="edit-project-subtitle-2">Your impact measurement framework(s)</h3>
       <h3 class="edit-project-subtitle-3">Your framework</h3>
-      <framework-select-box></framework-select-box>
+      <framework-select-box
+        @save-framework-data="saveFramewokrData">
+      </framework-select-box>
       <div class="framework-target">
         <h3 class="edit-project-subtitle-3">Your framework's target</h3>
-        <selectbox-framework-target></selectbox-framework-target>
+        <selectbox-framework-target
+          @save-framework-target="saveFrameworkTarget"
+        ></selectbox-framework-target>
       </div>
     </section>
   </main>
@@ -200,10 +204,12 @@ export default {
       companyDropdown: 0,
       projectDropdown: 1,
       loggedInUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
-      uploadAreaShow: false
+      uploadAreaShow: false,
+      framework: null
     }
   },
   mounted () {
+    // TODO: filter  ".", "#", "$", "/", "[", "]"
     this.showNavBar()
     this.getInsGrowthRate()
 
@@ -224,6 +230,9 @@ export default {
   methods: {
     changeState (newState) {
       this.objectives = ['']
+      store.commit('clearProjectInfo')
+      store.commit('clearObjectives')
+      store.commit('clearFileList')      
       
       switch (newState) {
         case this.stateSelectCompany:
@@ -284,8 +293,6 @@ export default {
     },
     // Only to be called when select dropdown menu
     handleSelectLogic (dropdownType) {
-      this.alertAssert(dropdownType === this.companyDropdown || dropdownType === this.projectDropdown)
-
       switch (dropdownType) {
         case this.companyDropdown:
           this.projectNames = null
@@ -310,7 +317,7 @@ export default {
       const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
       // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
       database.on('value', (snapshot) => {
-        this.alertAssert(this.selectedCompany)
+        this.alertAssert(this.selectedCompany, 'Selected Company name is not exist')
         const projectInfo = snapshot.val().projectInfo
         this.alertAssert(projectInfo[this.selectedCompany], `Selected company ${this.selectedCompany} not found in project info`)
         const projects = projectInfo[this.selectedCompany].projects
@@ -319,23 +326,26 @@ export default {
       })
     },
     // this function gets the objected associated with this company + project from database set in internal state
-    getObjectiveListFromDB () {
-      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
-      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
-      database.on('value', (snapshot) => {
-        this.alertAssert(this.selectedCompany, 'getObjectiveListFromDB: this.selectedCompany was falsy')
-        this.alertAssert(this.selectedProject && this.selectedProject !== this.createNewProjectString)
-        const projectInfo = snapshot.val().projectInfo
-        const objectList = projectInfo[this.selectedCompany].projects[this.selectedProject].projectObjectives
-        this.objectives = objectList ? objectList : this.emptyObjectiveList
-      })
+    async getObjectiveListFromDB () {
+      if (this.selectedCompany && this.selectedProject) {
+        console.log(this.selectedCompany, this.selectedProject)
+        const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+        // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+        await database.on('value', (snapshot) => {
+          // this.alertAssert(this.selectedCompany, 'getObjectiveListFromDB: this.selectedCompany was falsy')
+          // this.alertAssert(this.selectedProject, 'getObjectiveListFromDB: this.selectedProject was falsy') 
+          // FIXME: why this assertion message keep calling??
+          const projectInfo = snapshot.val().projectInfo
+          const objectList = projectInfo[this.selectedCompany].projects[this.selectedProject].projectObjectives
+          this.objectives = objectList ? objectList : this.emptyObjectiveList
+        })
+      }
     },
     showNavBar () {
       const navbar = document.getElementById('nav')
       navbar.style.display = 'inline'
     },
     addCompany (addedCompany) {
-      this.alertAssert(this.state === this.stateEditCompany)
       const createdCompany = addedCompany.userInputSubComp
       this.objectives = this.emptyObjectiveList
       this.selectedCompany = createdCompany
@@ -344,7 +354,6 @@ export default {
       this.changeState(this.stateSelectProject)
     },
     addProject (addedProject) {
-      this.alertAssert(this.state === this.stateEditProject)
       const createdProject = addedProject.userInputSubComp
       this.saveNewProjectInDB(createdProject)
       this.objectives = this.emptyObjectiveList
@@ -373,15 +382,12 @@ export default {
     async saveNewProjectInDB (createdProject) {
       const userId = this.loggedInUserId
       const company = this.selectedCompany
-      const projectInfo = {
-        companyName: company,
-        projectName: createdProject
-      }
 
       // for Firebase update
       const update = {}
       let savedInfoFromDB = {}
-      update[`/${userId}/projectInfo/${company}/projects/${createdProject}/`] = projectInfo
+      update[`/${userId}/projectInfo/${company}/projects/${createdProject}/companyName`] = company
+      update[`/${userId}/projectInfo/${company}/projects/${createdProject}/projectName`] = createdProject
       await this.$database.ref().update(update)
         .then(() => {
           const database = this.$database.ref(`${userId}`)
@@ -401,7 +407,6 @@ export default {
       if (editedIndex === this.objectives.length - 1) {
         this.objectives.push("")
       }
-
       this.$forceUpdate()
     },
     removeObjectives (editedObjFromComp) {
@@ -414,20 +419,9 @@ export default {
     removeProject (removeIndex) {
       console.log(removeIndex)
     },
-    getInsGrowthRate () {
-      const prevYear = getLessons([], [], [], '2018')
-      const currYear = getLessons([], [], [], '2019')
-      this.insGrowthRate = compareDataByYear(Object.values(prevYear.lessons[0]), Object.values(currYear.lessons[0]))
-      this.ictGrowthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
-    },
     projectUpdate () {
       this.firebaseUpdate()
       alert('Project information has been saved!')
-    },
-    alertAssert (condition, message) {
-      if(!condition) {
-        alert(message)
-      }
     },
     async firebaseUpdate () {
       const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
@@ -436,41 +430,75 @@ export default {
       const objective = this.objectives
 
       if (company && project && objective) {
-        const projectInfo = {
-          companyName: company,
-          projectName: project,
-          projectObjectives: objective
-        }
-
         const update = {}
-        update[`/${userId}/projectInfo/${company}/projects/${project}/`] = projectInfo
+        update[`/${userId}/projectInfo/${company}/projects/${project}/companyName`] = company
+        update[`/${userId}/projectInfo/${company}/projects/${project}/projectName`] = project
+        update[`/${userId}/projectInfo/${company}/projects/${project}/projectObjectives`] = objective
         await this.$database.ref().update(update)
           .then(() => {
-            try {
-              const database = this.$database.ref(`${userId}`)
-              database.on('value', (snapshot) => {
-                const projectInfo = snapshot.val().projectInfo
-                const addedObjectives = projectInfo[company].projects[project].projectObjectives
+            const database = this.$database.ref(`${userId}`)
+            database.on('value', (snapshot) => {
+              const projectInfo = snapshot.val().projectInfo
+              const addedObjectives = projectInfo[company].projects[project].projectObjectives
+              console.log(projectInfo)
 
-                this.selectedCompany = company
-                this.selectedProject = project
-                this.objectives = addedObjectives
-                this.uploadAreaShow = true
+              this.changeState(this.stateEditObjectives)
+              this.selectedCompany = company
+              this.selectedProject = project
+              this.objectives = addedObjectives
 
-                // save info in vuex store -> for file upload module
-                store.commit('setProjectInfo', {
-                  companyName: company,
-                  projectName: project
-                })
+              this.uploadAreaShow = true
+
+              // save info in vuex store -> for file upload module
+              store.commit('setProjectInfo', {
+                companyName: company,
+                projectName: project
               })
-            } catch (error) {
-              console.log(error)
-            }
+            })
           })
       }
     },
     fileListUpdate () {
-      location.reload()
+      const fileList = store.state.filelist
+      const update = {}
+      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/projectFiles/`] = fileList
+      this.$database.ref().update(update)
+        .then(() => {
+          store.commit('clearObjectives')
+          store.commit('clearFileList')
+          alert('Upload successful')
+          location.reload()
+        })
+    },
+    saveFramewokrData (frameworkInfo) {
+      this.alertAssert(store.state.loginUserId, 'Logged in user id is not exist')
+      this.alertAssert(store.state.companyName, 'Please select company name first')
+      this.alertAssert(store.state.projectName, 'Please select project name first')
+      const update = {}
+      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${frameworkInfo.frameworksName}`] = frameworkInfo
+      this.$database.ref().update(update)
+        .then(() => {
+          const database = this.$database.ref(`${this.loggedInUserId}`)
+          database.on('value', (snapshot) => {
+            const projectInfo = snapshot.val().projectInfo
+            this.framework = projectInfo[store.state.companyName].projects[store.state.projectName].frameworksInfo[frameworkInfo.frameworksName].frameworksName
+          })
+        })
+    },
+    saveFrameworkTarget (frameworkTargets) {
+      this.alertAssert(this.framework, 'Please add framework first')
+      if (this.framework) {
+        const update = {}
+        update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${this.framework}/target`] = frameworkTargets
+        this.$database.ref().update(update)
+          .then(() => {
+            const database = this.$database.ref(`${this.loggedInUserId}`)
+            database.on('value', (snapshot) => {
+              const projectInfo = snapshot.val().projectInfo
+              console.log(projectInfo)
+            })
+          })        
+      }
     },
     mouseHover (number) {
       switch (number) {
@@ -496,6 +524,17 @@ export default {
         case 3:
           this.editHoverboxShow3 = false
           break
+      }
+    },
+    getInsGrowthRate () {
+      const prevYear = getLessons([], [], [], '2018')
+      const currYear = getLessons([], [], [], '2019')
+      this.insGrowthRate = compareDataByYear(Object.values(prevYear.lessons[0]), Object.values(currYear.lessons[0]))
+      this.ictGrowthRate = calcDifference([getStudentAvgAcrossSchools('Total', 'Base')], [getStudentAvgAcrossSchools('Total', 'End')])[0]
+    },
+    alertAssert (condition, message) {
+      if (!condition) {
+        alert(message)
       }
     }
   },

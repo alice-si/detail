@@ -15,6 +15,7 @@
         </ul>
       </div>
     </form>
+  <button class='target-submit' @click="saveFrameworksData">Add</button>
   </div>
 </template>
 
@@ -87,6 +88,12 @@ export default {
       } else {
         this.selectboxPlaceholder = 'Select target'
       }
+    },
+    saveFrameworksData () {
+      const frameworkTargets = this.selectedOption
+      this.$emit('save-framework-target', { frameworkTargets })
+      this.selectedOption = []
+      this.setSelectboxPlaceholder()
     }
   },
   watch: {
@@ -98,6 +105,12 @@ export default {
 </script>
 
 <style>
+.framework-target-form-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 .framework-target-form-area ul,
 .framework-target-form-area li {
   list-style-type: none;
@@ -148,7 +161,7 @@ export default {
 
 .framework-target-form-area .framework-target-dropdown {
   position: relative;
-  z-index: 1;
+  z-index: 0;
 }
 
 .framework-target-form-area .framework-target-dropdown-item {
@@ -161,6 +174,7 @@ export default {
   width: 100%;
   height: 4.7rem;
   color: rgba(133, 136, 150, 0.5);
+  background-color: #fff;
   text-align: left;
   transition: border-color 100ms ease-in;
   padding: 0 1.6rem 0 1.6rem;
@@ -212,20 +226,6 @@ export default {
   margin: 0;
 }
 
-.framework-target-form-area .add-link-form {
-  margin-top: 2.5rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.framework-target-form-area .add-link-form h3 {
-  margin-bottom: 2.5rem;
-  font-family: Helvetica;
-  font-size: 1.6rem;
-  color: #686868;
-  text-align: left;
-}
-
 .framework-target-form-area .text-form {
   width: 39.7rem;
   height:  4.7rem;
@@ -243,46 +243,18 @@ export default {
   text-align: center;
 }
 
-.framework-target-form-area .text-submit {
-  /* float: inline-end; */
+.framework-target-form-area .target-submit{
   background: #5D38DB;
   box-shadow: 0 14px 42px 0 rgba(52,77,178,0.34);
   border-radius: 2.4px;
   color: #ffffff;
   height: 5.5rem;
   width: 12rem;
-  /* position: relative;
-  top: 95%;
-  left: 80%; */
+  margin-top: 2rem;
 } 
 
 .framework-target-form-area button::after {
   display: none;
 }
-
-.add-link-form {
-  -webkit-animation-name: fadeIn;
-  animation-name: fadeIn;
-  -webkit-animation-duration: 1s;
-  animation-duration: 1s;
-}
-
-@-webkit-keyframes fadeIn {
-  0% {
-    opacity: 0
-  }
-  100% {
-    opacity: 1
-  }
-}
-@keyframes fadeIn {
-  0% {
-    opacity: 0
-  }
-  100% {
-    opacity: 1
-  }
-}
-
 
 </style>
