@@ -64,6 +64,7 @@ export default {
   },
   watch: {
     selectboxOption () {
+      console.log(this.selectboxOption)
       // this.selectboxPlaceholder = 'Select option'
       if (this.selectedOption === null) {
         this.selectboxPlaceholder = 'Select option'

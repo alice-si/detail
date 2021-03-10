@@ -203,36 +203,41 @@ export default {
       emptyObjectiveList: [""],
       companyDropdown: 0,
       projectDropdown: 1,
-      loggedInUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
+      loggedInUserId: '',
       uploadAreaShow: false,
       framework: null
     }
   },
-  mounted () {
+  async mounted () {
     // TODO: filter  ".", "#", "$", "/", "[", "]"
     this.showNavBar()
     this.getInsGrowthRate()
 
-    const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // naver login
-    // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
-    database.on('value', (snapshot) => {
-      // create company selectbox
-      const createdCompanies = [...Object.keys(snapshot.val().projectInfo), this.createNewCompanyString]
-      this.companyNames = createdCompanies
-      store.commit('setLogin', { // fake login store commit
-        loggedIn: true,
-        loginUserId: 'spqo4phrmdUbvKf722BiQdld3R12',
-        loginUserFullName: 'Joanna Kang'
+    const firebaseDB = this.$database
+    let context = this
+    this.$firebase.auth().onAuthStateChanged(
+      function (user) {
+        if (user) {
+          // User is signed in.
+          context.loggedInUserId = user.uid
+          const database = firebaseDB.ref(`${user.uid}`)
+          database.on('value', (snapshot) => {
+            let projectSelectOptions = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
+            context.companyNames = projectSelectOptions
+            context.changeState(context.stateSelectCompany)
+          })
+        } else {
+          // No user is signed in.
+          console.log('not logged in')
+        }
       })
-      this.changeState(this.stateSelectCompany)
-    })
   },
   methods: {
     changeState (newState) {
       this.objectives = ['']
       store.commit('clearProjectInfo')
       store.commit('clearObjectives')
-      store.commit('clearFileList')      
+      store.commit('clearFileList') 
       
       switch (newState) {
         case this.stateSelectCompany:
@@ -314,7 +319,7 @@ export default {
       }
     },
     getProjectListFromDB () {
-      const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+      const database = this.$database.ref(`${this.loggedInUserId}`) // email login
       // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
       database.on('value', (snapshot) => {
         this.alertAssert(this.selectedCompany, 'Selected Company name is not exist')
@@ -329,7 +334,7 @@ export default {
     async getObjectiveListFromDB () {
       if (this.selectedCompany && this.selectedProject) {
         console.log(this.selectedCompany, this.selectedProject)
-        const database = this.$database.ref('spqo4phrmdUbvKf722BiQdld3R12') // email login
+        const database = this.$database.ref(`${this.loggedInUserId}`) // email login
         // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
         await database.on('value', (snapshot) => {
           // this.alertAssert(this.selectedCompany, 'getObjectiveListFromDB: this.selectedCompany was falsy')
@@ -424,7 +429,7 @@ export default {
       alert('Project information has been saved!')
     },
     async firebaseUpdate () {
-      const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
+      const userId = this.loggedInUserId
       const company = this.selectedCompany
       const project = this.selectedProject
       const objective = this.objectives
@@ -461,7 +466,7 @@ export default {
     fileListUpdate () {
       const fileList = store.state.filelist
       const update = {}
-      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/projectFiles/`] = fileList
+      update[`/${this.loggedInUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/projectFiles/`] = fileList
       this.$database.ref().update(update)
         .then(() => {
           store.commit('clearObjectives')
@@ -475,7 +480,7 @@ export default {
       this.alertAssert(store.state.companyName, 'Please select company name first')
       this.alertAssert(store.state.projectName, 'Please select project name first')
       const update = {}
-      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${frameworkInfo.frameworksName}`] = frameworkInfo
+      update[`/${this.loggedInUserId}}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${frameworkInfo.frameworksName}`] = frameworkInfo
       this.$database.ref().update(update)
         .then(() => {
           const database = this.$database.ref(`${this.loggedInUserId}`)
@@ -489,7 +494,7 @@ export default {
       this.alertAssert(this.framework, 'Please add framework first')
       if (this.framework) {
         const update = {}
-        update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${this.framework}/target`] = frameworkTargets
+        update[`/${this.loggedInUserId}}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${this.framework}/target`] = frameworkTargets
         this.$database.ref().update(update)
           .then(() => {
             const database = this.$database.ref(`${this.loggedInUserId}`)
@@ -497,7 +502,7 @@ export default {
               const projectInfo = snapshot.val().projectInfo
               console.log(projectInfo)
             })
-          })        
+          })  
       }
     },
     mouseHover (number) {
