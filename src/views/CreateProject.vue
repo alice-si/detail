@@ -82,16 +82,8 @@ export default {
 
       this.objectives[index - 1] = userInput
       if (this.objectives.length === index) this.objectives.push('')
-
-
-      // store.commit('setObjectives', {
-      //   addedObj
-      // })
-      // this.objectives = store.state.objectives
-      // this.$forceUpdate()
     },
     removeObjectives (removeObj) {
-      // const userInput = removeObj.userInputSubComp
       const index = removeObj.noOfIndex
       this.objectives.splice(index - 1, 1)
     },
@@ -99,8 +91,7 @@ export default {
       console.log(this.objectives)
       console.log(this.companyName, this.projectName)
   
-      // const userId = store.state.loginUserId
-      const userId = 'spqo4phrmdUbvKf722BiQdld3R12'
+      const userId = store.state.loginUserId
       if (userId && this.objectives && this.companyName && this.projectName) {
         const projectInfo = {
           companyName: this.companyName,
@@ -139,7 +130,6 @@ export default {
       }
     },
     saveFileList () {
-      console.log(store.state)
       const fileList = store.state.filelist
       const update = {}
       update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/projectFiles/`] = fileList
@@ -148,7 +138,6 @@ export default {
           store.commit('clearObjectives')
           store.commit('clearFileList')
           alert('Data has been saved in system!')
-          // TODO: upload 버튼 클릭되면 dashboard setting 페이지로 리다이렉트
           router.push('/editproject')
         })
         .catch((error) => { alert(error) })
@@ -159,7 +148,6 @@ export default {
   },
   computed: {
     noOfObjectiveInputForm () {
-      console.log(this.objectives)
       return this.objectives.length
     }
   }
