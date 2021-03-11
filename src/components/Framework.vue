@@ -164,7 +164,7 @@ export default {
 }
 
 .framework-form-area .framework-dropdown-toggle {
-  width: 100%;
+  width: 36.7rem;
   height: 4.7rem;
   /* color: rgba(133, 136, 150); */
   background-color: #fff;

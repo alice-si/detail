@@ -64,8 +64,6 @@ export default {
   },
   watch: {
     selectboxOption () {
-      console.log(this.selectboxOption)
-      // this.selectboxPlaceholder = 'Select option'
       if (this.selectedOption === null) {
         this.selectboxPlaceholder = 'Select option'
       } else {
@@ -116,7 +114,7 @@ export default {
 
 .editproject-dropbox-form .editproject-dropbox {
   background-color: #fff;
-  width: 39.8rem;
+  width: 40rem;
 }
 
 .editproject-dropbox-form .editproject-dropdown-item {
@@ -126,7 +124,7 @@ export default {
 }
 
 .editproject-dropdown-toggle {
-  width: 39.8rem;
+  width: 37rem;
   height: 5rem;
   color: rgba(133, 136, 150, 0.5);
   background-color: #fff;
