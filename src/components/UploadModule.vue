@@ -8,7 +8,6 @@
         id="customdropzone"
         :options="dropzoneOptions"
         @vdropzone-complete="afterComplete"
-        @vdropzone-mounted="getFileList"
       ></vue-dropzone>
       <div v-if="uploading.length > 0" class="image-div">
         <div v-for="(file, index) in uploading" :key="index" class="filename-list">
@@ -63,6 +62,7 @@ export default {
     this.hideNavBar()
     this.termsAndConditionCheck = false
     this.uploading = []
+    this.getFileList()
   },
   methods: {
     hideNavBar () {
@@ -71,11 +71,13 @@ export default {
     },
     getFileList () {
       const storageRef = this.$fileupload.ref()
-      const fileOriginRef = storageRef.child(`${store.state.companyName}/${store.state.projectName}/`)
+      const company = store.state.companyName
+      const project = store.state.projectName
+      const fileOriginRef = storageRef.child(`${company}/${project}/`)
       fileOriginRef.listAll()
         .then((res) => res._delegate.items
           .forEach((el) => {
-            this.savedFileList.push(el.name) 
+            this.savedFileList.push(el.name)
           })
         )
     },

@@ -97,9 +97,6 @@ export default {
     }
   },
   watch: {
-    // selectedOption () {
-    //   console.log(this.selectedOption)
-    // }
   }
 }
 </script>

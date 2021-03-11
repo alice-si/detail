@@ -333,7 +333,6 @@ export default {
     // this function gets the objected associated with this company + project from database set in internal state
     async getObjectiveListFromDB () {
       if (this.selectedCompany && this.selectedProject) {
-        console.log(this.selectedCompany, this.selectedProject)
         const database = this.$database.ref(`${this.loggedInUserId}`) // email login
         // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
         await database.on('value', (snapshot) => {
@@ -445,7 +444,6 @@ export default {
             database.on('value', (snapshot) => {
               const projectInfo = snapshot.val().projectInfo
               const addedObjectives = projectInfo[company].projects[project].projectObjectives
-              console.log(projectInfo)
 
               this.changeState(this.stateEditObjectives)
               this.selectedCompany = company
@@ -476,7 +474,7 @@ export default {
         })
     },
     saveFramewokrData (frameworkInfo) {
-      this.alertAssert(store.state.loginUserId, 'Logged in user id is not exist')
+      this.alertAssert(this.loggedInUserId, 'Logged in user id is not exist')
       this.alertAssert(store.state.companyName, 'Please select company name first')
       this.alertAssert(store.state.projectName, 'Please select project name first')
       const update = {}
@@ -500,7 +498,6 @@ export default {
             const database = this.$database.ref(`${this.loggedInUserId}`)
             database.on('value', (snapshot) => {
               const projectInfo = snapshot.val().projectInfo
-              console.log(projectInfo)
             })
           })  
       }

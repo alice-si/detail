@@ -88,26 +88,26 @@ export default {
       this.objectives.splice(index - 1, 1)
     },
     projectCreate () {
-      console.log(this.objectives)
-      console.log(this.companyName, this.projectName)
-  
+      const company = this.companyName
+      const project = this.projectName
+      const objectives = this.objectives
       const userId = store.state.loginUserId
-      if (userId && this.objectives && this.companyName && this.projectName) {
+
+      if (userId && objectives && company && project) {
         const projectInfo = {
-          companyName: this.companyName,
-          projectName: this.projectName,
-          projectObjectives: this.objectives
+          companyName: company,
+          projectName: project,
+          projectObjectives: objectives
         }
 
         const update = {}
-        update[`/${userId}/projectInfo/${this.companyName}/projects/${this.projectName}/`] = projectInfo
+        update[`/${userId}/projectInfo/${company}/projects/${project}/`] = projectInfo
         this.$database.ref().update(update)
           .then(() => {
             const database = this.$database.ref(`${userId}`)
             database.on('value', (snapshot) => {
-              const projectInfo = snapshot.val().projectInfo[this.companyName][this.projectName]
+              const projectInfo = snapshot.val().projectInfo[company].projects[project]
               const savedObjectives = projectInfo.projectObjectives
-              console.log(savedObjectives)
 
               store.commit('setProjectInfo', {
                 companyName: projectInfo.companyName,
@@ -120,7 +120,7 @@ export default {
                 })
               })
             })
-            console.log(store.state)
+
             alert('Project detail saved!')
 
             this.uploadAreaShow = true
@@ -130,9 +130,16 @@ export default {
       }
     },
     saveFileList () {
+      const userid = store.state.loginUserId
+      const company = store.state.companyName
+      const project = store.state.projectName
       const fileList = store.state.filelist
       const update = {}
-      update[`/${store.state.loginUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/projectFiles/`] = fileList
+
+      console.assert(userid, 'Logged in user id is not exist')
+      console.assert(company, 'company name is not exist')
+      console.assert(project, 'project name is not exist')
+      update[`/${userid}/projectInfo/${company}/projects/${project}/projectFiles/`] = fileList
       this.$database.ref().update(update)
         .then(() => {
           store.commit('clearObjectives')
