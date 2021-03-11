@@ -155,9 +155,9 @@ export default {
           // console.log(this.$database.ref(`${user.user.uid}`))
           this.$database.ref(`${user.user.uid}`).once('value')
             .then((snapshot) => {
-              // console.log(snapshot)
-              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
-              const userid = snapshot.ref_.key
+              console.log(snapshot.val())
+              const username = snapshot.val().loginUserInfo.userName
+              const userid = snapshot.val().loginUserInfo.userId
               store.commit('setLogin', {
                 loggedIn: true,
                 loginUserId: userid,

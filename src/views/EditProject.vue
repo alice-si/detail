@@ -222,7 +222,7 @@ export default {
           context.loggedInUserId = user.uid
           const database = firebaseDB.ref(`${user.uid}`)
           database.on('value', (snapshot) => {
-            let projectSelectOptions = [...Object.keys(snapshot.val().projectInfo), 'Create new company']
+            let projectSelectOptions = snapshot.val().projectInfo ? [...Object.keys(snapshot.val().projectInfo), 'Create new company'] : ['Create new company']
             context.companyNames = projectSelectOptions
             context.changeState(context.stateSelectCompany)
           })
@@ -480,7 +480,7 @@ export default {
       this.alertAssert(store.state.companyName, 'Please select company name first')
       this.alertAssert(store.state.projectName, 'Please select project name first')
       const update = {}
-      update[`/${this.loggedInUserId}}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${frameworkInfo.frameworksName}`] = frameworkInfo
+      update[`/${this.loggedInUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${frameworkInfo.frameworksName}`] = frameworkInfo
       this.$database.ref().update(update)
         .then(() => {
           const database = this.$database.ref(`${this.loggedInUserId}`)
@@ -494,7 +494,7 @@ export default {
       this.alertAssert(this.framework, 'Please add framework first')
       if (this.framework) {
         const update = {}
-        update[`/${this.loggedInUserId}}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${this.framework}/target`] = frameworkTargets
+        update[`/${this.loggedInUserId}/projectInfo/${store.state.companyName}/projects/${store.state.projectName}/frameworksInfo/${this.framework}/target`] = frameworkTargets
         this.$database.ref().update(update)
           .then(() => {
             const database = this.$database.ref(`${this.loggedInUserId}`)

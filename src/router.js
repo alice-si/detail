@@ -9,7 +9,7 @@ import Home from './views/Home.vue'
 // import Framework from './views/Framework.vue'
 // import Createproject from './views/CreateProject.vue'
 
-import firebase from 'firebase'
+// import firebase from 'firebase'
 import { store } from './store/store'
 
 Vue.use(Router)
@@ -79,8 +79,7 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  const user = firebase.auth().currentUser
-  if (!user && to.name !== 'login') {
+  if (store.state.loggedIn === false && to.name !== 'login') {
     alert('Please login before access this page')
     next('/login')
   } else if (store.state.loggedIn === true && to.name === 'login') {

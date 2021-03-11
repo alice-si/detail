@@ -23,3 +23,5 @@ Vue.prototype.$firebase = firebase
 Vue.prototype.$google = new firebase.auth.GoogleAuthProvider()
 Vue.prototype.$database = firebase.database()
 Vue.prototype.$fileupload = firebase.storage()
+
+export default firebase
