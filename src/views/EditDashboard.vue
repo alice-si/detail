@@ -434,7 +434,6 @@ export default {
     },
     addSelectboxOption (addedItem) {
       const selectboxType = addedItem.cssId
-      console.log(addedItem)
       switch (selectboxType) {
         case 'country-selectbox':
           this.countries.push(addedItem.item)
@@ -449,7 +448,6 @@ export default {
     },
     removeSelectboxOption (removedItem) {
       const selectboxType = removedItem.cssId
-      console.log(removedItem)
       switch (selectboxType) {
         case 'country-selectbox':
           this.countries.splice(removedItem.index, 1)

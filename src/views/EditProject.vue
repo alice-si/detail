@@ -209,7 +209,6 @@ export default {
     }
   },
   async mounted () {
-    // TODO: filter  ".", "#", "$", "/", "[", "]"
     this.showNavBar()
     this.getInsGrowthRate()
 
@@ -237,7 +236,7 @@ export default {
       this.objectives = ['']
       store.commit('clearProjectInfo')
       store.commit('clearObjectives')
-      store.commit('clearFileList') 
+      store.commit('clearFileList')
       
       switch (newState) {
         case this.stateSelectCompany:
@@ -319,8 +318,7 @@ export default {
       }
     },
     getProjectListFromDB () {
-      const database = this.$database.ref(`${this.loggedInUserId}`) // email login
-      // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+      const database = this.$database.ref(`${this.loggedInUserId}`)
       database.on('value', (snapshot) => {
         this.alertAssert(this.selectedCompany, 'Selected Company name is not exist')
         const projectInfo = snapshot.val().projectInfo
@@ -333,12 +331,10 @@ export default {
     // this function gets the objected associated with this company + project from database set in internal state
     async getObjectiveListFromDB () {
       if (this.selectedCompany && this.selectedProject) {
-        const database = this.$database.ref(`${this.loggedInUserId}`) // email login
-        // const database = this.$database.ref('0M1kcgIWytPWL1UNzHfSyb1YQvh2') // google login
+        const database = this.$database.ref(`${this.loggedInUserId}`)
         await database.on('value', (snapshot) => {
           // this.alertAssert(this.selectedCompany, 'getObjectiveListFromDB: this.selectedCompany was falsy')
           // this.alertAssert(this.selectedProject, 'getObjectiveListFromDB: this.selectedProject was falsy') 
-          // FIXME: why this assertion message keep calling??
           const projectInfo = snapshot.val().projectInfo
           const objectList = projectInfo[this.selectedCompany].projects[this.selectedProject].projectObjectives
           this.objectives = objectList ? objectList : this.emptyObjectiveList

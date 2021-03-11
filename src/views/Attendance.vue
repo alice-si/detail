@@ -166,13 +166,11 @@ export default {
       return initialData
     },
     updateColor (colorScheme, colorIndex) {
-      console.log(colorScheme, colorIndex)
       let haveSet = 0
       colorIndex.sort((a, b) => a - b)
       for (let i = 0; i < this.summaryBoxData.length; i++) {
         const school = this.summaryBoxData[i].cssId
         const dom = document.getElementsByClassName(`${school}`)
-        console.log(dom)
         if (dom.length !== 0 && dom[0].checked === true) {
           const setColor = colorScheme().normal[colorIndex[haveSet]]
           dom[1].style.color = setColor

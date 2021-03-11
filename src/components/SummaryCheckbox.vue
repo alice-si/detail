@@ -71,8 +71,6 @@ export default {
   mounted () {
     this.vFor = this.dictForVfor
     this.barChartDataProp = this.barChartData
-    console.log('this.barChartData', this.barChartData)
-    
   }
 }
 </script>

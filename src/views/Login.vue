@@ -46,9 +46,6 @@ import { store } from '../store/store'
 
 export default {
   name: 'login',
-  // components: {
-
-  // },
   data () {
     return {
       email: null,
@@ -101,7 +98,6 @@ export default {
     submitSignUp () {
       this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
         .then((result) => {
-          // console.log(result)
           const loginUserInfo = {
             userName: this.fullname,
             userId: result.user.uid,
@@ -112,7 +108,7 @@ export default {
           })
           this.$database.ref(`${result.user.uid}`).once('value')
             .then((snapshot) => {
-              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
+              const username = snapshot.val().loginUserInfo.userName
               const userid = snapshot.key
               store.commit('setLogin', {
                 loggedIn: true,
@@ -132,7 +128,6 @@ export default {
         .then((user) => {
           this.$database.ref(`${user.user.uid}`).once('value')
             .then((snapshot) => {
-              console.log(snapshot.val())
               const username = snapshot.val().loginUserInfo.userName
               const userid = snapshot.key
               store.commit('setLogin', {
@@ -143,7 +138,6 @@ export default {
               alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
               router.push('/')
             })
-          // store.state.loggedIn = true
         })
         .catch((error) => {
           alert(error.message)
@@ -152,10 +146,8 @@ export default {
     googleLogin () {
       this.$firebase.auth().signInWithPopup(this.$google)
         .then((user) => {
-          // console.log(this.$database.ref(`${user.user.uid}`))
           this.$database.ref(`${user.user.uid}`).once('value')
             .then((snapshot) => {
-              console.log(snapshot.val())
               const username = snapshot.val().loginUserInfo.userName
               const userid = snapshot.val().loginUserInfo.userId
               store.commit('setLogin', {
