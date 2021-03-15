@@ -163,7 +163,6 @@ export default {
 
 <style>
 textarea:focus,
-input:focus,
 button:focus {
   outline: none !important;
 }
@@ -334,8 +333,8 @@ button:focus {
   font-size: 1.68rem;
   position: relative;
   right: -18rem;
-  width: 9rem;
-  height: 3.5rem;
+  width: 9rem !important;
+  height: 5.5rem !important;
 }
 
 .file-upload-button:hover {
