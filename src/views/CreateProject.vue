@@ -1,7 +1,7 @@
 <template>
   <main id="creat-project">
     <section class="creat-project-form-area">
-      <img src="../assets/alice_logo.png" width="91rem"/>
+      <router-link to='/'><img src="../assets/alice_logo.png" width="91rem"/></router-link>
       <h1 class="creat-project-title">Create your project</h1>
       <form>
         <h1>Your company's name</h1>
@@ -22,7 +22,6 @@
           </div>
       </form>
     <button @click="projectCreate" class="project-create-button">Create</button>
-    <button @click="logOut" class="logout-button">Logout</button>
     </section>
       <section class="upload-area">
         <upload-module v-if="uploadAreaShow === true" @upload-status-change="uploadStatusChange"></upload-module>
@@ -173,7 +172,6 @@ button:focus {
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* height: 100vh; */
   background-image: url('../assets/Loginbackground.svg');
   background-position: center bottom;
   background-repeat: no-repeat;
@@ -184,11 +182,6 @@ button:focus {
   overflow-x: hidden;
   padding: 6.5rem 0 30rem 0;
 }
-
-/* .creat-project-form-area {
-  position: absolute;
-  top: 6%;
-} */
 
 .companyname-text,
 .projectname-text {
@@ -341,8 +334,8 @@ button:focus {
   font-size: 1.68rem;
   position: relative;
   right: -18rem;
-  width: 12rem;
-  height: 5.5rem;
+  width: 9rem;
+  height: 3.5rem;
 }
 
 .file-upload-button:hover {

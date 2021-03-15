@@ -76,10 +76,6 @@ export default {
 </script>
 
 <style>
-input:focus {
-  outline: none;
-}
-
 .project-objective-add {
   display: flex;
   flex-direction: row !important;
