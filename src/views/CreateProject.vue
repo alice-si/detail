@@ -250,7 +250,6 @@ button:focus {
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* margin-top: 2rem; */
 }
 
 .project-objective-input {
@@ -272,26 +271,17 @@ button:focus {
   margin-bottom: 2rem;
 }
 
-.creat-project-form-area .logout-button {
-  border: none;
-  padding: 0 1.5rem;
-  margin: 0 0.5rem;
-  border-radius: 0.2rem;
-  transition: all 0.3s ease;
-  font-size: 1.68rem;
-}
-
 .project-create-button {
   border: none;
   padding: 1rem 1.5rem;
-  margin: 0 0.5rem;
+  margin: 3rem 0.5rem;
   border-radius: 0.2rem;
   transition: all 0.3s ease;
   background-color: #5D38DB;
   color: #ffffff;
   font-size: 1.68rem;
   position: relative;
-  right: -22rem;
+  right: -17rem;
   width: 12rem;
 }
 
@@ -299,8 +289,6 @@ button:focus {
   border: none;
   padding: 1rem 1.5rem;
   border-radius: 0.2rem;
-  background-color: #5D38DB;
-  color: #ffffff;
   font-size: 1.88rem;
 }
 
@@ -313,17 +301,6 @@ button:focus {
   font-size: 1.88rem;
 }
 
-.project-create-button,
-.creat-project-form-area .logout-button {
-  margin-top: 3rem;
-  height: 5.5rem;
-}
-
-.creat-project-form-area .logout-button {
-  position: relative;
-  left: -5rem;
-}
-
 .file-upload-button {
   border: none;
   padding: 0 1.5rem;
@@ -334,7 +311,6 @@ button:focus {
   position: relative;
   right: -18rem;
   width: 9rem !important;
-  height: 5.5rem !important;
 }
 
 .file-upload-button:hover {

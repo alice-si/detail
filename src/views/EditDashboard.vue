@@ -345,8 +345,6 @@ export default {
       this.updateConditionalRendering()
       let lessons = {}
       let prevYearLessons = {}
-      // let totalCurrLessons = []
-      // let totalPrevLessons = []
       let tableLessons = {}
       let prevTableLessons = {}
 

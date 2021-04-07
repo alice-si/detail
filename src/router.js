@@ -1,15 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
-// *Pages
-// import Attendance from './views/Attendance.vue'
-// import Ict from './views/Ict.vue'
-// import Login from './views/Login.vue'
-// import UploadPage from './views/UploadPage.vue'
-// import Framework from './views/Framework.vue'
-// import Createproject from './views/CreateProject.vue'
-
-// import firebase from 'firebase'
 import { store } from './store/store'
 
 Vue.use(Router)
@@ -42,7 +32,6 @@ const router = new Router({
     {
       path: '/ict',
       name: 'ict',
-      // component: Ict
       component: () => import('./views/Ict.vue')
     },
     {
@@ -50,11 +39,6 @@ const router = new Router({
       name: 'upload',
       component: () => import('./views/UploadPage.vue')
     },
-    // {
-    //   path: '/framework',
-    //   name: 'framework',
-    //   component: () => import('./views/Framework.vue')      
-    // },
     {
       path: '/createproject',
       name: 'createproject',

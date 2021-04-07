@@ -93,7 +93,6 @@ export default {
   data () {
     return {
       viewMode: 'Students',
-      // schoolView: true,
       colorCode: '',
       growthRate: '',
       countries: ['No more available options'],
@@ -117,10 +116,7 @@ export default {
           xAxes: [{
             gridLines: { color: '#ffffff' },
             display: true,
-            stacked: false,
-            ticks: {
-              // fontColor: '#EA4C89'
-            }
+            stacked: false
           }],
           yAxes: [{
             display: true,

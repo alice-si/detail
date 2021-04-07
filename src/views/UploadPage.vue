@@ -50,7 +50,6 @@ export default {
   },
   data () {
     return {
-      // imgSrc: require('../assets/UploadCheckIcon_0.svg'),
       dropzoneOptions: {
         url: 'https://httpbin.org/post',
         thumbnailWidth: 150,

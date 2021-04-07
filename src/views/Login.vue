@@ -159,7 +159,8 @@ export default {
               router.push('/')
             })
             .catch((error) => {
-              alert(error)
+              console.log(error)
+              alert("Can't find user information. Please sign up first")
             })
         })
         .catch((error) => {
