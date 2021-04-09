@@ -69,35 +69,35 @@ export default {
       this.loading = true
       this.$firebase.auth().signInWithPopup(this.$google) // Sign-up with Firebase Auth
         .then((result) => {
-          const currentUserEmail = result.user.email
-          if (currentUserEmail.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain
-            const loginUserInfo = {
-              userName: result.user.displayName,
-              userId: result.user.uid,
-              userEmail: result.user.email
-            }
-            this.$database.ref(`${result.user.uid}`).set({ // Save signed-up user's info in database
-              loginUserInfo
-            })
-            this.$database.ref(`${result.user.uid}`).once('value') // Double check whether user info successfully saved in db or not
-              .then((snapshot) => {
-                const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
-                const userid = snapshot.key
-                store.commit('setLogin', { // Send logged-in user info to Vuex store
-                  loggedIn: true,
-                  loginUserId: userid,
-                  loginUserFullName: username
-                })
-                alert(`Hello ${store.state.loginUserFullName}, You have successfully registered and logged in!`)
-              })
-            router.push('/createproject')
-          } else {
-            // Delete account if user isn't belonged to vodafone foundation
-            let user = this.$firebase.auth().currentUser
-            user.delete().then(() => {
-              alert('Only Vodafone foundation user can access this system')
-            })
+          // const currentUserEmail = result.user.email
+          // if (currentUserEmail.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain
+          const loginUserInfo = {
+            userName: result.user.displayName,
+            userId: result.user.uid,
+            userEmail: result.user.email
           }
+          this.$database.ref(`${result.user.uid}`).set({ // Save signed-up user's info in database
+            loginUserInfo
+          })
+          this.$database.ref(`${result.user.uid}`).once('value') // Double check whether user info successfully saved in db or not
+            .then((snapshot) => {
+              const username = snapshot.node_.children_.root_.value.children_.root_.right.value.value_
+              const userid = snapshot.key
+              store.commit('setLogin', { // Send logged-in user info to Vuex store
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
+              })
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully registered and logged in!`)
+            })
+          router.push('/createproject')
+          // } else {
+          //   // Delete account if user isn't belonged to vodafone foundation
+          //   let user = this.$firebase.auth().currentUser
+          //   user.delete().then(() => {
+          //     alert('Only Vodafone foundation user can access this system')
+          //   })
+          // }
         })
         .catch((error) => {
           alert(error.message)
@@ -106,85 +106,85 @@ export default {
       this.loading = false
     },
     submitSignUp () {
-      if (this.email.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain
-        this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-          .then((result) => {
-            const loginUserInfo = {
-              userName: this.fullname,
-              userId: result.user.uid,
-              userEmail: result.user.email
-            }
-            this.$database.ref(`${result.user.uid}`).set({
-              loginUserInfo
-            })
-            this.$database.ref(`${result.user.uid}`).once('value')
-              .then((snapshot) => {
-                const username = snapshot.val().loginUserInfo.userName
-                const userid = snapshot.key
-                store.commit('setLogin', {
-                  loggedIn: true,
-                  loginUserId: userid,
-                  loginUserFullName: username
-                })
-                alert(`Hello ${store.state.loginUserFullName}, You have successfully registered and logged in!`)
-                router.push('/createproject')
+      // if (this.email.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain
+      this.$firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+        .then((result) => {
+          const loginUserInfo = {
+            userName: this.fullname,
+            userId: result.user.uid,
+            userEmail: result.user.email
+          }
+          this.$database.ref(`${result.user.uid}`).set({
+            loginUserInfo
+          })
+          this.$database.ref(`${result.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.val().loginUserInfo.userName
+              const userid = snapshot.key
+              store.commit('setLogin', {
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
               })
-          })
-          .catch((error) => {
-            alert(error.message)
-          })
-      } else {
-        alert('Only Vodafone foundation user can access this system')
-      }
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully registered and logged in!`)
+              router.push('/createproject')
+            })
+        })
+        .catch((error) => {
+          alert(error.message)
+        })
+      // } else {
+      //   alert('Only Vodafone foundation user can access this system')
+      // }
     },
     submitLogin () {
-      if (this.email.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain
-        this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-          .then((user) => {
-            this.$database.ref(`${user.user.uid}`).once('value')
-              .then((snapshot) => {
-                const username = snapshot.val().loginUserInfo.userName
-                const userid = snapshot.key
-                store.commit('setLogin', {
-                  loggedIn: true,
-                  loginUserId: userid,
-                  loginUserFullName: username
-                })
-                alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
-                router.push('/')
+      // if (this.email.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain
+      this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        .then((user) => {
+          this.$database.ref(`${user.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.val().loginUserInfo.userName
+              const userid = snapshot.key
+              store.commit('setLogin', {
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
               })
-          })
-          .catch((error) => {
-            alert(error.message)
-          })
-      } else {
-        alert('Only Vodafone foundation user can access this system')
-      }
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
+              router.push('/')
+            })
+        })
+        .catch((error) => {
+          alert(error.message)
+        })
+      // } else {
+      //   alert('Only Vodafone foundation user can access this system')
+      // }
     },
     googleLogin () {
       this.$firebase.auth().signInWithPopup(this.$google)
         .then((user) => {
-          const currentUserEmail = user.user.email
-          if (currentUserEmail.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain          
-            this.$database.ref(`${user.user.uid}`).once('value')
-              .then((snapshot) => {
-                const username = snapshot.val().loginUserInfo.userName
-                const userid = snapshot.val().loginUserInfo.userId
-                store.commit('setLogin', {
-                  loggedIn: true,
-                  loginUserId: userid,
-                  loginUserFullName: username
-                })
-                alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
-                router.push('/')
+          // const currentUserEmail = user.user.email
+          // if (currentUserEmail.match(this.matchOption) !== null) { // check mail domain id is mached as vodafone email domain          
+          this.$database.ref(`${user.user.uid}`).once('value')
+            .then((snapshot) => {
+              const username = snapshot.val().loginUserInfo.userName
+              const userid = snapshot.val().loginUserInfo.userId
+              store.commit('setLogin', {
+                loggedIn: true,
+                loginUserId: userid,
+                loginUserFullName: username
               })
-              .catch((error) => {
-                console.log(error)
-                alert("Can't find user information. Please sign up first")
-              })
-          } else {
-            alert('Only Vodafone foundation user can access this system')
-          }
+              alert(`Hello ${store.state.loginUserFullName}, You have successfully logged in!`)
+              router.push('/')
+            })
+            .catch((error) => {
+              console.log(error)
+              alert("Can't find user information. Please sign up first")
+            })
+          // } else {
+          //   alert('Only Vodafone foundation user can access this system')
+          // }
         })
         .catch((error) => {
           alert(error.message)
