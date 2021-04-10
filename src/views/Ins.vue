@@ -817,16 +817,17 @@ canvas#line-chart.chartjs-render-monitor {
   display: flex;
   flex-direction: column;
   max-height: 40rem;
-  overflow-y: auto;
+  overflow-y: hidden;
   border: none;
   align-items: left;
   margin: 8rem 0 5rem 0;
 }
 
 #ins .summary-area::-webkit-scrollbar {
-  width: 4px;
+  /* width: 4px;
   height: 355px;
-  background-color: rgba(216, 216, 216, 0.4);
+  background-color: rgba(216, 216, 216, 0.4); */
+  display:none;
 }
 
 #ins .summary-area::-webkit-scrollbar-thumb {
