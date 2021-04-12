@@ -82,7 +82,7 @@
         <row :gutter="12" class="framework-thumbnails-wrapper">
           <column class="framework-thumbnail-tile" :lg="3" :md="2" :xs="5">
             <router-link to="/editdashboard">
-            <div @mouseover="mouseHover(1)" @mouseout="mouseOut(1)">
+            <div>
               <div class="framework-link-title">
                 <h1>INS Lessons</h1>
                 <h1 style="color:#8954BA;">{{insGrowthRate}}</h1>
@@ -91,7 +91,7 @@
               <img src="../../src/assets/dummy1.svg"/>
               </div>
             </router-link>
-            <div class="framework-thumbnail-hover" v-if="editHoverboxShow1">
+            <div class="framework-thumbnail-hover">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -99,7 +99,7 @@
           </column>
           <column class="framework-thumbnail-tile-2" :lg="3" :md="2" :xs="5">
             <router-link to="/editdashboard">
-            <div @mouseover="mouseHover(2)" @mouseout="mouseOut(2)">
+            <div>
               <div class="framework-link-title">
                 <h1>Students attendance</h1>
               </div>
@@ -108,7 +108,7 @@
               <img src="../../src/assets/dummy2.svg"/>
             </div>  
             </router-link>
-            <div class="framework-thumbnail-hover-2" v-if="editHoverboxShow2">
+            <div class="framework-thumbnail-hover-2">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -116,7 +116,7 @@
           </column>
           <column class="framework-thumbnail-tile-3" :lg="3" :md="2" :xs="5">
             <router-link to="/editdashboard">
-            <div @mouseover="mouseHover(3)" @mouseout="mouseOut(3)">
+            <div>
               <div class="framework-link-title">
                 <h1>ICT skills acquired</h1>
                 <h1 style="color:#8954BA;">{{ictGrowthRate}}</h1>
@@ -125,7 +125,7 @@
               <img src="../../src/assets/dummy3.svg"/>
             </div>
             </router-link>
-            <div class="framework-thumbnail-hover-3" v-if="editHoverboxShow3">
+            <div class="framework-thumbnail-hover-3">
               <span>Edit  |</span>
               <span>  Archive  |</span>
               <span>  Delete</span>
@@ -184,9 +184,6 @@ export default {
       lastUpdate: '31/12/2019',
       insGrowthRate: '',
       ictGrowthRate: '',
-      editHoverboxShow1: false,
-      editHoverboxShow2: false,
-      editHoverboxShow3: false,
       showCompanySelectBox: false,
       showProjectSelectBox: false,
       showCreateNewCompany: false,
@@ -493,32 +490,6 @@ export default {
               const projectInfo = snapshot.val().projectInfo
             })
           })  
-      }
-    },
-    mouseHover (number) {
-      switch (number) {
-        case 1:
-          this.editHoverboxShow1 = true
-          break
-        case 2:
-          this.editHoverboxShow2 = true
-          break
-        case 3:
-          this.editHoverboxShow3 = true
-          break
-      }
-    },
-    mouseOut (number) {
-      switch (number) {
-        case 1:
-          this.editHoverboxShow1 = false
-          break
-        case 2:
-          this.editHoverboxShow2 = false
-          break
-        case 3:
-          this.editHoverboxShow3 = false
-          break
       }
     },
     getInsGrowthRate () {
